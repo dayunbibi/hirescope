@@ -53,18 +53,30 @@ export default function JobCard({ job }: JobCardProps) {
               </div>
             </div>
 
+            {/* Bookmark icon */}
             <button
               type="button"
               aria-label={
-                job.bookmarked ? "Remove bookmark" : "Add bookmark"
+                job.bookmarked
+                  ? "Remove bookmark"
+                  : "Add bookmark"
               }
-              className={`text-xl transition ${
+              className={`transition ${
                 job.bookmarked
                   ? "text-[#800020]"
                   : "text-gray-400 hover:text-[#800020]"
               }`}
             >
-              {job.bookmarked ? "★" : "☆"}
+              <span
+                className="material-symbols-outlined text-[24px]"
+                style={{
+                  fontVariationSettings: job.bookmarked
+                    ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                    : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                }}
+              >
+                bookmark
+              </span>
             </button>
           </div>
 
@@ -90,7 +102,9 @@ export default function JobCard({ job }: JobCardProps) {
             </div>
 
             <div className="flex items-center justify-between gap-4 lg:justify-end">
-              <span className="text-xs text-gray-500">{job.postedAt}</span>
+              <span className="text-xs text-gray-500">
+                {job.postedAt}
+              </span>
 
               <Link
                 href={`/jobs/${job.id}`}

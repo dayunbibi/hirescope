@@ -14,17 +14,25 @@ function formatSalary(salary: number) {
 export default function BookmarkCard({ job }: BookmarkCardProps) {
   return (
     <article className="relative flex h-full flex-col rounded-lg border border-[#E4E2E0] bg-white p-6 shadow-sm transition hover:shadow-md">
-      {/* Remove bookmark button */}
+      {/* Filled bookmark icon for saved jobs */}
       <button
         type="button"
         aria-label="Remove bookmark"
         className="absolute right-5 top-5 text-[#800020] transition hover:text-[#570013]"
       >
-        ●
+        <span
+          className="material-symbols-outlined text-[24px]"
+          style={{
+            fontVariationSettings:
+              "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+          }}
+        >
+          bookmark
+        </span>
       </button>
 
       {/* Company and job information */}
-      <div className="flex items-center gap-4 pr-8">
+      <div className="flex items-center gap-4 pr-10">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#E0BFBF] bg-[#F5F3F1] font-bold text-[#800020]">
           {job.company.charAt(0)}
         </div>

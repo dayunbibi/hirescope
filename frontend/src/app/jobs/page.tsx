@@ -1,129 +1,246 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FilterSidebar from "@/components/FilterSidebar";
 import JobCard from "@/components/JobCard";
-import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/Pagination";
 import { jobs } from "@/data/jobs";
 
+const jobsPerPage = 3;
+
 export default function JobsPage() {
-  // Stores the text entered in the search input
+  // Stores the current keyword search
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Stores the selected work type filter
-  const [selectedWorkType, setSelectedWorkType] = useState("All");
+  // Stores the current location search
+  const [location, setLocation] = useState("Toronto");
 
-  // Available work type filter buttons
-  const workTypes = ["All", "Remote", "Hybrid", "On-site"];
+  // Stores selected work arrangements
+  const [selectedWorkTypes, setSelectedWorkTypes] = useState<string[]>([]);
 
-  // Filters jobs based on search text and selected work type
-  const filteredJobs = jobs.filter((job) => {
+  // Stores selected experience levels
+  const [selectedExperienceLevels, setSelectedExperienceLevels] =
+    useState<string[]>([]);
+
+  // Stores the minimum desired salary
+  const [minimumSalary, setMinimumSalary] = useState(50000);
+
+  // Stores the active sorting method
+  const [sortOption, setSortOption] = useState("relevant");
+
+  // Stores the currently selected result page
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Adds or removes one work type from the selected filters
+  const toggleWorkType = (workType: string) => {
+    setSelectedWorkTypes((currentTypes) =>
+      currentTypes.includes(workType)
+        ? currentTypes.filter((type) => type !== workType)
+        : [...currentTypes, workType]
+    );
+
+    setCurrentPage(1);
+  };
+
+  // Adds or removes one experience level from the selected filters
+  const toggleExperienceLevel = (experienceLevel: string) => {
+    setSelectedExperienceLevels((currentLevels) =>
+      currentLevels.includes(experienceLevel)
+        ? currentLevels.filter((level) => level !== experienceLevel)
+        : [...currentLevels, experienceLevel]
+    );
+
+    setCurrentPage(1);
+  };
+
+  // Clears every active job filter
+  const clearFilters = () => {
+    setSearchTerm("");
+    setLocation("");
+    setSelectedWorkTypes([]);
+    setSelectedExperienceLevels([]);
+    setMinimumSalary(50000);
+    setCurrentPage(1);
+  };
+
+  // Filters and sorts jobs using the selected controls
+  const filteredJobs = useMemo(() => {
     const keyword = searchTerm.trim().toLowerCase();
+    const locationKeyword = location.trim().toLowerCase();
 
-    const matchesSearch =
-      job.title.toLowerCase().includes(keyword) ||
-      job.company.toLowerCase().includes(keyword) ||
-      job.location.toLowerCase().includes(keyword) ||
-      job.workType.toLowerCase().includes(keyword) ||
-      job.skills.some((skill) =>
-        skill.toLowerCase().includes(keyword)
+    const matchingJobs = jobs.filter((job) => {
+      const matchesKeyword =
+        job.title.toLowerCase().includes(keyword) ||
+        job.company.toLowerCase().includes(keyword) ||
+        job.skills.some((skill) =>
+          skill.toLowerCase().includes(keyword)
+        );
+
+      const matchesLocation =
+        locationKeyword === "" ||
+        job.location.toLowerCase().includes(locationKeyword) ||
+        job.workType === "Remote";
+
+      const matchesWorkType =
+        selectedWorkTypes.length === 0 ||
+        selectedWorkTypes.includes(job.workType);
+
+      const matchesExperience =
+        selectedExperienceLevels.length === 0 ||
+        selectedExperienceLevels.includes(job.experienceLevel);
+
+      const matchesSalary = job.salaryMax >= minimumSalary;
+
+      return (
+        matchesKeyword &&
+        matchesLocation &&
+        matchesWorkType &&
+        matchesExperience &&
+        matchesSalary
       );
+    });
 
-    const matchesWorkType =
-      selectedWorkType === "All" ||
-      job.workType === selectedWorkType;
+    return [...matchingJobs].sort((firstJob, secondJob) => {
+      if (sortOption === "salary") {
+        return secondJob.salaryMax - firstJob.salaryMax;
+      }
 
-    return matchesSearch && matchesWorkType;
-  });
+      if (sortOption === "newest") {
+        return secondJob.id - firstJob.id;
+      }
+
+      return firstJob.id - secondJob.id;
+    });
+  }, [
+    searchTerm,
+    location,
+    selectedWorkTypes,
+    selectedExperienceLevels,
+    minimumSalary,
+    sortOption,
+  ]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredJobs.length / jobsPerPage)
+  );
+
+  const firstJobIndex = (currentPage - 1) * jobsPerPage;
+  const visibleJobs = filteredJobs.slice(
+    firstJobIndex,
+    firstJobIndex + jobsPerPage
+  );
 
   return (
     <>
       {/* Global website header */}
       <Header />
 
-      <main className="min-h-screen bg-[#FBF9F7] px-6 py-10">
-        <div className="mx-auto max-w-6xl">
-          {/* Page heading */}
-          <section className="mb-8">
-            <p className="text-sm font-medium uppercase tracking-[0.16em] text-[#800020]">
-              Toronto Tech Jobs
-            </p>
+      <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-12">
+          {/* Desktop and mobile filter sidebar */}
+          <div className="md:col-span-4 lg:col-span-3">
+            <FilterSidebar
+              searchTerm={searchTerm}
+              location={location}
+              selectedWorkTypes={selectedWorkTypes}
+              selectedExperienceLevels={selectedExperienceLevels}
+              minimumSalary={minimumSalary}
+              onSearchChange={(value) => {
+                setSearchTerm(value);
+                setCurrentPage(1);
+              }}
+              onLocationChange={(value) => {
+                setLocation(value);
+                setCurrentPage(1);
+              }}
+              onWorkTypeToggle={toggleWorkType}
+              onExperienceToggle={toggleExperienceLevel}
+              onMinimumSalaryChange={(value) => {
+                setMinimumSalary(value);
+                setCurrentPage(1);
+              }}
+              onClearFilters={clearFilters}
+            />
+          </div>
 
-            <h1 className="mt-2 text-4xl font-bold text-gray-900">
-              Browse Developer Jobs
-            </h1>
+          {/* Main job results area */}
+          <section className="md:col-span-8 lg:col-span-9">
+            {/* Results heading and sorting control */}
+            <div className="mb-5 flex flex-col gap-4 border-b border-[#E0BFBF] pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Available Jobs in Toronto
+                </h1>
 
-            <p className="mt-3 max-w-2xl text-gray-600">
-              Search developer roles by job title, company, location,
-              technology, or work arrangement.
-            </p>
-          </section>
+                <p className="mt-1 text-gray-600">
+                  Showing {filteredJobs.length} role
+                  {filteredJobs.length !== 1 ? "s" : ""} matching your
+                  criteria
+                </p>
+              </div>
 
-          {/* Search and work type filter controls */}
-          <SearchBar
-            searchTerm={searchTerm}
-            selectedWorkType={selectedWorkType}
-            workTypes={workTypes}
-            onSearchChange={setSearchTerm}
-            onWorkTypeChange={setSelectedWorkType}
-          />
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="sort-jobs"
+                  className="text-sm text-gray-600"
+                >
+                  Sort by:
+                </label>
 
-          {/* Results heading */}
-          <section className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Available Positions
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-600">
-                {filteredJobs.length} job
-                {filteredJobs.length !== 1 ? "s" : ""} found
-              </p>
+                <select
+                  id="sort-jobs"
+                  value={sortOption}
+                  onChange={(event) => {
+                    setSortOption(event.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="rounded-lg border border-[#E0BFBF] bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-[#800020]"
+                >
+                  <option value="relevant">Most Relevant</option>
+                  <option value="newest">Date Posted</option>
+                  <option value="salary">Highest Salary</option>
+                </select>
+              </div>
             </div>
 
-            {/* Temporary sort control */}
-            <select
-              aria-label="Sort jobs"
-              defaultValue="newest"
-              className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-[#800020]"
-            >
-              <option value="newest">Newest</option>
-              <option value="relevant">Most Relevant</option>
-              <option value="salary">Highest Salary</option>
-            </select>
-          </section>
+            {/* Job cards */}
+            <div className="space-y-4">
+              {visibleJobs.length === 0 ? (
+                <div className="rounded-xl border border-[#E0BFBF] bg-white p-10 text-center">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    No jobs found
+                  </h2>
 
-          {/* Job listing section */}
-          <section className="grid gap-5">
-            {/* Empty state shown when no jobs match */}
-            {filteredJobs.length === 0 && (
-              <div className="rounded-xl border border-[#E0BFBF] bg-white p-10 text-center shadow-sm">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  No jobs found
-                </h3>
+                  <p className="mt-2 text-gray-500">
+                    Try changing your filters or salary range.
+                  </p>
 
-                <p className="mt-2 text-gray-500">
-                  Try changing your search keyword or work type filter.
-                </p>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-5 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white hover:bg-[#570013]"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                visibleJobs.map((job) => (
+                  <JobCard key={job.id} job={job} />
+                ))
+              )}
+            </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedWorkType("All");
-                  }}
-                  className="mt-5 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
-                >
-                  Clear Filters
-                </button>
-              </div>
+            {/* Pagination controls */}
+            {filteredJobs.length > jobsPerPage && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             )}
-
-            {/* Render each filtered job */}
-            {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
-            ))}
           </section>
         </div>
       </main>

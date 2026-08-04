@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Header from "@/components/Header";
+import JobCard from "@/components/JobCard";
 import { jobs } from "@/data/jobs";
 
 export default function Home() {
@@ -104,49 +105,9 @@ export default function Home() {
               </div>
             )}
 
-            {/* Render each filtered job */}
+            {/* Render each filtered job using the reusable JobCard component */}
             {filteredJobs.map((job) => (
-              <article
-                key={job.id}
-                className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm transition hover:shadow-md"
-              >
-                <div className="flex flex-col justify-between gap-4 md:flex-row">
-                  {/* Job information */}
-                  <div>
-                    <p className="text-sm font-medium text-[#800020]">
-                      {job.company}
-                    </p>
-
-                    <h2 className="mt-1 text-xl font-semibold text-gray-900">
-                      {job.title}
-                    </h2>
-
-                    <p className="mt-2 text-gray-600">
-                      {job.location} · {job.workType}
-                    </p>
-
-                    {/* Technology skill tags */}
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {job.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-full bg-[#F7EDEE] px-3 py-1 text-sm text-[#570013]"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Future job detail page button */}
-                  <button
-                    type="button"
-                    className="h-fit rounded-lg bg-[#800020] px-5 py-3 text-white transition hover:bg-[#570013]"
-                  >
-                    View Job
-                  </button>
-                </div>
-              </article>
+              <JobCard key={job.id} job={job} />
             ))}
           </section>
         </div>

@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import JobCard from "@/components/JobCard";
+import SearchBar from "@/components/SearchBar";
+import StatCard from "@/components/StatCard";
+import TechnologyDemand from "@/components/TechnologyDemand";
+import WorkTypeChart from "@/components/WorkTypeChart";
 import { jobs } from "@/data/jobs";
 
 export default function Home() {
@@ -53,65 +58,93 @@ export default function Home() {
             </p>
           </section>
 
-          {/* Search and filter section */}
-          <section className="mb-8 rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-            {/* Job search input */}
-            <input
-              type="text"
-              placeholder="Search by job title, company, or skill"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              className="w-full rounded-lg border border-[#E0BFBF] px-4 py-3 text-gray-900 outline-none transition focus:border-[#800020]"
+          {/* Search and work type filter controls */}
+          <SearchBar
+            searchTerm={searchTerm}
+            selectedWorkType={selectedWorkType}
+            workTypes={workTypes}
+            onSearchChange={setSearchTerm}
+            onWorkTypeChange={setSelectedWorkType}
+          />
+
+          {/* Summary statistics */}
+          <section className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              label="Total Jobs"
+              value="4,821"
+              description="+12% this week"
             />
 
-            {/* Work type filter buttons */}
-            <div className="mt-4 flex flex-wrap gap-3">
-              {workTypes.map((workType) => {
-                const isSelected =
-                  selectedWorkType === workType;
+            <StatCard
+              label="Remote Jobs"
+              value="1,245"
+              description="+5% this week"
+            />
 
-                return (
-                  <button
-                    key={workType}
-                    type="button"
-                    onClick={() =>
-                      setSelectedWorkType(workType)
-                    }
-                    className={`rounded-lg border px-4 py-2 transition ${
-                      isSelected
-                        ? "border-[#800020] bg-[#800020] text-white"
-                        : "border-[#E0BFBF] bg-white text-gray-700 hover:bg-[#FFDADA]"
-                    }`}
-                  >
-                    {workType}
-                  </button>
-                );
-              })}
-            </div>
+            <StatCard
+              label="Companies Hiring"
+              value="342"
+              description="Steady this week"
+            />
+
+            <StatCard
+              label="Top Skill"
+              value="React"
+              description="Required in 45% of frontend roles"
+              highlighted
+            />
           </section>
 
-          {/* Job result count */}
-          <div className="mb-4 text-sm text-gray-600">
-            {filteredJobs.length} job
-            {filteredJobs.length !== 1 ? "s" : ""} found
-          </div>
+          {/* Main dashboard content */}
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Latest job listings */}
+            <section className="lg:col-span-2">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Latest Job Postings
+                  </h2>
 
-          {/* Job listing section */}
-          <section className="grid gap-5">
-            {/* Empty state shown when no jobs match */}
-            {filteredJobs.length === 0 && (
-              <div className="rounded-xl border border-[#E0BFBF] bg-white p-8 text-center text-gray-500 shadow-sm">
-                No jobs found.
+                  <p className="mt-1 text-sm text-gray-600">
+                    {filteredJobs.length} job
+                    {filteredJobs.length !== 1 ? "s" : ""} found
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="text-sm font-medium text-[#800020] transition hover:text-[#570013]"
+                >
+                  View all
+                </button>
               </div>
-            )}
 
-            {/* Render each filtered job using the reusable JobCard component */}
-            {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
-            ))}
-          </section>
+              <div className="grid gap-5">
+                {/* Empty state shown when no jobs match */}
+                {filteredJobs.length === 0 && (
+                  <div className="rounded-xl border border-[#E0BFBF] bg-white p-8 text-center text-gray-500 shadow-sm">
+                    No jobs found.
+                  </div>
+                )}
+
+                {/* Render each filtered job */}
+                {filteredJobs.map((job) => (
+                  <JobCard key={job.id} job={job} />
+                ))}
+              </div>
+            </section>
+
+            {/* Analytics sidebar */}
+            <aside className="grid gap-6">
+              <TechnologyDemand />
+              <WorkTypeChart />
+            </aside>
+          </div>
         </div>
       </main>
+
+      {/* Global website footer */}
+      <Footer />
     </>
   );
 }

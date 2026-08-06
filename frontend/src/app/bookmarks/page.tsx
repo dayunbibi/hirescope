@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookmarkCard from "@/components/BookmarkCard";
+import EmptyState from "@/components/EmptyState";
+import LoadingCard from "@/components/LoadingCard";
 import { jobs } from "@/data/jobs";
 import { useBookmarks } from "@/hooks/useBookmarks";
 
@@ -97,14 +98,11 @@ export default function BookmarksPage() {
             </div>
           </section>
 
-          {/* Loading state shown while localStorage is being read */}
+          {/* Loading state */}
           {!isLoaded ? (
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="h-56 animate-pulse rounded-lg border border-[#E4E2E0] bg-white"
-                />
+                <LoadingCard key={item} />
               ))}
             </section>
           ) : bookmarkedJobs.length > 0 ? (
@@ -115,30 +113,16 @@ export default function BookmarksPage() {
               ))}
             </section>
           ) : (
-            /* Empty state */
-            <section className="mt-10 flex flex-col items-center justify-center rounded-xl border border-[#E0BFBF] bg-white px-6 py-16 text-center shadow-sm">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-[#E0BFBF] bg-[#F5F3F1] text-[#800020]">
-                <span className="material-symbols-outlined text-[36px]">
-                  bookmark_border
-                </span>
-              </div>
-
-              <h2 className="mt-6 text-2xl font-semibold text-gray-900">
-                No saved jobs yet
-              </h2>
-
-              <p className="mt-2 max-w-md text-gray-500">
-                Jobs you bookmark while browsing will appear here so
-                you can easily find them later.
-              </p>
-
-              <Link
-                href="/jobs"
-                className="mt-6 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
-              >
-                Browse Jobs
-              </Link>
-            </section>
+            /* Empty bookmarked job state */
+            <div className="mt-10">
+              <EmptyState
+                icon="bookmark_border"
+                title="No saved jobs yet"
+                description="Jobs you bookmark while browsing will appear here so you can easily find them later."
+                actionLabel="Browse Jobs"
+                actionHref="/jobs"
+              />
+            </div>
           )}
         </div>
       </main>

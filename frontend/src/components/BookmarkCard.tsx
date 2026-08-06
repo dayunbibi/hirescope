@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { Job } from "@/data/jobs";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 type BookmarkCardProps = {
   job: Job;
@@ -12,13 +15,18 @@ function formatSalary(salary: number) {
 
 // Displays one saved job card
 export default function BookmarkCard({ job }: BookmarkCardProps) {
+  // Loads bookmark state and toggle function
+  const { toggleBookmark, isLoaded } = useBookmarks();
+
   return (
     <article className="relative flex h-full flex-col rounded-lg border border-[#E4E2E0] bg-white p-6 shadow-sm transition hover:shadow-md">
-      {/* Filled bookmark icon for saved jobs */}
+      {/* Removes this job from bookmarks */}
       <button
         type="button"
+        disabled={!isLoaded}
+        onClick={() => toggleBookmark(job.id)}
         aria-label="Remove bookmark"
-        className="absolute right-5 top-5 text-[#800020] transition hover:text-[#570013]"
+        className="absolute right-5 top-5 text-[#800020] transition hover:text-[#570013] disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span
           className="material-symbols-outlined text-[24px]"
@@ -70,7 +78,7 @@ export default function BookmarkCard({ job }: BookmarkCardProps) {
           href={`/jobs/${job.id}`}
           className="text-sm font-medium text-[#800020] transition hover:underline"
         >
-          Apply Now
+          View Details
         </Link>
       </div>
     </article>

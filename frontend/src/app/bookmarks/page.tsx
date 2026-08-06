@@ -6,17 +6,23 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookmarkCard from "@/components/BookmarkCard";
 import { jobs } from "@/data/jobs";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 export default function BookmarksPage() {
+  // Loads bookmarked job IDs from localStorage
+  const { bookmarkedJobIds, isLoaded } = useBookmarks();
+
   // Stores the selected work type filter
   const [selectedWorkType, setSelectedWorkType] = useState("All");
 
   // Stores the selected sorting option
   const [sortOption, setSortOption] = useState("newest");
 
-  // Filters and sorts bookmarked jobs
+  // Finds bookmarked jobs and applies filtering and sorting
   const bookmarkedJobs = useMemo(() => {
-    const savedJobs = jobs.filter((job) => job.bookmarked);
+    const savedJobs = jobs.filter((job) =>
+      bookmarkedJobIds.includes(job.id)
+    );
 
     const filteredJobs =
       selectedWorkType === "All"
@@ -36,7 +42,7 @@ export default function BookmarksPage() {
 
       return secondJob.id - firstJob.id;
     });
-  }, [selectedWorkType, sortOption]);
+  }, [bookmarkedJobIds, selectedWorkType, sortOption]);
 
   return (
     <>
@@ -91,8 +97,18 @@ export default function BookmarksPage() {
             </div>
           </section>
 
-          {/* Saved job cards */}
-          {bookmarkedJobs.length > 0 ? (
+          {/* Loading state shown while localStorage is being read */}
+          {!isLoaded ? (
+            <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="h-56 animate-pulse rounded-lg border border-[#E4E2E0] bg-white"
+                />
+              ))}
+            </section>
+          ) : bookmarkedJobs.length > 0 ? (
+            /* Saved job cards */
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {bookmarkedJobs.map((job) => (
                 <BookmarkCard key={job.id} job={job} />
@@ -101,8 +117,10 @@ export default function BookmarksPage() {
           ) : (
             /* Empty state */
             <section className="mt-10 flex flex-col items-center justify-center rounded-xl border border-[#E0BFBF] bg-white px-6 py-16 text-center shadow-sm">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-[#E0BFBF] bg-[#F5F3F1] text-3xl text-[#800020]">
-                ☆
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border border-[#E0BFBF] bg-[#F5F3F1] text-[#800020]">
+                <span className="material-symbols-outlined text-[36px]">
+                  bookmark_border
+                </span>
               </div>
 
               <h2 className="mt-6 text-2xl font-semibold text-gray-900">

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CompanyCard from "@/components/CompanyCard";
+import EmptyState from "@/components/EmptyState";
 import { companies } from "@/data/companies";
 
 export default function CompaniesPage() {
@@ -27,6 +28,15 @@ export default function CompaniesPage() {
     "All",
     ...Array.from(new Set(companies.map((company) => company.industry))),
   ];
+
+  // Clears all company filters
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedIndustry("All");
+    setSelectedSize("All");
+    setSortOption("jobs");
+    setVisibleCount(3);
+  };
 
   // Filters and sorts the company directory
   const filteredCompanies = useMemo(() => {
@@ -63,6 +73,7 @@ export default function CompaniesPage() {
     });
   }, [searchTerm, selectedIndustry, selectedSize, sortOption]);
 
+  // Limits how many company cards are shown
   const visibleCompanies = filteredCompanies.slice(0, visibleCount);
 
   return (
@@ -129,12 +140,13 @@ export default function CompaniesPage() {
                 <option value="Enterprise">Enterprise</option>
               </select>
 
-              {/* Search action button */}
+              {/* Clears all active filters */}
               <button
                 type="button"
+                onClick={clearFilters}
                 className="rounded-lg bg-[#800020] px-8 py-3 font-medium text-white transition hover:bg-[#570013]"
               >
-                Search
+                Clear Filters
               </button>
             </div>
           </section>
@@ -147,7 +159,10 @@ export default function CompaniesPage() {
             </p>
 
             <div className="flex items-center gap-2">
-              <label htmlFor="company-sort" className="text-sm text-gray-500">
+              <label
+                htmlFor="company-sort"
+                className="text-sm text-gray-500"
+              >
                 Sort by:
               </label>
 
@@ -164,37 +179,23 @@ export default function CompaniesPage() {
             </div>
           </section>
 
-          {/* Company directory */}
-          <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {visibleCompanies.map((company) => (
-              <CompanyCard key={company.id} company={company} />
-            ))}
-          </section>
-
-          {/* Empty state */}
-          {filteredCompanies.length === 0 && (
-            <section className="mt-6 rounded-xl border border-[#E0BFBF] bg-white p-12 text-center shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                No companies found
-              </h2>
-
-              <p className="mt-2 text-gray-500">
-                Try changing your company search or filters.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedIndustry("All");
-                  setSelectedSize("All");
-                  setVisibleCount(3);
-                }}
-                className="mt-6 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
-              >
-                Clear Filters
-              </button>
+          {/* Company directory or empty state */}
+          {filteredCompanies.length > 0 ? (
+            <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {visibleCompanies.map((company) => (
+                <CompanyCard key={company.id} company={company} />
+              ))}
             </section>
+          ) : (
+            <div className="mt-6">
+              <EmptyState
+                icon="domain_disabled"
+                title="No companies found"
+                description="Try changing your company name, industry, or company size filters."
+                actionLabel="Clear Filters"
+                onAction={clearFilters}
+              />
+            </div>
           )}
 
           {/* Load more button */}

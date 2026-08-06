@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { Job } from "@/data/jobs";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 type JobCardProps = {
   job: Job;
@@ -12,16 +15,22 @@ function formatSalary(salary: number) {
 
 // Displays one detailed and reusable job posting card
 export default function JobCard({ job }: JobCardProps) {
+  // Loads bookmark state and toggle function from localStorage
+  const { isBookmarked, toggleBookmark, isLoaded } = useBookmarks();
+
+  // Checks whether this specific job is bookmarked
+  const bookmarked = isBookmarked(job.id);
+
   return (
     <article
       className={`relative overflow-hidden rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
-        job.bookmarked
+        bookmarked
           ? "border-[#800020]/40"
           : "border-[#E0BFBF]"
       }`}
     >
-      {/* Bookmark indicator for saved jobs */}
-      {job.bookmarked && (
+      {/* Burgundy indicator shown for bookmarked jobs */}
+      {bookmarked && (
         <div className="absolute bottom-0 left-0 top-0 w-1 bg-[#800020]" />
       )}
 
@@ -53,16 +62,18 @@ export default function JobCard({ job }: JobCardProps) {
               </div>
             </div>
 
-            {/* Bookmark icon */}
+            {/* Interactive bookmark button */}
             <button
               type="button"
+              disabled={!isLoaded}
+              onClick={() => toggleBookmark(job.id)}
               aria-label={
-                job.bookmarked
+                bookmarked
                   ? "Remove bookmark"
                   : "Add bookmark"
               }
-              className={`transition ${
-                job.bookmarked
+              className={`transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                bookmarked
                   ? "text-[#800020]"
                   : "text-gray-400 hover:text-[#800020]"
               }`}
@@ -70,7 +81,7 @@ export default function JobCard({ job }: JobCardProps) {
               <span
                 className="material-symbols-outlined text-[24px]"
                 style={{
-                  fontVariationSettings: job.bookmarked
+                  fontVariationSettings: bookmarked
                     ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
                     : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
                 }}

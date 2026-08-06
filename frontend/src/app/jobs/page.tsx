@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import JobCard from "@/components/JobCard";
 import Pagination from "@/components/Pagination";
+import EmptyState from "@/components/EmptyState";
 import { jobs } from "@/data/jobs";
 
 const jobsPerPage = 3;
@@ -62,6 +63,7 @@ export default function JobsPage() {
     setSelectedWorkTypes([]);
     setSelectedExperienceLevels([]);
     setMinimumSalary(50000);
+    setSortOption("relevant");
     setCurrentPage(1);
   };
 
@@ -122,12 +124,15 @@ export default function JobsPage() {
     sortOption,
   ]);
 
+  // Calculates the total number of result pages
   const totalPages = Math.max(
     1,
     Math.ceil(filteredJobs.length / jobsPerPage)
   );
 
+  // Calculates which jobs should be displayed on the current page
   const firstJobIndex = (currentPage - 1) * jobsPerPage;
+
   const visibleJobs = filteredJobs.slice(
     firstJobIndex,
     firstJobIndex + jobsPerPage
@@ -197,7 +202,7 @@ export default function JobsPage() {
                     setSortOption(event.target.value);
                     setCurrentPage(1);
                   }}
-                  className="rounded-lg border border-[#E0BFBF] bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-[#800020]"
+                  className="rounded-lg border border-[#E0BFBF] bg-white px-3 py-2 text-sm text-gray-700 outline-none transition focus:border-[#800020]"
                 >
                   <option value="relevant">Most Relevant</option>
                   <option value="newest">Date Posted</option>
@@ -206,26 +211,16 @@ export default function JobsPage() {
               </div>
             </div>
 
-            {/* Job cards */}
+            {/* Job cards or empty result state */}
             <div className="space-y-4">
               {visibleJobs.length === 0 ? (
-                <div className="rounded-xl border border-[#E0BFBF] bg-white p-10 text-center">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    No jobs found
-                  </h2>
-
-                  <p className="mt-2 text-gray-500">
-                    Try changing your filters or salary range.
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="mt-5 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white hover:bg-[#570013]"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
+                <EmptyState
+                  icon="search_off"
+                  title="No jobs found"
+                  description="Try changing your keyword, location, work type, experience level, or minimum salary."
+                  actionLabel="Clear Filters"
+                  onAction={clearFilters}
+                />
               ) : (
                 visibleJobs.map((job) => (
                   <JobCard key={job.id} job={job} />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import JobBookmarkButton from "@/components/JobBookmarkButton";
 import type { Job } from "@/data/jobs";
 import { getJob, getJobs } from "@/lib/api";
 
@@ -221,7 +222,7 @@ export default async function JobDetailPage({
 
               {/* Main job actions */}
               <div className="mt-7 flex flex-wrap gap-3">
-                {/* Application button */}
+                {/* Opens the original job posting */}
                 {job.sourceUrl ? (
                   <a
                     href={job.sourceUrl}
@@ -249,17 +250,8 @@ export default async function JobDetailPage({
                   </button>
                 )}
 
-                {/* Bookmark button placeholder */}
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-lg border border-[#800020] px-6 py-3 text-sm font-medium text-[#800020] transition hover:bg-[#F7EDEE]"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    bookmark_border
-                  </span>
-
-                  Save Job
-                </button>
+                {/* Interactive bookmark button */}
+                <JobBookmarkButton jobId={job.id} />
               </div>
             </article>
 
@@ -397,9 +389,7 @@ export default async function JobDetailPage({
                             location_on
                           </span>
 
-                          <span>
-                            {relatedJob.location}
-                          </span>
+                          <span>{relatedJob.location}</span>
                         </div>
 
                         <div className="flex items-center gap-1">

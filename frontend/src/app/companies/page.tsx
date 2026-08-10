@@ -22,9 +22,16 @@ export default function CompaniesPage() {
   // Fetches companies from the backend API on mount
   useEffect(() => {
     getCompanies()
-      .then(setCompanies)
-      .catch(() => setHasError(true))
-      .finally(() => setIsLoading(false));
+      .then((fetchedCompanies) => {
+        setCompanies(fetchedCompanies);
+        setHasError(false);
+      })
+      .catch(() => {
+        setHasError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   // Stores the company name search
@@ -45,7 +52,13 @@ export default function CompaniesPage() {
   // Creates reusable industry filter options
   const industries = [
     "All",
-    ...Array.from(new Set(companies.map((company) => company.industry))),
+    ...Array.from(
+      new Set(
+        companies
+          .map((company) => company.industry)
+          .filter(Boolean)
+      )
+    ),
   ];
 
   // Clears all company filters
@@ -74,26 +87,48 @@ export default function CompaniesPage() {
         company.industry === selectedIndustry;
 
       const matchesSize =
-        selectedSize === "All" || company.size === selectedSize;
+        selectedSize === "All" ||
+        company.size === selectedSize;
 
       return matchesSearch && matchesIndustry && matchesSize;
     });
 
     return [...results].sort((firstCompany, secondCompany) => {
+      // Sorts companies by highest available average salary
       if (sortOption === "salary") {
-        return secondCompany.averageSalary - firstCompany.averageSalary;
+        const firstSalary =
+          firstCompany.averageSalary ?? 0;
+
+        const secondSalary =
+          secondCompany.averageSalary ?? 0;
+
+        return secondSalary - firstSalary;
       }
 
+      // Sorts companies alphabetically
       if (sortOption === "alphabetical") {
-        return firstCompany.name.localeCompare(secondCompany.name);
+        return firstCompany.name.localeCompare(
+          secondCompany.name
+        );
       }
 
-      return secondCompany.openJobs - firstCompany.openJobs;
+      // Default sorting uses the number of open jobs
+      return (
+        secondCompany.openJobs -
+        firstCompany.openJobs
+      );
     });
-  }, [companies, searchTerm, selectedIndustry, selectedSize, sortOption]);
+  }, [
+    companies,
+    searchTerm,
+    selectedIndustry,
+    selectedSize,
+    sortOption,
+  ]);
 
   // Limits how many company cards are shown
-  const visibleCompanies = filteredCompanies.slice(0, visibleCount);
+  const visibleCompanies =
+    filteredCompanies.slice(0, visibleCount);
 
   return (
     <>
@@ -132,14 +167,21 @@ export default function CompaniesPage() {
               <select
                 value={selectedIndustry}
                 onChange={(event) => {
-                  setSelectedIndustry(event.target.value);
+                  setSelectedIndustry(
+                    event.target.value
+                  );
                   setVisibleCount(3);
                 }}
-                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-gray-700 outline-none focus:border-[#800020]"
+                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-gray-700 outline-none transition focus:border-[#800020]"
               >
                 {industries.map((industry) => (
-                  <option key={industry} value={industry}>
-                    {industry === "All" ? "All Industries" : industry}
+                  <option
+                    key={industry}
+                    value={industry}
+                  >
+                    {industry === "All"
+                      ? "All Industries"
+                      : industry}
                   </option>
                 ))}
               </select>
@@ -151,12 +193,27 @@ export default function CompaniesPage() {
                   setSelectedSize(event.target.value);
                   setVisibleCount(3);
                 }}
-                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-gray-700 outline-none focus:border-[#800020]"
+                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-gray-700 outline-none transition focus:border-[#800020]"
               >
-                <option value="All">Company Size</option>
-                <option value="Startup">Startup</option>
-                <option value="Mid-size">Mid-size</option>
-                <option value="Enterprise">Enterprise</option>
+                <option value="All">
+                  Company Size
+                </option>
+
+                <option value="Startup">
+                  Startup
+                </option>
+
+                <option value="Mid-size">
+                  Mid-size
+                </option>
+
+                <option value="Enterprise">
+                  Enterprise
+                </option>
+
+                <option value="Unknown">
+                  Unknown
+                </option>
               </select>
 
               {/* Clears all active filters */}
@@ -173,8 +230,11 @@ export default function CompaniesPage() {
           {/* Result count and sorting */}
           <section className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-600">
-              Showing {filteredCompanies.length} compan
-              {filteredCompanies.length === 1 ? "y" : "ies"}
+              Showing {filteredCompanies.length}{" "}
+              compan
+              {filteredCompanies.length === 1
+                ? "y"
+                : "ies"}
             </p>
 
             <div className="flex items-center gap-2">
@@ -188,12 +248,22 @@ export default function CompaniesPage() {
               <select
                 id="company-sort"
                 value={sortOption}
-                onChange={(event) => setSortOption(event.target.value)}
+                onChange={(event) =>
+                  setSortOption(event.target.value)
+                }
                 className="border-none bg-transparent text-sm font-medium text-[#800020] outline-none"
               >
-                <option value="jobs">Most Open Jobs</option>
-                <option value="salary">Highest Average Salary</option>
-                <option value="alphabetical">Alphabetical</option>
+                <option value="jobs">
+                  Most Open Jobs
+                </option>
+
+                <option value="salary">
+                  Highest Average Salary
+                </option>
+
+                <option value="alphabetical">
+                  Alphabetical
+                </option>
               </select>
             </div>
           </section>
@@ -216,7 +286,10 @@ export default function CompaniesPage() {
           ) : filteredCompanies.length > 0 ? (
             <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {visibleCompanies.map((company) => (
-                <CompanyCard key={company.id} company={company} />
+                <CompanyCard
+                  key={company.id}
+                  company={company}
+                />
               ))}
             </section>
           ) : (
@@ -232,17 +305,24 @@ export default function CompaniesPage() {
           )}
 
           {/* Load more button */}
-          {!isLoading && !hasError && visibleCount < filteredCompanies.length && (
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setVisibleCount((count) => count + 3)}
-                className="rounded-lg border border-[#E0BFBF] bg-white px-12 py-3 text-gray-600 transition hover:border-[#800020] hover:text-[#800020]"
-              >
-                Load More Companies
-              </button>
-            </div>
-          )}
+          {!isLoading &&
+            !hasError &&
+            visibleCount <
+              filteredCompanies.length && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVisibleCount(
+                      (count) => count + 3
+                    )
+                  }
+                  className="rounded-lg border border-[#E0BFBF] bg-white px-12 py-3 text-gray-600 transition hover:border-[#800020] hover:text-[#800020]"
+                >
+                  Load More Companies
+                </button>
+              </div>
+            )}
         </div>
       </main>
 

@@ -13,8 +13,24 @@ type CompanyDetailPageProps = {
 };
 
 // Formats a salary value into a short display format
-function formatSalary(salary: number) {
+function formatSalary(salary: number | null) {
+  if (salary === null) {
+    return "Not disclosed";
+  }
+
   return `$${Math.round(salary / 1000)}k`;
+}
+
+// Converts incomplete backend values into cleaner display text
+function formatCompanyValue(
+  value: string,
+  fallback: string
+) {
+  if (!value || value === "Unknown") {
+    return fallback;
+  }
+
+  return value;
 }
 
 // Displays detailed information about one selected company
@@ -29,9 +45,13 @@ export default async function CompanyDetailPage({
   let allJobs: Job[] = [];
 
   try {
-    [companies, allJobs] = await Promise.all([getCompanies(), getJobs()]);
+    [companies, allJobs] = await Promise.all([
+      getCompanies(),
+      getJobs(),
+    ]);
   } catch {
     companies = [];
+    allJobs = [];
   }
 
   // Finds the matching company from the fetched companies
@@ -76,11 +96,32 @@ export default async function CompanyDetailPage({
   // Finds jobs connected to the selected company
   const companyJobs = allJobs.filter(
     (job) =>
-      job.company.toLowerCase() === company.name.toLowerCase()
+      job.company.toLowerCase() ===
+      company.name.toLowerCase()
   );
 
-  // Temporary hiring trend values used before backend integration
+  // Temporary hiring trend values used before backend analytics integration
   const hiringTrend = [35, 50, 42, 68, 75, 90];
+
+  const displayIndustry = formatCompanyValue(
+    company.industry,
+    "Industry not available"
+  );
+
+  const displayLocation = formatCompanyValue(
+    company.location,
+    "Location not available"
+  );
+
+  const displaySize = formatCompanyValue(
+    company.size,
+    "Size not available"
+  );
+
+  const displayDescription =
+    company.description.trim() !== ""
+      ? company.description
+      : "A detailed company description is not currently available. More information will appear here as the HireScope backend collects additional company data.";
 
   return (
     <>
@@ -118,43 +159,47 @@ export default async function CompanyDetailPage({
 
                   {/* Company metadata */}
                   <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600">
+                    {/* Industry */}
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-[18px] text-[#800020]">
                         domain
                       </span>
 
-                      <span>{company.industry}</span>
+                      <span>{displayIndustry}</span>
                     </div>
 
+                    {/* Location */}
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-[18px] text-[#800020]">
                         location_on
                       </span>
 
-                      <span>{company.location}</span>
+                      <span>{displayLocation}</span>
                     </div>
 
+                    {/* Company size */}
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-[18px] text-[#800020]">
                         groups
                       </span>
 
-                      <span>{company.size}</span>
+                      <span>{displaySize}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Company action button */}
+              {/* Temporary company action button */}
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                disabled
+                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-200 px-6 py-3 text-sm font-medium text-gray-500"
               >
                 <span className="material-symbols-outlined text-[18px]">
                   open_in_new
                 </span>
 
-                Visit Website
+                Website unavailable
               </button>
             </div>
           </section>
@@ -170,7 +215,7 @@ export default async function CompanyDetailPage({
                 </h2>
 
                 <p className="mt-4 leading-7 text-gray-600">
-                  {company.description}
+                  {displayDescription}
                 </p>
               </article>
 
@@ -180,16 +225,24 @@ export default async function CompanyDetailPage({
                   Popular Technologies
                 </h2>
 
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {company.technologies.map((technology) => (
-                    <span
-                      key={technology}
-                      className="rounded-lg bg-[#F7EDEE] px-4 py-2 text-sm font-medium text-[#800020]"
-                    >
-                      {technology}
-                    </span>
-                  ))}
-                </div>
+                {company.technologies.length > 0 ? (
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    {company.technologies.map(
+                      (technology) => (
+                        <span
+                          key={technology}
+                          className="rounded-lg bg-[#F7EDEE] px-4 py-2 text-sm font-medium text-[#800020]"
+                        >
+                          {technology}
+                        </span>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-gray-500">
+                    Technology information is not currently available.
+                  </p>
+                )}
               </article>
 
               {/* Hiring trend */}
@@ -199,23 +252,29 @@ export default async function CompanyDetailPage({
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  Open job activity over the last six months
+                  Temporary hiring activity visualization
                 </p>
 
                 {/* Temporary hiring trend chart */}
                 <div className="mt-8 flex h-52 items-end gap-3 rounded-lg bg-[#F5F3F1] p-5">
-                  {hiringTrend.map((height, index) => (
-                    <div
-                      key={index}
-                      className="flex h-full flex-1 items-end"
-                    >
+                  {hiringTrend.map(
+                    (height, index) => (
                       <div
-                        className="w-full rounded-t-md bg-[#800020] transition hover:bg-[#570013]"
-                        style={{ height: `${height}%` }}
-                        title={`Month ${index + 1}: ${height}%`}
-                      />
-                    </div>
-                  ))}
+                        key={index}
+                        className="flex h-full flex-1 items-end"
+                      >
+                        <div
+                          className="w-full rounded-t-md bg-[#800020] transition hover:bg-[#570013]"
+                          style={{
+                            height: `${height}%`,
+                          }}
+                          title={`Month ${
+                            index + 1
+                          }: ${height}%`}
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
 
                 <div className="mt-3 flex justify-between text-xs text-gray-500">
@@ -234,6 +293,7 @@ export default async function CompanyDetailPage({
                 </h2>
 
                 <div className="mt-6 space-y-5">
+                  {/* Open jobs */}
                   <div className="flex items-center justify-between border-b border-[#E4E2E0] pb-4">
                     <span className="text-sm text-gray-500">
                       Open Jobs
@@ -244,23 +304,27 @@ export default async function CompanyDetailPage({
                     </span>
                   </div>
 
+                  {/* Average salary */}
                   <div className="flex items-center justify-between border-b border-[#E4E2E0] pb-4">
                     <span className="text-sm text-gray-500">
                       Average Salary
                     </span>
 
                     <span className="text-xl font-bold text-gray-900">
-                      {formatSalary(company.averageSalary)}
+                      {formatSalary(
+                        company.averageSalary
+                      )}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  {/* Company size */}
+                  <div className="flex items-center justify-between gap-5">
                     <span className="text-sm text-gray-500">
                       Company Size
                     </span>
 
-                    <span className="font-semibold text-gray-900">
-                      {company.size}
+                    <span className="text-right font-semibold text-gray-900">
+                      {displaySize}
                     </span>
                   </div>
                 </div>
@@ -279,12 +343,15 @@ export default async function CompanyDetailPage({
 
                   <div>
                     <p className="font-medium text-gray-900">
-                      {company.location}
+                      {displayLocation}
                     </p>
 
-                    <p className="mt-1 text-sm text-gray-500">
-                      Toronto and Greater Toronto Area
-                    </p>
+                    {company.location !==
+                      "Unknown" && (
+                      <p className="mt-1 text-sm text-gray-500">
+                        Toronto and Greater Toronto Area
+                      </p>
+                    )}
                   </div>
                 </div>
               </article>
@@ -301,8 +368,10 @@ export default async function CompanyDetailPage({
 
                 <p className="mt-2 text-gray-600">
                   {companyJobs.length} matching job
-                  {companyJobs.length !== 1 ? "s" : ""} currently
-                  available
+                  {companyJobs.length !== 1
+                    ? "s"
+                    : ""}{" "}
+                  currently available
                 </p>
               </div>
 
@@ -321,11 +390,13 @@ export default async function CompanyDetailPage({
             {companyJobs.length > 0 ? (
               <div className="mt-6 grid gap-5">
                 {companyJobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                  />
                 ))}
               </div>
             ) : (
-              /* Empty state shown when no mock jobs match this company */
               <div className="mt-6 rounded-xl border border-[#E0BFBF] bg-white p-10 text-center shadow-sm">
                 <span className="material-symbols-outlined text-[40px] text-[#800020]">
                   work_off
@@ -336,8 +407,8 @@ export default async function CompanyDetailPage({
                 </h3>
 
                 <p className="mt-2 text-gray-500">
-                  Job listings for this company will appear here after
-                  the backend API is connected.
+                  No current jobs from this company were found in the
+                  HireScope database.
                 </p>
 
                 <Link

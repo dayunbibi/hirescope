@@ -10,13 +10,41 @@ type JobDetailPageProps = {
   }>;
 };
 
-// Formats a salary number into a short display value
+// Formats one salary value
 function formatSalary(salary: number | null) {
-  if (salary === null) return "N/A";
+  if (salary === null) {
+    return "N/A";
+  }
+
   return `$${Math.round(salary / 1000)}k`;
 }
 
-// Temporary detailed content used before the backend API is connected
+// Formats the full salary range safely
+function formatSalaryRange(
+  salaryMin: number | null,
+  salaryMax: number | null
+) {
+  // No salary information is available
+  if (salaryMin === null && salaryMax === null) {
+    return "Salary not disclosed";
+  }
+
+  // Only the maximum salary is available
+  if (salaryMin === null) {
+    return `Up to ${formatSalary(salaryMax)}`;
+  }
+
+  // Only the minimum salary is available
+  if (salaryMax === null) {
+    return `From ${formatSalary(salaryMin)}`;
+  }
+
+  // Full salary range is available
+  return `${formatSalary(salaryMin)} – ${formatSalary(salaryMax)}`;
+}
+
+// Temporary detailed content used until job descriptions
+// are provided by the backend API
 const jobDetails = {
   description:
     "We are seeking a highly skilled developer to help build modern, accessible, and data-driven products. You will collaborate with designers, backend developers, and product stakeholders to deliver reliable user experiences.",
@@ -58,9 +86,13 @@ export default async function JobDetailPage({
   let allJobs: Job[] = [];
 
   try {
-    [job, allJobs] = await Promise.all([getJob(Number(id)), getJobs()]);
+    [job, allJobs] = await Promise.all([
+      getJob(Number(id)),
+      getJobs(),
+    ]);
   } catch {
     job = null;
+    allJobs = [];
   }
 
   // Displays a fallback page when the job does not exist
@@ -87,6 +119,7 @@ export default async function JobDetailPage({
                 <span className="material-symbols-outlined text-[18px]">
                   arrow_back
                 </span>
+
                 Back to Jobs
               </Link>
             </section>
@@ -104,7 +137,9 @@ export default async function JobDetailPage({
       (item) =>
         item.id !== job.id &&
         (item.workType === job.workType ||
-          item.skills.some((skill) => job.skills.includes(skill)))
+          item.skills.some((skill) =>
+            job.skills.includes(skill)
+          ))
     )
     .slice(0, 3);
 
@@ -120,7 +155,7 @@ export default async function JobDetailPage({
             {/* Job summary card */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
               <div className="flex items-start justify-between gap-5">
-                <div>
+                <div className="min-w-0">
                   {/* Job title */}
                   <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
                     {job.title}
@@ -140,6 +175,7 @@ export default async function JobDetailPage({
 
               {/* Main job metadata */}
               <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600">
+                {/* Location */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-[#800020]">
                     location_on
@@ -150,17 +186,21 @@ export default async function JobDetailPage({
                   </span>
                 </div>
 
+                {/* Salary */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-[#800020]">
                     payments
                   </span>
 
                   <span>
-                    {formatSalary(job.salaryMin)} –{" "}
-                    {formatSalary(job.salaryMax)}
+                    {formatSalaryRange(
+                      job.salaryMin,
+                      job.salaryMax
+                    )}
                   </span>
                 </div>
 
+                {/* Employment type */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-[#800020]">
                     work
@@ -169,6 +209,7 @@ export default async function JobDetailPage({
                   <span>Full-time</span>
                 </div>
 
+                {/* Experience level */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-[#800020]">
                     monitoring
@@ -180,16 +221,35 @@ export default async function JobDetailPage({
 
               {/* Main job actions */}
               <div className="mt-7 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    open_in_new
-                  </span>
-                  Apply Now
-                </button>
+                {/* Application button */}
+                {job.sourceUrl ? (
+                  <a
+                    href={job.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      open_in_new
+                    </span>
 
+                    Apply Now
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-gray-300 px-6 py-3 text-sm font-medium text-gray-600"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      open_in_new
+                    </span>
+
+                    Application unavailable
+                  </button>
+                )}
+
+                {/* Bookmark button placeholder */}
                 <button
                   type="button"
                   className="inline-flex items-center gap-2 rounded-lg border border-[#800020] px-6 py-3 text-sm font-medium text-[#800020] transition hover:bg-[#F7EDEE]"
@@ -197,6 +257,7 @@ export default async function JobDetailPage({
                   <span className="material-symbols-outlined text-[18px]">
                     bookmark_border
                   </span>
+
                   Save Job
                 </button>
               </div>
@@ -209,8 +270,10 @@ export default async function JobDetailPage({
               </h2>
 
               <div className="mt-6 space-y-7 text-gray-700">
-                {/* Overview description */}
-                <p className="leading-7">{jobDetails.description}</p>
+                {/* Temporary overview description */}
+                <p className="leading-7">
+                  {jobDetails.description}
+                </p>
 
                 {/* Responsibilities section */}
                 <section>
@@ -258,16 +321,22 @@ export default async function JobDetailPage({
                   Tech Stack
                 </h3>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {job.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded-md bg-[#E4E2E0] px-3 py-1.5 text-sm text-gray-700"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+                {job.skills.length > 0 ? (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {job.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded-md bg-[#E4E2E0] px-3 py-1.5 text-sm text-gray-700"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-gray-500">
+                    No technology stack information available.
+                  </p>
+                )}
               </section>
             </article>
           </section>
@@ -281,24 +350,23 @@ export default async function JobDetailPage({
               </h2>
 
               <p className="mt-4 leading-7 text-gray-600">
-                {job.company} is a technology-focused organization
-                building modern digital products and services. This
-                temporary company description will later come from the
-                HireScope backend API.
+                Company profile information will be expanded when
+                additional company data is available from the backend.
               </p>
 
               <Link
                 href="/companies"
                 className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#800020] transition hover:underline"
               >
-                View Company Profile
+                View Companies
+
                 <span className="material-symbols-outlined text-[18px]">
                   arrow_forward
                 </span>
               </Link>
             </article>
 
-            {/* Related job recommendations */}
+            {/* Related jobs */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
               <h2 className="text-2xl font-semibold text-gray-900">
                 Related Jobs
@@ -323,13 +391,15 @@ export default async function JobDetailPage({
                       </p>
 
                       {/* Related job metadata */}
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+                      <div className="mt-3 flex flex-col gap-2 text-xs text-gray-500">
                         <div className="flex items-center gap-1">
                           <span className="material-symbols-outlined text-[15px]">
                             location_on
                           </span>
 
-                          <span>{relatedJob.location}</span>
+                          <span>
+                            {relatedJob.location}
+                          </span>
                         </div>
 
                         <div className="flex items-center gap-1">
@@ -338,8 +408,10 @@ export default async function JobDetailPage({
                           </span>
 
                           <span>
-                            {formatSalary(relatedJob.salaryMin)} –{" "}
-                            {formatSalary(relatedJob.salaryMax)}
+                            {formatSalaryRange(
+                              relatedJob.salaryMin,
+                              relatedJob.salaryMax
+                            )}
                           </span>
                         </div>
                       </div>

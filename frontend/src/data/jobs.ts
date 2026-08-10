@@ -10,5 +10,6 @@ export type Job = {
   salaryMin: number | null;
   salaryMax: number | null;
   postedAt: string;
+  sourceUrl: string | null;
   bookmarked?: boolean;
 };

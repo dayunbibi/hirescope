@@ -1,16 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import EmptyState from "@/components/EmptyState";
 import JobCard from "@/components/JobCard";
+import LoadingCard from "@/components/LoadingCard";
 import SearchBar from "@/components/SearchBar";
 import StatCard from "@/components/StatCard";
 import TechnologyDemand from "@/components/TechnologyDemand";
 import WorkTypeChart from "@/components/WorkTypeChart";
-import { jobs } from "@/data/jobs";
+import type { Job } from "@/data/jobs";
+import { getJobs } from "@/lib/api";
 
 export default function Home() {
+  // Stores the jobs fetched from the backend API
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  // Tracks whether jobs are still being fetched
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Tracks whether the job fetch failed
+  const [hasError, setHasError] = useState(false);
+
+  // Fetches jobs from the backend API on mount
+  useEffect(() => {
+    getJobs()
+      .then(setJobs)
+      .catch(() => setHasError(true))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   // Stores the text entered in the search input
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -120,17 +140,33 @@ export default function Home() {
               </div>
 
               <div className="grid gap-5">
-                {/* Empty state shown when no jobs match */}
-                {filteredJobs.length === 0 && (
-                  <div className="rounded-xl border border-[#E0BFBF] bg-white p-8 text-center text-gray-500 shadow-sm">
-                    No jobs found.
-                  </div>
-                )}
+                {isLoading ? (
+                  <>
+                    <LoadingCard />
+                    <LoadingCard />
+                    <LoadingCard />
+                  </>
+                ) : hasError ? (
+                  <EmptyState
+                    icon="cloud_off"
+                    title="Couldn't load jobs"
+                    description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
+                  />
+                ) : (
+                  <>
+                    {/* Empty state shown when no jobs match */}
+                    {filteredJobs.length === 0 && (
+                      <div className="rounded-xl border border-[#E0BFBF] bg-white p-8 text-center text-gray-500 shadow-sm">
+                        No jobs found.
+                      </div>
+                    )}
 
-                {/* Render each filtered job */}
-                {filteredJobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
-                ))}
+                    {/* Render each filtered job */}
+                    {filteredJobs.map((job) => (
+                      <JobCard key={job.id} job={job} />
+                    ))}
+                  </>
+                )}
               </div>
             </section>
 

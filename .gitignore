@@ -5,6 +5,13 @@
 .venv/
 backend/venv/
 backend/__pycache__/
+backend/app/__pycache__/
+backend/app/scrapers/__pycache__/
+backend/scripts/__pycache__/
+
+# Scraper data
+backend/hirescope.db
+backend/app/scrapers/discovery_cache.json
 
 # Environment files
 .env

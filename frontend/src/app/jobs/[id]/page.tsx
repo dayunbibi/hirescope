@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { jobs } from "@/data/jobs";
+import type { Job } from "@/data/jobs";
+import { getJob, getJobs } from "@/lib/api";
 
 type JobDetailPageProps = {
   params: Promise<{
@@ -10,7 +11,8 @@ type JobDetailPageProps = {
 };
 
 // Formats a salary number into a short display value
-function formatSalary(salary: number) {
+function formatSalary(salary: number | null) {
+  if (salary === null) return "N/A";
   return `$${Math.round(salary / 1000)}k`;
 }
 
@@ -51,8 +53,15 @@ export default async function JobDetailPage({
   // Reads the job ID from the dynamic URL
   const { id } = await params;
 
-  // Finds the selected job from temporary mock data
-  const job = jobs.find((item) => item.id === Number(id));
+  // Fetches the selected job and full job list from the backend API
+  let job: Job | null = null;
+  let allJobs: Job[] = [];
+
+  try {
+    [job, allJobs] = await Promise.all([getJob(Number(id)), getJobs()]);
+  } catch {
+    job = null;
+  }
 
   // Displays a fallback page when the job does not exist
   if (!job) {
@@ -90,7 +99,7 @@ export default async function JobDetailPage({
   }
 
   // Finds related jobs while excluding the current job
-  const relatedJobs = jobs
+  const relatedJobs = allJobs
     .filter(
       (item) =>
         item.id !== job.id &&

@@ -2,8 +2,9 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JobCard from "@/components/JobCard";
-import { companies } from "@/data/companies";
-import { jobs } from "@/data/jobs";
+import type { Company } from "@/data/companies";
+import type { Job } from "@/data/jobs";
+import { getCompanies, getJobs } from "@/lib/api";
 
 type CompanyDetailPageProps = {
   params: Promise<{
@@ -23,7 +24,17 @@ export default async function CompanyDetailPage({
   // Reads the company ID from the dynamic URL
   const { id } = await params;
 
-  // Finds the matching company from temporary mock data
+  // Fetches companies and jobs from the backend API
+  let companies: Company[] = [];
+  let allJobs: Job[] = [];
+
+  try {
+    [companies, allJobs] = await Promise.all([getCompanies(), getJobs()]);
+  } catch {
+    companies = [];
+  }
+
+  // Finds the matching company from the fetched companies
   const company = companies.find(
     (item) => item.id === Number(id)
   );
@@ -63,7 +74,7 @@ export default async function CompanyDetailPage({
   }
 
   // Finds jobs connected to the selected company
-  const companyJobs = jobs.filter(
+  const companyJobs = allJobs.filter(
     (job) =>
       job.company.toLowerCase() === company.name.toLowerCase()
   );

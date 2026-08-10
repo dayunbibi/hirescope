@@ -1,13 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CompanyCard from "@/components/CompanyCard";
 import EmptyState from "@/components/EmptyState";
-import { companies } from "@/data/companies";
+import LoadingCard from "@/components/LoadingCard";
+import type { Company } from "@/data/companies";
+import { getCompanies } from "@/lib/api";
 
 export default function CompaniesPage() {
+  // Stores the companies fetched from the backend API
+  const [companies, setCompanies] = useState<Company[]>([]);
+
+  // Tracks whether companies are still being fetched
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Tracks whether the company fetch failed
+  const [hasError, setHasError] = useState(false);
+
+  // Fetches companies from the backend API on mount
+  useEffect(() => {
+    getCompanies()
+      .then(setCompanies)
+      .catch(() => setHasError(true))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   // Stores the company name search
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -71,7 +90,7 @@ export default function CompaniesPage() {
 
       return secondCompany.openJobs - firstCompany.openJobs;
     });
-  }, [searchTerm, selectedIndustry, selectedSize, sortOption]);
+  }, [companies, searchTerm, selectedIndustry, selectedSize, sortOption]);
 
   // Limits how many company cards are shown
   const visibleCompanies = filteredCompanies.slice(0, visibleCount);
@@ -179,8 +198,22 @@ export default function CompaniesPage() {
             </div>
           </section>
 
-          {/* Company directory or empty state */}
-          {filteredCompanies.length > 0 ? (
+          {/* Company directory, loading skeletons, or empty/error state */}
+          {isLoading ? (
+            <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <LoadingCard />
+              <LoadingCard />
+              <LoadingCard />
+            </section>
+          ) : hasError ? (
+            <div className="mt-6">
+              <EmptyState
+                icon="cloud_off"
+                title="Couldn't load companies"
+                description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
+              />
+            </div>
+          ) : filteredCompanies.length > 0 ? (
             <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {visibleCompanies.map((company) => (
                 <CompanyCard key={company.id} company={company} />
@@ -199,7 +232,7 @@ export default function CompaniesPage() {
           )}
 
           {/* Load more button */}
-          {visibleCount < filteredCompanies.length && (
+          {!isLoading && !hasError && visibleCount < filteredCompanies.length && (
             <div className="mt-8 flex justify-center">
               <button
                 type="button"

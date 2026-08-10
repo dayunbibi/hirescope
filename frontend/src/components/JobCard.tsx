@@ -9,7 +9,8 @@ type JobCardProps = {
 };
 
 // Formats a numeric salary as a short Canadian dollar value
-function formatSalary(salary: number) {
+function formatSalary(salary: number | null) {
+  if (salary === null) return "N/A";
   return `$${Math.round(salary / 1000)}k`;
 }
 

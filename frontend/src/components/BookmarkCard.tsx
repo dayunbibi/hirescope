@@ -9,7 +9,8 @@ type BookmarkCardProps = {
 };
 
 // Formats a salary number into a shorter display value
-function formatSalary(salary: number) {
+function formatSalary(salary: number | null) {
+  if (salary === null) return "N/A";
   return `$${Math.round(salary / 1000)}k`;
 }
 

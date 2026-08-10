@@ -1,17 +1,36 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import JobCard from "@/components/JobCard";
+import LoadingCard from "@/components/LoadingCard";
 import Pagination from "@/components/Pagination";
 import EmptyState from "@/components/EmptyState";
-import { jobs } from "@/data/jobs";
+import type { Job } from "@/data/jobs";
+import { getJobs } from "@/lib/api";
 
 const jobsPerPage = 3;
 
 export default function JobsPage() {
+  // Stores the jobs fetched from the backend API
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  // Tracks whether jobs are still being fetched
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Tracks whether the job fetch failed
+  const [hasError, setHasError] = useState(false);
+
+  // Fetches jobs from the backend API on mount
+  useEffect(() => {
+    getJobs()
+      .then(setJobs)
+      .catch(() => setHasError(true))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   // Stores the current keyword search
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -116,6 +135,7 @@ export default function JobsPage() {
       return firstJob.id - secondJob.id;
     });
   }, [
+    jobs,
     searchTerm,
     location,
     selectedWorkTypes,
@@ -211,9 +231,21 @@ export default function JobsPage() {
               </div>
             </div>
 
-            {/* Job cards or empty result state */}
+            {/* Job cards, loading skeletons, or empty/error state */}
             <div className="space-y-4">
-              {visibleJobs.length === 0 ? (
+              {isLoading ? (
+                <>
+                  <LoadingCard />
+                  <LoadingCard />
+                  <LoadingCard />
+                </>
+              ) : hasError ? (
+                <EmptyState
+                  icon="cloud_off"
+                  title="Couldn't load jobs"
+                  description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
+                />
+              ) : visibleJobs.length === 0 ? (
                 <EmptyState
                   icon="search_off"
                   title="No jobs found"
@@ -229,7 +261,7 @@ export default function JobsPage() {
             </div>
 
             {/* Pagination controls */}
-            {filteredJobs.length > jobsPerPage && (
+            {!isLoading && !hasError && filteredJobs.length > jobsPerPage && (
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

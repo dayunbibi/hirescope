@@ -1,17 +1,35 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookmarkCard from "@/components/BookmarkCard";
 import EmptyState from "@/components/EmptyState";
 import LoadingCard from "@/components/LoadingCard";
-import { jobs } from "@/data/jobs";
+import type { Job } from "@/data/jobs";
+import { getJobs } from "@/lib/api";
 import { useBookmarks } from "@/hooks/useBookmarks";
 
 export default function BookmarksPage() {
   // Loads bookmarked job IDs from localStorage
   const { bookmarkedJobIds, isLoaded } = useBookmarks();
+
+  // Stores the jobs fetched from the backend API
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  // Tracks whether jobs are still being fetched
+  const [isJobsLoading, setIsJobsLoading] = useState(true);
+
+  // Tracks whether the job fetch failed
+  const [hasError, setHasError] = useState(false);
+
+  // Fetches jobs from the backend API on mount
+  useEffect(() => {
+    getJobs()
+      .then(setJobs)
+      .catch(() => setHasError(true))
+      .finally(() => setIsJobsLoading(false));
+  }, []);
 
   // Stores the selected work type filter
   const [selectedWorkType, setSelectedWorkType] = useState("All");
@@ -43,7 +61,10 @@ export default function BookmarksPage() {
 
       return secondJob.id - firstJob.id;
     });
-  }, [bookmarkedJobIds, selectedWorkType, sortOption]);
+  }, [jobs, bookmarkedJobIds, selectedWorkType, sortOption]);
+
+  // Combined loading state: bookmarks from localStorage and jobs from the API
+  const isLoading = !isLoaded || isJobsLoading;
 
   return (
     <>
@@ -98,13 +119,21 @@ export default function BookmarksPage() {
             </div>
           </section>
 
-          {/* Loading state */}
-          {!isLoaded ? (
+          {/* Loading, error, or content state */}
+          {isLoading ? (
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((item) => (
                 <LoadingCard key={item} />
               ))}
             </section>
+          ) : hasError ? (
+            <div className="mt-10">
+              <EmptyState
+                icon="cloud_off"
+                title="Couldn't load saved jobs"
+                description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
+              />
+            </div>
           ) : bookmarkedJobs.length > 0 ? (
             /* Saved job cards */
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

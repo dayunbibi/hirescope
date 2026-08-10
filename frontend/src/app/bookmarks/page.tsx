@@ -39,10 +39,12 @@ export default function BookmarksPage() {
 
   // Finds bookmarked jobs and applies filtering and sorting
   const bookmarkedJobs = useMemo(() => {
+    // Finds jobs whose IDs are stored in localStorage
     const savedJobs = jobs.filter((job) =>
       bookmarkedJobIds.includes(job.id)
     );
 
+    // Applies the selected work type filter
     const filteredJobs =
       selectedWorkType === "All"
         ? savedJobs
@@ -50,20 +52,33 @@ export default function BookmarksPage() {
             (job) => job.workType === selectedWorkType
           );
 
+    // Sorts the filtered bookmarked jobs
     return [...filteredJobs].sort((firstJob, secondJob) => {
+      // Sorts by highest available maximum salary
       if (sortOption === "salary") {
-        return secondJob.salaryMax - firstJob.salaryMax;
+        const firstSalary = firstJob.salaryMax ?? 0;
+        const secondSalary = secondJob.salaryMax ?? 0;
+
+        return secondSalary - firstSalary;
       }
 
+      // Sorts alphabetically by company name
       if (sortOption === "company") {
         return firstJob.company.localeCompare(secondJob.company);
       }
 
+      // Uses the job ID as the temporary newest-job ordering
       return secondJob.id - firstJob.id;
     });
-  }, [jobs, bookmarkedJobIds, selectedWorkType, sortOption]);
+  }, [
+    jobs,
+    bookmarkedJobIds,
+    selectedWorkType,
+    sortOption,
+  ]);
 
-  // Combined loading state: bookmarks from localStorage and jobs from the API
+  // Combined loading state:
+  // bookmarks from localStorage and jobs from the backend API
   const isLoading = !isLoaded || isJobsLoading;
 
   return (
@@ -92,12 +107,13 @@ export default function BookmarksPage() {
 
             {/* Filter and sort controls */}
             <div className="flex flex-wrap gap-3">
+              {/* Work type filter */}
               <select
                 value={selectedWorkType}
                 onChange={(event) =>
                   setSelectedWorkType(event.target.value)
                 }
-                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-[#800020]"
+                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-2 text-sm text-gray-700 outline-none transition focus:border-[#800020]"
               >
                 <option value="All">All Work Types</option>
                 <option value="Remote">Remote</option>
@@ -105,12 +121,13 @@ export default function BookmarksPage() {
                 <option value="On-site">On-site</option>
               </select>
 
+              {/* Sort control */}
               <select
                 value={sortOption}
                 onChange={(event) =>
                   setSortOption(event.target.value)
                 }
-                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-2 text-sm text-gray-700 outline-none focus:border-[#800020]"
+                className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-2 text-sm text-gray-700 outline-none transition focus:border-[#800020]"
               >
                 <option value="newest">Newest</option>
                 <option value="salary">Highest Salary</option>
@@ -119,7 +136,7 @@ export default function BookmarksPage() {
             </div>
           </section>
 
-          {/* Loading, error, or content state */}
+          {/* Loading state */}
           {isLoading ? (
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((item) => (
@@ -127,6 +144,7 @@ export default function BookmarksPage() {
               ))}
             </section>
           ) : hasError ? (
+            /* API error state */
             <div className="mt-10">
               <EmptyState
                 icon="cloud_off"
@@ -138,7 +156,10 @@ export default function BookmarksPage() {
             /* Saved job cards */
             <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {bookmarkedJobs.map((job) => (
-                <BookmarkCard key={job.id} job={job} />
+                <BookmarkCard
+                  key={job.id}
+                  job={job}
+                />
               ))}
             </section>
           ) : (

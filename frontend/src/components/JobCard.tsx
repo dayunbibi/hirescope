@@ -14,6 +14,30 @@ function formatSalary(salary: number | null) {
   return `$${Math.round(salary / 1000)}k`;
 }
 
+// Formats the full salary range safely
+function formatSalaryRange(
+  salaryMin: number | null,
+  salaryMax: number | null
+) {
+  // No salary information available
+  if (salaryMin === null && salaryMax === null) {
+    return "Salary not disclosed";
+  }
+
+  // Only maximum salary is available
+  if (salaryMin === null) {
+    return `Up to ${formatSalary(salaryMax)}`;
+  }
+
+  // Only minimum salary is available
+  if (salaryMax === null) {
+    return `From ${formatSalary(salaryMin)}`;
+  }
+
+  // Full salary range is available
+  return `${formatSalary(salaryMin)} – ${formatSalary(salaryMax)}`;
+}
+
 // Displays one detailed and reusable job posting card
 export default function JobCard({ job }: JobCardProps) {
   // Loads bookmark state and toggle function from localStorage
@@ -44,7 +68,7 @@ export default function JobCard({ job }: JobCardProps) {
         <div className="min-w-0 flex-1">
           {/* Job title and bookmark button */}
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <h3 className="text-xl font-semibold text-gray-900 transition hover:text-[#800020]">
                 {job.title}
               </h3>
@@ -57,8 +81,10 @@ export default function JobCard({ job }: JobCardProps) {
                 <span>{job.location}</span>
 
                 <span>
-                  {formatSalary(job.salaryMin)} –{" "}
-                  {formatSalary(job.salaryMax)}
+                  {formatSalaryRange(
+                    job.salaryMin,
+                    job.salaryMax
+                  )}
                 </span>
               </div>
             </div>
@@ -73,7 +99,7 @@ export default function JobCard({ job }: JobCardProps) {
                   ? "Remove bookmark"
                   : "Add bookmark"
               }
-              className={`transition disabled:cursor-not-allowed disabled:opacity-50 ${
+              className={`shrink-0 transition disabled:cursor-not-allowed disabled:opacity-50 ${
                 bookmarked
                   ? "text-[#800020]"
                   : "text-gray-400 hover:text-[#800020]"

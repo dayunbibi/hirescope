@@ -26,9 +26,16 @@ export default function JobsPage() {
   // Fetches jobs from the backend API on mount
   useEffect(() => {
     getJobs()
-      .then(setJobs)
-      .catch(() => setHasError(true))
-      .finally(() => setIsLoading(false));
+      .then((fetchedJobs) => {
+        setJobs(fetchedJobs);
+        setHasError(false);
+      })
+      .catch(() => {
+        setHasError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   // Stores the current keyword search
@@ -112,7 +119,10 @@ export default function JobsPage() {
         selectedExperienceLevels.length === 0 ||
         selectedExperienceLevels.includes(job.experienceLevel);
 
-      const matchesSalary = job.salaryMax >= minimumSalary;
+      // Jobs without salary data are still shown instead of being removed
+      const matchesSalary =
+        job.salaryMax === null ||
+        job.salaryMax >= minimumSalary;
 
       return (
         matchesKeyword &&
@@ -124,14 +134,20 @@ export default function JobsPage() {
     });
 
     return [...matchingJobs].sort((firstJob, secondJob) => {
+      // Sorts jobs from highest to lowest available maximum salary
       if (sortOption === "salary") {
-        return secondJob.salaryMax - firstJob.salaryMax;
+        const firstSalary = firstJob.salaryMax ?? 0;
+        const secondSalary = secondJob.salaryMax ?? 0;
+
+        return secondSalary - firstSalary;
       }
 
+      // Temporary newest sorting based on job ID
       if (sortOption === "newest") {
         return secondJob.id - firstJob.id;
       }
 
+      // Default temporary relevance sorting
       return firstJob.id - secondJob.id;
     });
   }, [
@@ -261,13 +277,15 @@ export default function JobsPage() {
             </div>
 
             {/* Pagination controls */}
-            {!isLoading && !hasError && filteredJobs.length > jobsPerPage && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            )}
+            {!isLoading &&
+              !hasError &&
+              filteredJobs.length > jobsPerPage && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
           </section>
         </div>
       </main>

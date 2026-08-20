@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "code-review-skill": {
+      "source": "awesome-skills/code-review-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "56ffac36c171dd1289ff9d732c5f0249180ed0c905a5fc355257e92703bc4c38"
+    },
+    "karpathy-guidelines": {
+      "source": "forrestchang/andrej-karpathy-skills",
+      "sourceType": "github",
+      "skillPath": "skills/karpathy-guidelines/SKILL.md",
+      "computedHash": "41e8ca055bbde13d240776a14a076a59614057200340c243130a76ba4e64cac8"
+    }
+  }
+}

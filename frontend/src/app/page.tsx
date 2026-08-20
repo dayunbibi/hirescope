@@ -165,11 +165,15 @@ export default function Home() {
       {/* Global website header */}
       <Header />
 
-      <main className="min-h-screen bg-[#FBF9F7] px-6 py-10">
+      <main className="min-h-screen bg-[#FBF9F7] px-4 py-8 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-6xl">
           {/* Hero section */}
-          <section className="mb-10 text-center">
-            <h1 className="text-4xl font-bold text-gray-900">
+          <section className="mb-8 text-center sm:mb-10">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#800020]">
+              Toronto Tech Job Market
+            </p>
+
+            <h1 className="mt-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
               Data-Driven Tech Recruitment
             </h1>
 
@@ -188,8 +192,9 @@ export default function Home() {
           />
 
           {/* Summary statistics */}
-          <section className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="mb-8 grid gap-4 sm:mb-10 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard
+              icon="work"
               label="Total Jobs"
               value={
                 isLoading
@@ -200,6 +205,7 @@ export default function Home() {
             />
 
             <StatCard
+              icon="home_work"
               label="Remote Jobs"
               value={
                 isLoading
@@ -216,6 +222,7 @@ export default function Home() {
             />
 
             <StatCard
+              icon="apartment"
               label="Companies Hiring"
               value={
                 isLoading
@@ -226,6 +233,7 @@ export default function Home() {
             />
 
             <StatCard
+              icon="bolt"
               label="Top Skill"
               value={
                 isLoading ? "..." : topSkill.name
@@ -240,16 +248,16 @@ export default function Home() {
           </section>
 
           {/* Main dashboard content */}
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
             {/* Latest job listings */}
             <section className="lg:col-span-2">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold tracking-tight text-gray-900">
                     Latest Job Postings
                   </h2>
 
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-gray-500">
                     {filteredJobs.length} job
                     {filteredJobs.length !== 1 ? "s" : ""} found
                   </p>
@@ -257,13 +265,16 @@ export default function Home() {
 
                 <Link
                   href="/jobs"
-                  className="shrink-0 text-sm font-medium text-[#800020] transition hover:text-[#570013]"
+                  className="group flex shrink-0 items-center gap-1 rounded-md text-sm font-medium text-[#800020] transition hover:text-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                 >
                   View all
+                  <span className="material-symbols-outlined text-[16px] transition group-hover:translate-x-0.5">
+                    arrow_forward
+                  </span>
                 </Link>
               </div>
 
-              <div className="grid gap-5">
+              <div className="grid gap-4">
                 {isLoading ? (
                   <>
                     <LoadingCard />
@@ -293,15 +304,15 @@ export default function Home() {
             {/* Analytics sidebar */}
             <aside className="grid gap-6">
               {/* Technology demand */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
+              <article className="rounded-xl border border-[#E0BFBF] bg-white p-5 shadow-sm sm:p-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-xl font-semibold tracking-tight text-gray-900">
                     Technology Demand
                   </h2>
 
                   <Link
                     href="/analytics"
-                    className="text-xs font-medium text-[#800020] hover:underline"
+                    className="rounded-md text-xs font-medium text-[#800020] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                   >
                     Analytics
                   </Link>
@@ -360,8 +371,8 @@ export default function Home() {
               </article>
 
               {/* Work type distribution */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold text-gray-900">
+              <article className="rounded-xl border border-[#E0BFBF] bg-white p-5 shadow-sm sm:p-6">
+                <h2 className="text-xl font-semibold tracking-tight text-gray-900">
                   Work Type
                 </h2>
 

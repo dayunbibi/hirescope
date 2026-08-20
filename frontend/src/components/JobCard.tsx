@@ -69,16 +69,20 @@ export default function JobCard({ job }: JobCardProps) {
           {/* Job title and bookmark button */}
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <h3 className="text-xl font-semibold text-gray-900 transition hover:text-[#800020]">
+              <h3 className="text-lg font-semibold leading-snug text-gray-900 transition hover:text-[#800020]">
                 {job.title}
               </h3>
 
-              <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-600">
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-600">
                 <span className="font-medium text-gray-800">
                   {job.company}
                 </span>
 
+                <span className="text-gray-300">·</span>
+
                 <span>{job.location}</span>
+
+                <span className="text-gray-300">·</span>
 
                 <span>
                   {formatSalaryRange(
@@ -124,7 +128,7 @@ export default function JobCard({ job }: JobCardProps) {
               {job.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="rounded-md bg-[#F0F0F0] px-2 py-1 text-xs font-medium text-gray-700"
+                  className="rounded-md bg-[#F5F0EE] px-2 py-1 text-xs font-medium text-gray-700"
                 >
                   {skill}
                 </span>
@@ -146,7 +150,7 @@ export default function JobCard({ job }: JobCardProps) {
 
               <Link
                 href={`/jobs/${job.id}`}
-                className="rounded-lg bg-[#800020] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#570013]"
+                className="rounded-lg bg-[#800020] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/40 focus-visible:ring-offset-2"
               >
                 View Details
               </Link>

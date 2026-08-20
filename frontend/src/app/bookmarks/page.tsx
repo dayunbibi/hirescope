@@ -91,7 +91,7 @@ export default function BookmarksPage() {
           {/* Page heading and controls */}
           <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 Saved Jobs
               </h1>
 

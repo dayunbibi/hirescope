@@ -20,14 +20,14 @@ export default function BookmarkCard({ job }: BookmarkCardProps) {
   const { toggleBookmark, isLoaded } = useBookmarks();
 
   return (
-    <article className="relative flex h-full flex-col rounded-lg border border-[#E4E2E0] bg-white p-6 shadow-sm transition hover:shadow-md">
+    <article className="relative flex h-full flex-col rounded-xl border border-[#E4E2E0] bg-white p-6 shadow-sm transition hover:shadow-md">
       {/* Removes this job from bookmarks */}
       <button
         type="button"
         disabled={!isLoaded}
         onClick={() => toggleBookmark(job.id)}
         aria-label="Remove bookmark"
-        className="absolute right-5 top-5 text-[#800020] transition hover:text-[#570013] disabled:cursor-not-allowed disabled:opacity-50"
+        className="absolute right-5 top-5 rounded text-[#800020] transition hover:text-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span
           className="material-symbols-outlined text-[24px]"
@@ -77,7 +77,7 @@ export default function BookmarkCard({ job }: BookmarkCardProps) {
 
         <Link
           href={`/jobs/${job.id}`}
-          className="text-sm font-medium text-[#800020] transition hover:underline"
+          className="rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
         >
           View Details
         </Link>

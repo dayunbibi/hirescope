@@ -115,7 +115,7 @@ export default async function JobDetailPage({
 
               <Link
                 href="/jobs"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 <span className="material-symbols-outlined text-[18px]">
                   arrow_back
@@ -228,7 +228,7 @@ export default async function JobDetailPage({
                     href={job.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                   >
                     <span className="material-symbols-outlined text-[18px]">
                       open_in_new
@@ -257,7 +257,7 @@ export default async function JobDetailPage({
 
             {/* Full job description */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="border-b border-[#E4E2E0] pb-4 text-2xl font-semibold text-gray-900">
+              <h2 className="border-b border-[#E4E2E0] pb-4 text-lg font-semibold tracking-tight text-gray-900">
                 Job Description
               </h2>
 
@@ -337,7 +337,7 @@ export default async function JobDetailPage({
           <aside className="flex flex-col gap-6 lg:col-span-4">
             {/* Company information card */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                 About {job.company}
               </h2>
 
@@ -348,7 +348,7 @@ export default async function JobDetailPage({
 
               <Link
                 href="/companies"
-                className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#800020] transition hover:underline"
+                className="mt-5 inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 View Companies
 
@@ -360,7 +360,7 @@ export default async function JobDetailPage({
 
             {/* Related jobs */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                 Related Jobs
               </h2>
 
@@ -370,7 +370,7 @@ export default async function JobDetailPage({
                     <Link
                       key={relatedJob.id}
                       href={`/jobs/${relatedJob.id}`}
-                      className="block rounded-lg border border-transparent p-4 transition hover:border-[#E0BFBF] hover:bg-[#FBF9F7]"
+                      className="block rounded-lg border border-transparent p-4 transition hover:border-[#E0BFBF] hover:bg-[#FBF9F7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                     >
                       {/* Related job title */}
                       <h3 className="font-semibold text-gray-900 transition hover:text-[#800020]">

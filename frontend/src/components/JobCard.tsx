@@ -103,7 +103,7 @@ export default function JobCard({ job }: JobCardProps) {
                   ? "Remove bookmark"
                   : "Add bookmark"
               }
-              className={`shrink-0 transition disabled:cursor-not-allowed disabled:opacity-50 ${
+              className={`shrink-0 rounded transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 disabled:cursor-not-allowed disabled:opacity-50 ${
                 bookmarked
                   ? "text-[#800020]"
                   : "text-gray-400 hover:text-[#800020]"

@@ -35,7 +35,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
       : "Company information is not currently available.";
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-[#E0BFBF] bg-white p-6 shadow-sm transition hover:shadow-lg">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm transition hover:shadow-lg">
       {/* Burgundy hover indicator */}
       <div className="absolute left-0 top-0 h-1 w-full bg-[#800020] opacity-0 transition group-hover:opacity-100" />
 
@@ -87,7 +87,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
       )}
 
       {/* Company actions */}
-      <div className="mt-auto flex items-end justify-between border-t border-gray-200 pt-5">
+      <div className="mt-auto flex items-end justify-between border-t border-[#E0BFBF] pt-5">
         {/* Open job count */}
         <div>
           <p className="text-2xl font-semibold text-[#800020]">
@@ -102,7 +102,7 @@ export default function CompanyCard({ company }: CompanyCardProps) {
         {/* Company profile link */}
         <Link
           href={`/companies/${company.id}`}
-          className="rounded-md border border-[#800020] px-4 py-2 text-sm font-medium text-[#800020] transition hover:bg-[#F7EDEE]"
+          className="rounded-md border border-[#800020] px-4 py-2 text-sm font-medium text-[#800020] transition hover:bg-[#F7EDEE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
         >
           View Profile
         </Link>

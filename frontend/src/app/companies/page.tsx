@@ -139,7 +139,7 @@ export default function CompaniesPage() {
         <div className="mx-auto max-w-6xl">
           {/* Page heading */}
           <section>
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               Companies Directory
             </h1>
 
@@ -220,7 +220,7 @@ export default function CompaniesPage() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="rounded-lg bg-[#800020] px-8 py-3 font-medium text-white transition hover:bg-[#570013]"
+                className="rounded-lg bg-[#800020] px-8 py-3 font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 Clear Filters
               </button>
@@ -251,7 +251,7 @@ export default function CompaniesPage() {
                 onChange={(event) =>
                   setSortOption(event.target.value)
                 }
-                className="border-none bg-transparent text-sm font-medium text-[#800020] outline-none"
+                className="rounded border-none bg-transparent text-sm font-medium text-[#800020] outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 <option value="jobs">
                   Most Open Jobs
@@ -317,7 +317,7 @@ export default function CompaniesPage() {
                       (count) => count + 3
                     )
                   }
-                  className="rounded-lg border border-[#E0BFBF] bg-white px-12 py-3 text-gray-600 transition hover:border-[#800020] hover:text-[#800020]"
+                  className="rounded-lg border border-[#E0BFBF] bg-white px-12 py-3 text-gray-600 transition hover:border-[#800020] hover:text-[#800020] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                 >
                   Load More Companies
                 </button>

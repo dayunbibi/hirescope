@@ -60,6 +60,17 @@ export default function JobsPage() {
   // Stores the currently selected result page
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Tracks whether the filter panel is expanded on mobile
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+
+  // Counts how many filters are currently active
+  const activeFilterCount =
+    selectedWorkTypes.length +
+    selectedExperienceLevels.length +
+    (searchTerm.trim() !== "" ? 1 : 0) +
+    (location.trim() !== "" ? 1 : 0) +
+    (minimumSalary > 50000 ? 1 : 0);
+
   // Adds or removes one work type from the selected filters
   const toggleWorkType = (workType: string) => {
     setSelectedWorkTypes((currentTypes) =>
@@ -189,6 +200,11 @@ export default function JobsPage() {
               selectedWorkTypes={selectedWorkTypes}
               selectedExperienceLevels={selectedExperienceLevels}
               minimumSalary={minimumSalary}
+              isOpen={isFilterPanelOpen}
+              activeFilterCount={activeFilterCount}
+              onToggleOpen={() =>
+                setIsFilterPanelOpen((current) => !current)
+              }
               onSearchChange={(value) => {
                 setSearchTerm(value);
                 setCurrentPage(1);
@@ -212,7 +228,7 @@ export default function JobsPage() {
             {/* Results heading and sorting control */}
             <div className="mb-5 flex flex-col gap-4 border-b border-[#E0BFBF] pb-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                   Available Jobs in Toronto
                 </h1>
 

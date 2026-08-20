@@ -4,6 +4,9 @@ type FilterSidebarProps = {
   selectedWorkTypes: string[];
   selectedExperienceLevels: string[];
   minimumSalary: number;
+  isOpen: boolean;
+  activeFilterCount: number;
+  onToggleOpen: () => void;
   onSearchChange: (value: string) => void;
   onLocationChange: (value: string) => void;
   onWorkTypeToggle: (workType: string) => void;
@@ -22,6 +25,9 @@ export default function FilterSidebar({
   selectedWorkTypes,
   selectedExperienceLevels,
   minimumSalary,
+  isOpen,
+  activeFilterCount,
+  onToggleOpen,
   onSearchChange,
   onLocationChange,
   onWorkTypeToggle,
@@ -30,20 +36,40 @@ export default function FilterSidebar({
   onClearFilters,
 }: FilterSidebarProps) {
   return (
-    <aside className="h-fit rounded-xl border border-[#E0BFBF] bg-white p-5 shadow-sm md:sticky md:top-24">
-      {/* Sidebar heading */}
-      <div className="mb-5 flex items-center justify-between border-b border-[#E0BFBF] pb-3">
-        <h2 className="text-xl font-semibold text-gray-900">Filters</h2>
+    <aside className="h-fit rounded-xl border border-[#E0BFBF] bg-white shadow-sm md:sticky md:top-24">
+      {/* Sidebar heading, also the mobile collapse toggle */}
+      <div className="flex items-center justify-between p-5 md:border-b md:border-[#E0BFBF] md:pb-3">
+        <button
+          type="button"
+          onClick={onToggleOpen}
+          aria-expanded={isOpen}
+          aria-controls="job-filter-panel"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 md:pointer-events-none"
+        >
+          Filters
+          {activeFilterCount > 0 && (
+            <span className="rounded-full bg-[#800020] px-2 py-0.5 text-xs font-medium text-white">
+              {activeFilterCount}
+            </span>
+          )}
+          <span className="material-symbols-outlined text-[20px] text-gray-500 transition md:hidden">
+            {isOpen ? "expand_less" : "expand_more"}
+          </span>
+        </button>
 
         <button
           type="button"
           onClick={onClearFilters}
-          className="text-xs font-medium uppercase tracking-wide text-gray-500 transition hover:text-[#800020]"
+          className="rounded text-xs font-medium uppercase tracking-wide text-gray-500 transition hover:text-[#800020] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
         >
           Clear All
         </button>
       </div>
 
+      <div
+        id="job-filter-panel"
+        className={`${isOpen ? "block" : "hidden"} border-t border-[#E0BFBF] p-5 md:block md:border-t-0 md:pt-5`}
+      >
       {/* Keyword filter */}
       <div className="mb-5">
         <label
@@ -107,7 +133,7 @@ export default function FilterSidebar({
           onChange={(event) =>
             onMinimumSalaryChange(Number(event.target.value))
           }
-          className="w-full accent-[#800020]"
+          className="brand-range w-full"
         />
       </div>
 
@@ -150,7 +176,7 @@ export default function FilterSidebar({
                 key={experienceLevel}
                 type="button"
                 onClick={() => onExperienceToggle(experienceLevel)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 ${
                   isSelected
                     ? "border-[#800020] bg-[#800020] text-white"
                     : "border-[#E0BFBF] bg-[#FBF9F7] text-gray-600 hover:text-[#800020]"
@@ -161,6 +187,7 @@ export default function FilterSidebar({
             );
           })}
         </div>
+      </div>
       </div>
     </aside>
   );

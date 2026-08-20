@@ -18,7 +18,7 @@ export default function JobBookmarkButton({
       type="button"
       disabled={!isLoaded}
       onClick={() => toggleBookmark(jobId)}
-      className={`inline-flex items-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${
+      className={`inline-flex items-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 disabled:cursor-not-allowed disabled:opacity-50 ${
         bookmarked
           ? "border-[#800020] bg-[#F7EDEE] text-[#800020]"
           : "border-[#800020] text-[#800020] hover:bg-[#F7EDEE]"

@@ -77,7 +77,7 @@ export default async function CompanyDetailPage({
 
             <Link
               href="/companies"
-              className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+              className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
             >
               <span className="material-symbols-outlined text-[18px]">
                 arrow_back
@@ -133,7 +133,7 @@ export default async function CompanyDetailPage({
           {/* Back navigation */}
           <Link
             href="/companies"
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#800020] transition hover:underline"
+            className="inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
           >
             <span className="material-symbols-outlined text-[18px]">
               arrow_back
@@ -153,7 +153,7 @@ export default async function CompanyDetailPage({
 
                 <div>
                   {/* Company name */}
-                  <h1 className="text-4xl font-bold text-gray-900">
+                  <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                     {company.name}
                   </h1>
 
@@ -210,7 +210,7 @@ export default async function CompanyDetailPage({
             <section className="space-y-6 lg:col-span-2">
               {/* Company overview */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Company Overview
                 </h2>
 
@@ -221,7 +221,7 @@ export default async function CompanyDetailPage({
 
               {/* Technology stack */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Popular Technologies
                 </h2>
 
@@ -247,7 +247,7 @@ export default async function CompanyDetailPage({
 
               {/* Hiring trend */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-2xl font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Hiring Trend
                 </h2>
 
@@ -288,7 +288,7 @@ export default async function CompanyDetailPage({
             <aside className="space-y-6">
               {/* Company statistics */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Company Statistics
                 </h2>
 
@@ -332,7 +332,7 @@ export default async function CompanyDetailPage({
 
               {/* Company location */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Location
                 </h2>
 
@@ -362,7 +362,7 @@ export default async function CompanyDetailPage({
           <section className="mt-10">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900">
+                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                   Open Positions
                 </h2>
 
@@ -377,7 +377,7 @@ export default async function CompanyDetailPage({
 
               <Link
                 href="/jobs"
-                className="inline-flex items-center gap-2 text-sm font-medium text-[#800020] transition hover:underline"
+                className="inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 Browse All Jobs
 
@@ -413,7 +413,7 @@ export default async function CompanyDetailPage({
 
                 <Link
                   href="/jobs"
-                  className="mt-6 inline-block rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                  className="mt-6 inline-block rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
                 >
                   Explore Other Jobs
                 </Link>

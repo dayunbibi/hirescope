@@ -21,7 +21,7 @@ export default function Footer() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm text-gray-600 transition hover:text-[#800020]"
+              className="rounded text-sm text-gray-600 transition hover:text-[#800020] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
             >
               {link.label}
             </Link>

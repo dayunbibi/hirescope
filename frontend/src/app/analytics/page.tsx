@@ -330,7 +330,7 @@ export default function AnalyticsPage() {
           {/* Analytics page heading */}
           <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 Market Insights Overview
               </h1>
 
@@ -405,7 +405,7 @@ export default function AnalyticsPage() {
               <button
                 type="button"
                 onClick={handleExport}
-                className="rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013]"
+                className="rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
               >
                 Export
               </button>
@@ -455,7 +455,7 @@ export default function AnalyticsPage() {
               <section className="mt-6 grid gap-6 lg:grid-cols-3">
                 {/* Salary distribution */}
                 <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm lg:col-span-2">
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                     Salary by Experience Level
                   </h2>
 
@@ -516,7 +516,7 @@ export default function AnalyticsPage() {
 
                 {/* Work type distribution */}
                 <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                     Work Type
                   </h2>
 
@@ -560,7 +560,7 @@ export default function AnalyticsPage() {
               <section className="mt-6 grid gap-6 lg:grid-cols-2">
                 {/* Technology ranking */}
                 <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                     Top Technologies
                   </h2>
 
@@ -593,7 +593,7 @@ export default function AnalyticsPage() {
 
                 {/* Experience demand distribution */}
                 <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold tracking-tight text-gray-900">
                     Experience Demand
                   </h2>
 

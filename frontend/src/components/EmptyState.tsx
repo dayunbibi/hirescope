@@ -19,7 +19,7 @@ export default function EmptyState({
   onAction,
 }: EmptyStateProps) {
   const actionClassName =
-    "mt-6 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013]";
+    "mt-6 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30";
 
   return (
     <section className="flex flex-col items-center justify-center rounded-xl border border-[#E0BFBF] bg-white px-6 py-16 text-center shadow-sm">

@@ -30,8 +30,8 @@ export default function AnalyticsPage() {
   // Tracks whether API loading failed
   const [hasError, setHasError] = useState(false);
 
-  // Stores the selected analytics date range
-  const [dateRange, setDateRange] = useState("30");
+  // Stores the selected posting date range in days, or "all"
+  const [dateRange, setDateRange] = useState("all");
 
   // Stores the selected role filter
   const [selectedRole, setSelectedRole] =
@@ -53,13 +53,25 @@ export default function AnalyticsPage() {
       });
   }, []);
 
-  // Filters jobs by the selected developer role
+  // Filters jobs by posting date range and developer role
   const filteredJobs = useMemo(() => {
+    const cutoff =
+      dateRange === "all"
+        ? null
+        : Date.now() - Number(dateRange) * 24 * 60 * 60 * 1000;
+
+    const jobsInRange =
+      cutoff === null
+        ? jobs
+        : jobs.filter(
+            (job) => new Date(job.postedAt).getTime() >= cutoff
+          );
+
     if (selectedRole === "All") {
-      return jobs;
+      return jobsInRange;
     }
 
-    return jobs.filter((job) => {
+    return jobsInRange.filter((job) => {
       const title = job.title.toLowerCase();
       const skills = job.skills.map((skill) =>
         skill.toLowerCase()
@@ -114,7 +126,7 @@ export default function AnalyticsPage() {
 
       return true;
     });
-  }, [jobs, selectedRole]);
+  }, [jobs, dateRange, selectedRole]);
 
   // Calculates average salary using jobs with available salary values
   const averageSalary = useMemo(() => {
@@ -350,6 +362,10 @@ export default function AnalyticsPage() {
                 }
                 className="rounded-lg border border-[#E0BFBF] bg-white px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#800020]"
               >
+                <option value="all">
+                  All Time
+                </option>
+
                 <option value="7">
                   Last 7 Days
                 </option>
@@ -425,6 +441,14 @@ export default function AnalyticsPage() {
                 icon="cloud_off"
                 title="Couldn't load analytics"
                 description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
+              />
+            </div>
+          ) : filteredJobs.length === 0 ? (
+            <div className="mt-8">
+              <EmptyState
+                icon="query_stats"
+                title="No jobs match these filters"
+                description="No postings were found for the selected date range and role. Try a longer date range or a different role."
               />
             </div>
           ) : (

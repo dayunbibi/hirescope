@@ -44,36 +44,20 @@ function formatSalaryRange(
   return `${formatSalary(salaryMin)} – ${formatSalary(salaryMax)}`;
 }
 
-// Temporary detailed content used until job descriptions
-// are provided by the backend API
-const jobDetails = {
-  description:
-    "We are seeking a highly skilled developer to help build modern, accessible, and data-driven products. You will collaborate with designers, backend developers, and product stakeholders to deliver reliable user experiences.",
+// Formats the posting date, falling back when the value is invalid
+function formatPostedDate(postedAt: string) {
+  const date = new Date(postedAt);
 
-  responsibilities: [
-    "Develop responsive and interactive frontend applications.",
-    "Build reusable components using React, Next.js, and TypeScript.",
-    "Collaborate with designers to create accurate and accessible interfaces.",
-    "Improve application performance and maintain code quality.",
-    "Participate in code reviews and technical planning.",
-  ],
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown";
+  }
 
-  qualifications: [
-    "Professional experience in software or frontend development.",
-    "Strong knowledge of React, TypeScript, and modern JavaScript.",
-    "Experience building responsive and accessible interfaces.",
-    "Understanding of API integration and version control.",
-    "Strong communication and problem-solving skills.",
-  ],
-
-  benefits: [
-    "Health and dental benefits.",
-    "Flexible work arrangements.",
-    "Professional development support.",
-    "Paid vacation and personal days.",
-    "Modern collaborative work environment.",
-  ],
-};
+  return date.toLocaleDateString("en-CA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 // Displays the detailed page for one selected job
 export default async function JobDetailPage({
@@ -201,15 +185,6 @@ export default async function JobDetailPage({
                   </span>
                 </div>
 
-                {/* Employment type */}
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                    work
-                  </span>
-
-                  <span>Full-time</span>
-                </div>
-
                 {/* Experience level */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px] text-[#800020]">
@@ -234,7 +209,7 @@ export default async function JobDetailPage({
                       open_in_new
                     </span>
 
-                    Apply Now
+                    View Original Posting
                   </a>
                 ) : (
                   <button
@@ -246,7 +221,7 @@ export default async function JobDetailPage({
                       open_in_new
                     </span>
 
-                    Application unavailable
+                    Original posting unavailable
                   </button>
                 )}
 
@@ -255,57 +230,39 @@ export default async function JobDetailPage({
               </div>
             </article>
 
-            {/* Full job description */}
+            {/* Job overview built from collected posting data */}
             <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
               <h2 className="border-b border-[#E4E2E0] pb-4 text-lg font-semibold tracking-tight text-gray-900">
-                Job Description
+                Job Overview
               </h2>
 
-              <div className="mt-6 space-y-7 text-gray-700">
-                {/* Temporary overview description */}
-                <p className="leading-7">
-                  {jobDetails.description}
-                </p>
+              <dl className="mt-6 grid gap-5 sm:grid-cols-2">
+                {[
+                  { label: "Work Type", value: job.workType },
+                  { label: "Experience Level", value: job.experienceLevel },
+                  {
+                    label: "Salary",
+                    value: formatSalaryRange(job.salaryMin, job.salaryMax),
+                  },
+                  { label: "Posted", value: formatPostedDate(job.postedAt) },
+                ].map((detail) => (
+                  <div key={detail.label}>
+                    <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                      {detail.label}
+                    </dt>
 
-                {/* Responsibilities section */}
-                <section>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Responsibilities
-                  </h3>
+                    <dd className="mt-1 text-base font-medium text-gray-900">
+                      {detail.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-                  <ul className="mt-3 list-disc space-y-2 pl-5 leading-7">
-                    {jobDetails.responsibilities.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                {/* Qualifications section */}
-                <section>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Qualifications
-                  </h3>
-
-                  <ul className="mt-3 list-disc space-y-2 pl-5 leading-7">
-                    {jobDetails.qualifications.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                {/* Benefits section */}
-                <section>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Benefits
-                  </h3>
-
-                  <ul className="mt-3 list-disc space-y-2 pl-5 leading-7">
-                    {jobDetails.benefits.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
+              <p className="mt-6 text-sm leading-6 text-gray-500">
+                {job.sourceUrl
+                  ? "The full job description, responsibilities, and benefits are available on the original posting."
+                  : "A full job description is not available for this posting."}
+              </p>
 
               {/* Technology stack */}
               <section className="mt-8 border-t border-[#E4E2E0] pt-6">

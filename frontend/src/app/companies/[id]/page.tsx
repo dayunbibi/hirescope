@@ -100,8 +100,23 @@ export default async function CompanyDetailPage({
       company.name.toLowerCase()
   );
 
-  // Temporary hiring trend values used before backend analytics integration
-  const hiringTrend = [35, 50, 42, 68, 75, 90];
+  // Counts the company's current open roles by experience level
+  const experienceBreakdown = (
+    ["Entry", "Mid-Level", "Senior", "Lead"] as const
+  ).map((level) => {
+    const count = companyJobs.filter(
+      (job) => job.experienceLevel === level
+    ).length;
+
+    return {
+      level,
+      count,
+      percentage:
+        companyJobs.length > 0
+          ? Math.round((count / companyJobs.length) * 100)
+          : 0,
+    };
+  });
 
   const displayIndustry = formatCompanyValue(
     company.industry,
@@ -245,42 +260,46 @@ export default async function CompanyDetailPage({
                 )}
               </article>
 
-              {/* Hiring trend */}
+              {/* Open roles by experience level */}
               <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
                 <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Hiring Trend
+                  Open Roles by Experience Level
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  Temporary hiring activity visualization
+                  Based on current job postings
                 </p>
 
-                {/* Temporary hiring trend chart */}
-                <div className="mt-8 flex h-52 items-end gap-3 rounded-lg bg-[#F5F3F1] p-5">
-                  {hiringTrend.map(
-                    (height, index) => (
-                      <div
-                        key={index}
-                        className="flex h-full flex-1 items-end"
-                      >
-                        <div
-                          className="w-full rounded-t-md bg-[#800020] transition hover:bg-[#570013]"
-                          style={{
-                            height: `${height}%`,
-                          }}
-                          title={`Month ${
-                            index + 1
-                          }: ${height}%`}
-                        />
-                      </div>
-                    )
-                  )}
-                </div>
+                {companyJobs.length > 0 ? (
+                  <div className="mt-6 space-y-4">
+                    {experienceBreakdown.map((experience) => (
+                      <div key={experience.level}>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-700">
+                            {experience.level}
+                          </span>
 
-                <div className="mt-3 flex justify-between text-xs text-gray-500">
-                  <span>6 months ago</span>
-                  <span>Current</span>
-                </div>
+                          <span className="text-gray-500">
+                            {experience.count} ({experience.percentage}%)
+                          </span>
+                        </div>
+
+                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#EAE8E6]">
+                          <div
+                            className="h-full rounded-full bg-[#800020]"
+                            style={{
+                              width: `${experience.percentage}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-gray-500">
+                    No open roles are currently listed for this company.
+                  </p>
+                )}
               </article>
             </section>
 

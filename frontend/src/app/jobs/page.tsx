@@ -153,13 +153,22 @@ export default function JobsPage() {
         return secondSalary - firstSalary;
       }
 
-      // Temporary newest sorting based on job ID
-      if (sortOption === "newest") {
-        return secondJob.id - firstJob.id;
+      const newestFirst =
+        new Date(secondJob.postedAt).getTime() -
+        new Date(firstJob.postedAt).getTime();
+
+      // Relevance ranks keyword matches in the title first
+      if (sortOption === "relevant" && keyword !== "") {
+        const firstTitleMatch = firstJob.title.toLowerCase().includes(keyword);
+        const secondTitleMatch = secondJob.title.toLowerCase().includes(keyword);
+
+        if (firstTitleMatch !== secondTitleMatch) {
+          return firstTitleMatch ? -1 : 1;
+        }
       }
 
-      // Default temporary relevance sorting
-      return firstJob.id - secondJob.id;
+      // Newest sorting, also the fallback for relevance ties
+      return newestFirst || 0;
     });
   }, [
     jobs,

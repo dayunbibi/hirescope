@@ -12,6 +12,7 @@ class JobOut(BaseModel):
     salaryMin: int | None
     salaryMax: int | None
     postedAt: str
+    sourceUrl: str | None
 
 
 class CompanyOut(BaseModel):

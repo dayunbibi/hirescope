@@ -43,6 +43,7 @@ def _job_to_out(job: Job) -> JobOut:
         salaryMin=job.salary_min,
         salaryMax=job.salary_max,
         postedAt=job.posted_at.isoformat(),
+        sourceUrl=job.source_url or None,
     )
 
 

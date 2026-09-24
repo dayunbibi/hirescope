@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import JobBookmarkButton from "@/components/JobBookmarkButton";
 import type { Job } from "@/data/jobs";
 import { getJob, getJobs } from "@/lib/api";
+import { formatPostedDate } from "@/lib/format";
 
 type JobDetailPageProps = {
   params: Promise<{
@@ -42,21 +43,6 @@ function formatSalaryRange(
 
   // Full salary range is available
   return `${formatSalary(salaryMin)} – ${formatSalary(salaryMax)}`;
-}
-
-// Formats the posting date, falling back when the value is invalid
-function formatPostedDate(postedAt: string) {
-  const date = new Date(postedAt);
-
-  if (Number.isNaN(date.getTime())) {
-    return "Unknown";
-  }
-
-  return date.toLocaleDateString("en-CA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 
 // Displays the detailed page for one selected job

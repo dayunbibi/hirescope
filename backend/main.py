@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import Base, engine, get_db
 from app.models import Company, Job
 from app.schemas import CompanyOut, JobOut
@@ -20,7 +21,7 @@ app = FastAPI(title="HireScope API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=settings.allowed_origin_list,
     allow_methods=["GET"],
     allow_headers=["*"],
 )

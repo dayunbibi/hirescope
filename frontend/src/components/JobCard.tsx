@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Job } from "@/data/jobs";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { formatPostedDate } from "@/lib/format";
 
 type JobCardProps = {
   job: Job;
@@ -145,7 +146,7 @@ export default function JobCard({ job }: JobCardProps) {
 
             <div className="flex items-center justify-between gap-4 lg:justify-end">
               <span className="text-xs text-gray-500">
-                {job.postedAt}
+                Posted {formatPostedDate(job.postedAt)}
               </span>
 
               <Link

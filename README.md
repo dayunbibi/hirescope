@@ -88,14 +88,16 @@ Charts are built with plain HTML elements styled with Tailwind CSS (proportional
 ### Database
 
 - **Development:** SQLite by default (`backend/hirescope.db`), used when `DATABASE_URL` in `backend/.env` is empty.
-- **Production:** PostgreSQL is planned. Set `DATABASE_URL` to a PostgreSQL connection string. A PostgreSQL driver (e.g. `psycopg2-binary`) is not yet in `requirements.txt` and must be added.
+- **Production:** PostgreSQL. Set `DATABASE_URL` to a PostgreSQL connection string (`psycopg2-binary` is included). Both `postgresql://` and `postgres://` URLs are accepted.
 
 Tables are created automatically on API startup and on each scraper run. There is no migration tool yet.
 
-### Deployment (planned)
+### Deployment
 
 - Vercel (frontend)
-- Railway (backend and database)
+- Railway (backend and PostgreSQL)
+
+See [Deployment](#deployment).
 
 ## Data Pipeline
 
@@ -139,7 +141,7 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate            # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env                # leave DATABASE_URL empty to use SQLite
+cp .env.example .env                # empty values use the defaults (SQLite, localhost:3000)
 
 python -m scripts.run_scraper       # populate the database
 uvicorn main:app --reload           # http://localhost:8000
@@ -158,15 +160,38 @@ cp .env.local.example .env.local    # sets NEXT_PUBLIC_API_URL=http://localhost:
 npm run dev                         # http://localhost:3000
 ```
 
-The backend only allows CORS requests from `http://localhost:3000`, so run the frontend on that port during local development.
+By default the backend only allows CORS requests from `http://localhost:3000`. To use another port, add it to `ALLOWED_ORIGINS` in `backend/.env`.
 
 Other frontend scripts: `npm run build`, `npm run start`, `npm run lint`.
+
+## Deployment
+
+### Environment variables
+
+| Service           | Variable              | Value                                                        |
+| ----------------- | --------------------- | ------------------------------------------------------------ |
+| Railway (backend) | `DATABASE_URL`        | PostgreSQL connection string (reference the Railway Postgres service) |
+| Railway (backend) | `ALLOWED_ORIGINS`     | Comma-separated frontend URLs, e.g. `https://hirescope.vercel.app` |
+| Vercel (frontend) | `NEXT_PUBLIC_API_URL` | Public URL of the Railway backend, e.g. `https://hirescope-api.up.railway.app` |
+
+### Backend (Railway)
+
+- Set the service root directory to `backend`.
+- The start command comes from `backend/Procfile`: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+- Tables are created on startup. The database is empty until the scraper runs against it: `python -m scripts.run_scraper`.
+
+### Frontend (Vercel)
+
+- Set the project root directory to `frontend`. Vercel detects Next.js automatically.
+- `NEXT_PUBLIC_API_URL` is read at build time, so redeploy after changing it.
+- Vercel preview deployments use different URLs. They can only call the API if their origin is added to `ALLOWED_ORIGINS`.
 
 ## Project Structure
 
 ```
 backend/
   main.py              FastAPI app and routes
+  Procfile             Railway start command
   app/
     config.py          Settings (DATABASE_URL)
     database.py        SQLAlchemy engine and session
@@ -215,7 +240,7 @@ frontend/
 - Store and display full job descriptions
 - Enrich company data (industry, size, location, technologies)
 - Collect job history to support real hiring trends
-- Add a PostgreSQL driver and deploy (Vercel and Railway)
+- Deploy (Vercel and Railway)
 - Scheduled scraper runs
 
 ### Planned API

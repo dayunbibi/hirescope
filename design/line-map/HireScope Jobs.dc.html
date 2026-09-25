@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+input::placeholder{color:#8a8c88}
+input[type=range]{accent-color:#16181a}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:32px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · JOBS PAGE · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">The filters work: stations, lines, salary, level, keyword and sort. Switch states below.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">Rows 1–3 are the real example jobs. Rows marked <span style="font:500 12px 'IBM Plex Mono',monospace;border:1px dashed #888;padding:1px 5px;border-radius:3px">SAMPLE</span> are placeholders using real companies and skills, with no invented salaries. Station counts are sample data except Remote.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<span style="font:500 14px 'IBM Plex Mono',monospace;color:#555;margin-right:8px">STATE</span>
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+<button onClick="{{ v.pick }}" style="height:40px;padding:0 18px;border-radius:99px;border:1px solid #1a1a1a;background:{{ v.bg }};color:{{ v.fg }};font:500 15px 'IBM Plex Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:64px;align-items:flex-start;flex-wrap:wrap">
+
+<!-- ============ DESKTOP ============ -->
+<div id="jobs-desktop" style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Desktop · 1440</div>
+<div data-screen-label="Jobs Desktop" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif;letter-spacing:-.01em"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:40px 48px 28px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">ALL DEPARTURES · TORONTO / GTA</div>
+<h1 style="margin:0;font:800 48px/1 'Overpass',sans-serif;letter-spacing:-.03em">Jobs</h1>
+<div style="font-size:17px;color:#4a4c49">149 developer postings from 26 companies. Pick a station, a line or a skill.</div>
+</div>
+<div style="display:flex;align-items:center;width:600px;height:56px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 6px 0 20px;gap:10px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg>
+<input value="{{ q }}" onChange="{{ setQ }}" aria-label="Keyword" placeholder="Job title, company or skill" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 17px 'Overpass',sans-serif;color:#16181a">
+<sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearQ }}" aria-label="Clear keyword" style="width:44px;height:44px;border-radius:50%;border:0;background:#efeee8;font:700 16px 'Overpass',sans-serif;cursor:pointer">×</button></sc-if>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:340px minmax(0,1fr);gap:32px;padding:0 48px;align-items:start">
+<aside style="background:#fff;border:1px solid #deddd6;border-radius:16px;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #eceae4"><div style="font:800 17px 'Overpass',sans-serif">Filters</div><button onClick="{{ reset }}" style="border:0;background:transparent;font:600 14px 'Overpass',sans-serif;color:oklch(0.5 0.19 28);cursor:pointer;padding:8px 0">Reset all</button></div>
+<div style="padding:18px 20px;border-bottom:1px solid #eceae4;display:flex;flex-direction:column;gap:12px">
+<div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">LOCATION · STATION</div>
+<div style="position:relative;width:298px;height:170px;background:#fbfbf8;border:1px solid #eceae4;border-radius:10px;overflow:hidden">
+<div style="position:absolute;left:0;right:0;bottom:0;height:14px;background:oklch(0.94 0.025 230)"></div>
+<svg width="298" height="170" viewBox="0 0 880 500" style="position:absolute;left:0;top:0">
+<polyline points="70,430 150,350 480,350 480,190 540,130 680,130" fill="none" stroke="oklch(0.8 0.15 85)" stroke-width="18" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opH }}"></polyline>
+<polyline points="230,350 330,250 330,190 480,190" fill="none" stroke="oklch(0.6 0.14 155)" stroke-width="18" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opO }}"></polyline>
+<polyline points="330,190 330,90" fill="none" stroke="oklch(0.6 0.14 155)" stroke-width="18" stroke-linecap="round" stroke-opacity="{{ opO }}"></polyline>
+<polyline points="480,350 540,410 860,410" fill="none" stroke="oklch(0.6 0.2 28)" stroke-width="18" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opR }}"></polyline>
+</svg>
+<sc-for list="{{ stations }}" as="s" hint-placeholder-count="7">
+<button onClick="{{ s.pick }}" aria-label="{{ s.name }}" style="position:absolute;left:{{ s.mx }}px;top:{{ s.my }}px;width:24px;height:24px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer"><span style="width:{{ s.md }}px;height:{{ s.md }}px;border-radius:50%;box-sizing:border-box;background:{{ s.cBg }};border:3px solid {{ s.cBd }};box-shadow:{{ s.ring }}"></span></button>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ stationRows }}" as="s" hint-placeholder-count="8">
+<button onClick="{{ s.pick }}" style="display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;height:36px;padding:0 8px;border:0;border-radius:8px;background:{{ s.rowBg }};text-align:left;cursor:pointer;font:{{ s.weight }} 15px 'Overpass',sans-serif;color:#16181a">
+<span style="width:14px;height:14px;border-radius:50%;box-sizing:border-box;border:2px solid #16181a;background:{{ s.dot }}"></span>
+<span>{{ s.name }}</span>
+<span style="display:flex;gap:6px;align-items:center;font:500 13px 'Overpass Mono',monospace;color:#4a4c49"><sc-if value="{{ s.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;border:1px dashed #9a9c98;padding:0 3px;border-radius:3px;color:#6a6c68">SAMPLE</span></sc-if>{{ s.n }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="padding:18px 20px;border-bottom:1px solid #eceae4;display:flex;flex-direction:column;gap:8px">
+<div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">WORK TYPE · LINE</div>
+<sc-for list="{{ lines }}" as="l" hint-placeholder-count="4">
+<button onClick="{{ l.pick }}" aria-pressed="{{ l.on }}" style="display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;height:40px;padding:0 10px;border-radius:8px;border:1px solid {{ l.bd }};background:{{ l.bg }};color:#16181a;font:700 15px 'Overpass',sans-serif;text-align:left;cursor:pointer"><span style="height:7px;border-radius:4px;background:{{ l.col }}"></span><span>{{ l.label }}</span><span style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">{{ l.n }}</span></button>
+</sc-for>
+</div>
+<div style="padding:18px 20px;border-bottom:1px solid #eceae4;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">MINIMUM SALARY · CAD</div><div style="font:700 16px 'Overpass Mono',monospace">{{ minSalLabel }}</div></div>
+<input type="range" min="0" max="200" step="10" value="{{ minSal }}" onChange="{{ setMinSal }}" aria-label="Minimum salary" style="width:100%;height:24px">
+<div style="display:flex;justify-content:space-between;font:500 12px 'Overpass Mono',monospace;color:#6a6c68"><span>$0</span><span>$100k</span><span>$200k+</span></div>
+<label style="display:flex;gap:10px;align-items:center;font-size:14px;color:#4a4c49;cursor:pointer;min-height:32px"><input type="checkbox" checked="{{ incNo }}" onChange="{{ toggleIncNo }}" style="width:18px;height:18px;accent-color:#16181a">Include jobs without a listed salary (93)</label>
+</div>
+<div style="padding:18px 20px 22px;display:flex;flex-direction:column;gap:10px">
+<div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">EXPERIENCE LEVEL</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<sc-for list="{{ levels }}" as="lv" hint-placeholder-count="4">
+<button onClick="{{ lv.pick }}" aria-pressed="{{ lv.on }}" style="height:44px;border-radius:10px;border:1.5px solid {{ lv.bd }};background:{{ lv.bg }};color:{{ lv.fg }};font:700 15px 'Overpass',sans-serif;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:0 12px">{{ lv.label }}<span style="font:500 12px 'Overpass Mono',monospace;opacity:.75">{{ lv.n }}</span></button>
+</sc-for>
+</div>
+</div>
+</aside>
+<div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:44px">
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<div style="font:800 20px 'Overpass',sans-serif">{{ countLabel }}</div>
+<sc-for list="{{ chips }}" as="c" hint-placeholder-count="0">
+<button onClick="{{ c.remove }}" style="height:32px;display:flex;align-items:center;gap:6px;padding:0 6px 0 12px;border-radius:99px;border:1px solid #cfcec7;background:#fff;font:600 13px 'Overpass',sans-serif;color:#16181a;cursor:pointer">{{ c.label }}<span aria-hidden="true" style="width:20px;height:20px;border-radius:50%;background:#efeee8;display:grid;place-items:center;font-size:13px">×</span></button>
+</sc-for>
+</div>
+<label style="display:flex;align-items:center;gap:10px;font:600 14px 'Overpass',sans-serif;color:#4a4c49">Sort
+<select value="{{ sort }}" onChange="{{ setSort }}" style="height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #16181a;background:#fff;font:700 15px 'Overpass',sans-serif;color:#16181a;cursor:pointer"><option value="relevant">Most Relevant</option><option value="newest">Newest</option><option value="salary">Highest Salary</option></select>
+</label>
+</div>
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;overflow:hidden">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px 44px;gap:16px;padding:14px 24px;font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#8d908c;border-bottom:1px solid #2c2f2d"><div>POSTED</div><div>LINE</div><div>ROLE · COMPANY · STACK</div><div>LEVEL</div><div>SALARY (CAD)</div><div></div></div>
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ list }}" as="j" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px 44px;gap:16px;padding:16px 24px;align-items:center;border-top:1px solid #262927">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span style="font:600 15px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85)">{{ j.posted }}</span><sc-if value="{{ j.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;color:#a9aba6;border:1px dashed #5a5d5a;padding:0 4px;border-radius:3px">SAMPLE</span></sc-if></div>
+<div style="display:flex;align-items:center;gap:8px;font:600 15px 'Overpass',sans-serif"><span style="width:12px;height:12px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }}</div>
+<div style="display:flex;gap:14px;align-items:flex-start;min-width:0">
+<span style="width:40px;height:40px;flex:none;border-radius:50%;background:#f5f4ef;color:#16181a;display:grid;place-items:center;font:800 16px 'Overpass',sans-serif">{{ j.ini }}</span>
+<div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+<a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a>
+<div style="font-size:14px;color:#b4b6b1">{{ j.c }} · {{ j.loc }}</div>
+<div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid {{ tg.bd }};color:{{ tg.fg }};padding:2px 8px;border-radius:99px">{{ tg.n }}</span></sc-for></div>
+</div>
+</div>
+<div style="font-size:15px;color:#d6d5cf">{{ j.lvl }}</div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+<button onClick="{{ j.toggle }}" aria-label="{{ j.bmLabel }}" aria-pressed="{{ j.bm }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #3c3f3c;background:{{ j.bBg }};display:grid;place-items:center;cursor:pointer"><svg width="13" height="16" viewBox="0 0 14 16" fill="{{ j.bFill }}" stroke="{{ j.bStroke }}" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" aria-label="Loading jobs">
+<sc-for list="{{ skel }}" as="k" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px 44px;gap:16px;padding:20px 24px;align-items:center;border-top:1px solid #262927">
+<span style="height:12px;width:50px;border-radius:3px;background:#2c2f2d"></span><span style="height:12px;width:70px;border-radius:3px;background:#2c2f2d"></span>
+<div style="display:flex;gap:14px;align-items:center"><span style="width:40px;height:40px;border-radius:50%;background:#2c2f2d"></span><div style="display:flex;flex-direction:column;gap:8px;flex:1"><span style="height:14px;width:{{ k.w }};border-radius:3px;background:#34373a"></span><span style="height:10px;width:40%;border-radius:3px;background:#2c2f2d"></span></div></div>
+<span style="height:12px;width:60px;border-radius:3px;background:#2c2f2d"></span><span style="height:12px;width:110px;border-radius:3px;background:#2c2f2d"></span><span style="width:44px;height:44px;border-radius:50%;background:#2c2f2d"></span>
+</div>
+</sc-for>
+<div style="padding:14px 24px;border-top:1px solid #262927;font:500 13px 'Overpass Mono',monospace;color:#a9aba6">Checking all lines for new departures…</div>
+</div>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:56px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:12px">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.85 0.15 85)">NO DEPARTURES</div>
+<div style="font:800 28px 'Overpass',sans-serif;letter-spacing:-.02em">No jobs match these filters.</div>
+<div style="font-size:16px;color:#b4b6b1;max-width:520px;line-height:1.5">Try another station, lower the minimum salary, or include jobs without a listed salary. Most postings don’t list one.</div>
+<div style="display:flex;gap:10px;margin-top:8px"><button onClick="{{ reset }}" style="height:44px;padding:0 20px;border-radius:99px;border:0;background:oklch(0.85 0.15 85);color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Clear all filters</button><button onClick="{{ allStations }}" style="height:44px;padding:0 20px;border-radius:99px;border:1px solid #4a4d4a;background:transparent;color:#f5f4ef;font:700 15px 'Overpass',sans-serif;cursor:pointer">Show all stations</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="padding:56px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div>
+<div style="font:800 28px 'Overpass',sans-serif;letter-spacing:-.02em">We can’t reach the HireScope API right now.</div>
+<div style="font-size:16px;color:#b4b6b1;max-width:560px;line-height:1.5">Job data is temporarily unavailable. Your filters and bookmarks are kept. Try again in a moment.</div>
+<button onClick="{{ retry }}" style="margin-top:8px;height:44px;padding:0 22px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Retry</button>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ showPager }}" hint-placeholder-val="{{ true }}">
+<nav aria-label="Pagination" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+<div style="font:500 14px 'Overpass Mono',monospace;color:#4a4c49">{{ rangeLabel }}</div>
+<div style="display:flex;gap:6px">
+<button aria-label="Previous page" style="height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #cfcec7;background:#fff;color:#8a8c88;font:700 15px 'Overpass',sans-serif" disabled="{{ true }}">← Prev</button>
+<sc-for list="{{ pages }}" as="p" hint-placeholder-count="5">
+<button aria-current="{{ p.current }}" style="width:44px;height:44px;border-radius:50%;border:1.5px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};font:700 15px 'Overpass Mono',monospace;cursor:pointer">{{ p.label }}</button>
+</sc-for>
+<button aria-label="Next page" style="height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #16181a;background:#fff;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Next →</button>
+</div>
+</nav>
+</sc-if>
+</div>
+</div>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<!-- ============ MOBILE ============ -->
+<div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+
+<div id="jobs-mobile" style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · results</div>
+<div data-screen-label="Jobs Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button>
+</div>
+<div style="padding:22px 16px 14px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h1 style="margin:0;font:800 34px/1 'Overpass',sans-serif;letter-spacing:-.03em">Jobs</h1><span style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">{{ countLabel }}</span></div>
+<div style="display:flex;align-items:center;height:52px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 16px;gap:10px">
+<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg>
+<input value="{{ q }}" onChange="{{ setQ }}" aria-label="Keyword" placeholder="Title, company or skill" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 16px 'Overpass',sans-serif;color:#16181a">
+</div>
+<div style="display:flex;gap:8px">
+<button style="flex:1;height:44px;border-radius:99px;border:1.5px solid #16181a;background:#16181a;color:#fff;font:700 15px 'Overpass',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px">Filters<span style="min-width:20px;height:20px;border-radius:10px;background:oklch(0.85 0.15 85);color:#16181a;font:700 12px 'Overpass Mono',monospace;display:grid;place-items:center;padding:0 5px">{{ activeCount }}</span></button>
+<select value="{{ sort }}" onChange="{{ setSort }}" aria-label="Sort" style="flex:1;height:44px;padding:0 12px;border-radius:99px;border:1.5px solid #16181a;background:#fff;font:700 15px 'Overpass',sans-serif;color:#16181a"><option value="relevant">Most Relevant</option><option value="newest">Newest</option><option value="salary">Highest Salary</option></select>
+</div>
+<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px">
+<sc-for list="{{ lines }}" as="l" hint-placeholder-count="4">
+<button onClick="{{ l.pick }}" aria-pressed="{{ l.on }}" style="flex:none;height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:99px;border:1.5px solid {{ l.mbd }};background:{{ l.mbg }};color:#16181a;font:700 14px 'Overpass',sans-serif;cursor:pointer"><span style="width:10px;height:10px;border-radius:50%;background:{{ l.col }}"></span>{{ l.short }}</button>
+</sc-for>
+</div>
+</div>
+<div style="padding:0 12px 16px;display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ mlist }}" as="j" hint-placeholder-count="4">
+<article style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px;font:600 13px 'Overpass Mono',monospace"><span style="width:10px;height:10px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }} · <span style="color:oklch(0.85 0.15 85)">{{ j.posted }}</span><sc-if value="{{ j.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;color:#a9aba6;border:1px dashed #5a5d5a;padding:0 4px;border-radius:3px">SAMPLE</span></sc-if></div>
+<button onClick="{{ j.toggle }}" aria-label="{{ j.bmLabel }}" style="width:44px;height:44px;margin:-8px -8px -8px 0;border-radius:50%;border:1px solid #3c3f3c;background:{{ j.bBg }};display:grid;place-items:center"><svg width="13" height="16" viewBox="0 0 14 16" fill="{{ j.bFill }}" stroke="{{ j.bStroke }}" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button></div>
+<div style="display:flex;gap:12px;align-items:flex-start"><span style="width:36px;height:36px;flex:none;border-radius:50%;background:#f5f4ef;color:#16181a;display:grid;place-items:center;font:800 15px 'Overpass',sans-serif">{{ j.ini }}</span><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a><span style="font-size:14px;color:#b4b6b1">{{ j.c }} · {{ j.loc }} · {{ j.lvl }}</span></div></div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+<div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid {{ tg.bd }};color:{{ tg.fg }};padding:2px 8px;border-radius:99px">{{ tg.n }}</span></sc-for></div>
+</article>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ mskel }}" as="k" hint-placeholder-count="3">
+<div style="background:#16181a;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px"><span style="height:10px;width:40%;border-radius:3px;background:#2c2f2d"></span><div style="display:flex;gap:12px"><span style="width:36px;height:36px;border-radius:50%;background:#2c2f2d"></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><span style="height:14px;width:{{ k.w }};border-radius:3px;background:#34373a"></span><span style="height:10px;width:55%;border-radius:3px;background:#2c2f2d"></span></div></div><span style="height:10px;width:30%;border-radius:3px;background:#2c2f2d"></span></div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.85 0.15 85)">NO DEPARTURES</div><div style="font:800 22px 'Overpass',sans-serif">No jobs match these filters.</div><div style="font-size:15px;color:#b4b6b1;line-height:1.5">Try another station or lower the minimum salary.</div><button onClick="{{ reset }}" style="margin-top:6px;height:48px;border-radius:99px;border:0;background:oklch(0.85 0.15 85);color:#16181a;font:700 15px 'Overpass',sans-serif">Clear all filters</button></div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:8px;font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:9px;height:9px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div><div style="font:800 22px 'Overpass',sans-serif">Can’t reach the HireScope API.</div><div style="font-size:15px;color:#b4b6b1;line-height:1.5">Your filters and bookmarks are kept.</div><button onClick="{{ retry }}" style="margin-top:6px;height:48px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif">Retry</button></div>
+</sc-if>
+<sc-if value="{{ showPager }}" hint-placeholder-val="{{ true }}">
+<nav aria-label="Pagination" style="display:flex;justify-content:space-between;align-items:center;padding-top:6px">
+<button disabled="{{ true }}" style="height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #cfcec7;background:#fff;color:#8a8c88;font:700 15px 'Overpass',sans-serif">← Prev</button>
+<span style="font:600 14px 'Overpass Mono',monospace">{{ mPageLabel }}</span>
+<button style="height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #16181a;background:#fff;color:#16181a;font:700 15px 'Overpass',sans-serif">Next →</button>
+</nav>
+</sc-if>
+</div>
+<footer style="padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · filters sheet</div>
+<div data-screen-label="Jobs Mobile Filters" style="width:390px;height:844px;position:relative;background:#6d6e6a;font-family:'Overpass',sans-serif;color:#16181a;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="position:absolute;left:0;right:0;bottom:0;top:56px;background:#f5f4ef;border-radius:24px 24px 0 0;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 20px;border-bottom:1px solid #deddd6"><div style="font:800 20px 'Overpass',sans-serif">Filters</div><div style="display:flex;gap:4px;align-items:center"><button onClick="{{ reset }}" style="height:44px;padding:0 12px;border:0;background:transparent;font:600 15px 'Overpass',sans-serif;color:oklch(0.5 0.19 28)">Reset</button><button aria-label="Close filters" style="width:44px;height:44px;border-radius:50%;border:0;background:#e8e7e1;font:700 18px 'Overpass',sans-serif">×</button></div></div>
+<div style="flex:1;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">LOCATION · STATION</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ stationRows }}" as="s" hint-placeholder-count="8"><button onClick="{{ s.pick }}" style="height:44px;padding:0 14px;border-radius:99px;border:1.5px solid {{ s.mbd }};background:{{ s.mbg }};color:{{ s.mfg }};font:700 14px 'Overpass',sans-serif;display:flex;align-items:center;gap:6px">{{ s.short }}<span style="font:500 12px 'Overpass Mono',monospace;opacity:.7">{{ s.n }}</span></button></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">WORK TYPE · LINE</div>
+<sc-for list="{{ lines }}" as="l" hint-placeholder-count="4"><button onClick="{{ l.pick }}" style="display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;height:48px;padding:0 14px;border-radius:12px;border:1.5px solid {{ l.mbd }};background:{{ l.mbg }};color:#16181a;font:700 16px 'Overpass',sans-serif;text-align:left"><span style="height:7px;border-radius:4px;background:{{ l.col }}"></span><span>{{ l.label }}</span><span style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">{{ l.n }}</span></button></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">MINIMUM SALARY</div><div style="font:700 15px 'Overpass Mono',monospace">{{ minSalLabel }}</div></div>
+<input type="range" min="0" max="200" step="10" value="{{ minSal }}" onChange="{{ setMinSal }}" aria-label="Minimum salary" style="width:100%;height:32px">
+<label style="display:flex;gap:10px;align-items:center;font-size:15px;color:#4a4c49;min-height:44px"><input type="checkbox" checked="{{ incNo }}" onChange="{{ toggleIncNo }}" style="width:20px;height:20px;accent-color:#16181a">Include jobs without a listed salary</label></div>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">EXPERIENCE LEVEL</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><sc-for list="{{ levels }}" as="lv" hint-placeholder-count="4"><button onClick="{{ lv.pick }}" style="height:48px;border-radius:12px;border:1.5px solid {{ lv.bd }};background:{{ lv.bg }};color:{{ lv.fg }};font:700 15px 'Overpass',sans-serif;display:flex;justify-content:space-between;align-items:center;padding:0 14px">{{ lv.label }}<span style="font:500 12px 'Overpass Mono',monospace;opacity:.75">{{ lv.n }}</span></button></sc-for></div></div>
+</div>
+<div style="padding:12px 20px 24px;border-top:1px solid #deddd6;background:#f5f4ef"><button style="width:100%;height:52px;border-radius:99px;border:0;background:#16181a;color:#fff;font:800 16px 'Overpass',sans-serif">Show {{ countLabel }}</button></div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · menu open (global)</div>
+<div data-screen-label="Mobile Menu" style="width:390px;height:844px;background:#16181a;color:#f5f4ef;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;border-bottom:1px solid #2c2f2d">
+<div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<button aria-label="Close menu" style="width:44px;height:44px;border-radius:50%;border:0;background:#2c2f2d;color:#f5f4ef;font:700 20px 'Overpass',sans-serif">×</button>
+</div>
+<nav style="position:relative;display:flex;flex-direction:column;padding:24px 20px 0 20px">
+<div style="position:absolute;left:33px;top:48px;bottom:30px;width:6px;background:oklch(0.6 0.2 28);border-radius:3px"></div>
+<a href="#" style="position:relative;display:flex;align-items:center;gap:18px;height:64px;font:700 22px 'Overpass',sans-serif;color:#c9c8c2"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#16181a;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box"></span>Home</a>
+<a href="#" aria-current="page" style="position:relative;display:flex;align-items:center;gap:18px;height:64px;font:800 22px 'Overpass',sans-serif;color:#fff"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#f5f4ef;border:5px solid #f5f4ef;box-sizing:border-box;box-shadow:0 0 0 5px rgba(245,244,239,.2)"></span>Jobs<span style="font:600 12px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85);margin-left:auto">YOU ARE HERE</span></a>
+<a href="#" style="position:relative;display:flex;align-items:center;gap:18px;height:64px;font:700 22px 'Overpass',sans-serif;color:#c9c8c2"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#16181a;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box"></span>Analytics</a>
+<a href="#" style="position:relative;display:flex;align-items:center;gap:18px;height:64px;font:700 22px 'Overpass',sans-serif;color:#c9c8c2"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#16181a;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box"></span>Companies</a>
+<a href="#" style="position:relative;display:flex;align-items:center;gap:18px;height:64px;font:700 22px 'Overpass',sans-serif;color:#c9c8c2"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#16181a;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box"></span>Bookmarks<span style="font:600 13px 'Overpass Mono',monospace;color:#c9c8c2;margin-left:auto">{{ bmCount }}</span></a>
+</nav>
+<div style="margin-top:auto;padding:20px;border-top:1px solid #2c2f2d;font:500 12px/1.6 'Overpass Mono',monospace;color:#a9aba6">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'default', q: '', area: 'all', wt: 'All', minSal: 0, incNo: true, lv: [], sort: 'relevant', bm: [2] };
+
+  jobs() {
+    const J = (id, t, c, loc, area, wt, lvl, skills, d, sample, smin, smax) => ({ id, t, c, ini: c[0], loc, area, wt, lvl, skills, d, posted: 'Sep ' + d, sample: !!sample, smin, smax, hasSal: !!smax });
+    return [
+      J(1, 'Senior Machine Learning Systems Engineer (CAD)', 'PointClickCare', 'Mississauga', 'mississauga', 'Hybrid', 'Senior', ['Python', 'Java', 'AWS', 'Azure'], 24, 0, 154, 193),
+      J(2, 'Junior Linux Kernel Engineer – Ubuntu', 'Canonical', 'Anywhere', 'remote', 'Remote', 'Entry', ['Python', 'Rust'], 23),
+      J(3, 'Contract Staff Front End Engineer', 'Mozilla', 'Canada', 'remote', 'Remote', 'Senior', ['JavaScript', 'HTML', 'CSS'], 22),
+      J(4, 'Senior Backend Engineer, Go', 'Faire', 'Toronto', 'downtown', 'Hybrid', 'Senior', ['Go', 'Kubernetes', 'AWS'], 22, 1),
+      J(5, 'Staff Platform Engineer', 'Canonical', 'Anywhere', 'remote', 'Remote', 'Lead', ['Go', 'Kubernetes', 'Docker'], 21, 1),
+      J(6, 'Software Engineer II, Frontend', 'Achievers', 'Toronto', 'downtown', 'Hybrid', 'Mid-Level', ['React', 'TypeScript'], 21, 1),
+      J(7, 'Data Engineer', 'Zensurance', 'Toronto', 'downtown', 'Hybrid', 'Mid-Level', ['Python', 'AWS', 'Docker'], 20, 1),
+      J(8, 'Lead Machine Learning Engineer', 'PointClickCare', 'Mississauga', 'mississauga', 'Hybrid', 'Lead', ['Python', 'Machine Learning', 'Azure'], 19, 1),
+      J(9, 'Full Stack Developer', 'Zensurance', 'Toronto', 'downtown', 'On-site', 'Mid-Level', ['React', 'TypeScript', 'Java'], 18, 1),
+      J(10, 'Senior Site Reliability Engineer', 'Faire', 'Toronto', 'downtown', 'Hybrid', 'Senior', ['Kubernetes', 'AWS', 'Go'], 18, 1),
+    ];
+  }
+
+  renderVals() {
+    const S = this.state;
+    const LC = { Hybrid: 'oklch(0.8 0.15 85)', 'On-site': 'oklch(0.6 0.14 155)', Remote: 'oklch(0.6 0.2 28)' };
+    const yellow = 'oklch(0.85 0.15 85)';
+    const q = S.q.trim().toLowerCase();
+    const st = [
+      { id: 'downtown', name: 'Downtown Toronto', short: 'Downtown', x: 480, y: 350, n: 38, lines: ['Hybrid', 'Remote'] },
+      { id: 'mississauga', name: 'Mississauga', short: 'Mississauga', x: 230, y: 350, n: 30, lines: ['Hybrid', 'On-site'] },
+      { id: 'northyork', name: 'North York', short: 'North York', x: 480, y: 190, n: 8, lines: ['Hybrid', 'On-site'] },
+      { id: 'markham', name: 'Markham', short: 'Markham', x: 680, y: 130, n: 6, lines: ['Hybrid'] },
+      { id: 'vaughan', name: 'Vaughan', short: 'Vaughan', x: 330, y: 90, n: 3, lines: ['On-site'] },
+      { id: 'oakville', name: 'Oakville', short: 'Oakville', x: 70, y: 430, n: 3, lines: ['Hybrid'] },
+      { id: 'remote', name: 'Remote · Canada', short: 'Remote', x: 760, y: 410, n: 61, real: true, lines: ['Remote'] },
+    ];
+    const pickArea = id => () => this.setState(s => ({ area: s.area === id ? 'all' : id }));
+    const sc = 298 / 880;
+    const stations = st.map(s => {
+      const sel = S.area === s.id, inter = s.lines.length > 1, md = inter ? 14 : 11;
+      return { name: s.name, mx: s.x * sc - 12, my: s.y * sc - 12, md, pick: pickArea(s.id),
+        cBg: sel ? '#16181a' : '#fff', cBd: inter || sel ? '#16181a' : LC[s.lines[0]], ring: sel ? '0 0 0 4px rgba(22,24,26,.2)' : 'none' };
+    });
+    const stationRows = [{ id: 'all', name: 'All stations', short: 'All', n: 149, real: true }, ...st].map(s => {
+      const sel = S.area === s.id;
+      return { name: s.name, short: s.short, n: s.n, sample: !s.real, pick: () => this.setState({ area: s.id }),
+        rowBg: sel ? '#efeee8' : 'transparent', weight: sel ? 800 : 500, dot: sel ? '#16181a' : '#fff',
+        mbg: sel ? '#16181a' : '#fff', mfg: sel ? '#fff' : '#16181a', mbd: sel ? '#16181a' : '#cfcec7' };
+    });
+    const lineOn = l => S.wt === 'All' || S.wt === l;
+    const counts = { All: 149, Remote: 61, Hybrid: 71, 'On-site': 17 };
+    const lines = ['All', 'Remote', 'Hybrid', 'On-site'].map(l => {
+      const on = S.wt === l;
+      return { label: l === 'All' ? 'All lines' : l + ' Line', short: l, n: counts[l], on, col: l === 'All' ? '#16181a' : LC[l],
+        bg: on ? '#efeee8' : '#fff', bd: on ? '#16181a' : 'transparent', mbg: on ? '#fff' : 'transparent', mbd: on ? '#16181a' : '#cfcec7',
+        pick: () => this.setState({ wt: l }) };
+    });
+    const LV = [['Entry', 6], ['Mid-Level', 42], ['Senior', 66], ['Lead', 35]];
+    const levels = LV.map(([l, n]) => {
+      const on = S.lv.includes(l);
+      return { label: l, n, on, bg: on ? '#16181a' : '#fff', fg: on ? '#fff' : '#16181a', bd: on ? '#16181a' : '#cfcec7',
+        pick: () => this.setState(s => ({ lv: s.lv.includes(l) ? s.lv.filter(x => x !== l) : [...s.lv, l] })) };
+    });
+
+    let list = this.jobs().filter(j => {
+      if (S.area !== 'all' && j.area !== S.area) return false;
+      if (S.wt !== 'All' && j.wt !== S.wt) return false;
+      if (S.lv.length && !S.lv.includes(j.lvl)) return false;
+      if (S.minSal > 0) { if (j.hasSal) { if (j.smax < S.minSal) return false; } else if (!S.incNo) return false; }
+      if (q && !(j.t + ' ' + j.c + ' ' + j.skills.join(' ')).toLowerCase().includes(q)) return false;
+      return true;
+    });
+    const rel = j => q ? (j.t.toLowerCase().includes(q) ? 3 : 0) + (j.skills.some(s => s.toLowerCase().includes(q)) ? 2 : 0) + (j.c.toLowerCase().includes(q) ? 1 : 0) : 0;
+    if (S.sort === 'newest') list.sort((a, b) => b.d - a.d);
+    else if (S.sort === 'salary') list.sort((a, b) => (b.smax || 0) - (a.smax || 0) || b.d - a.d);
+    else list.sort((a, b) => rel(b) - rel(a) || (a.sample - b.sample) || b.d - a.d);
+
+    const deco = j => {
+      const b = S.bm.includes(j.id);
+      return { ...j, lineCol: LC[j.wt],
+        sal: j.hasSal ? '$' + j.smin + 'k–$' + j.smax + 'k' : 'Salary not disclosed', salCol: j.hasSal ? '#f5f4ef' : '#8d908c',
+        tags: j.skills.map(n => { const hit = q && n.toLowerCase().includes(q); return { n, bd: hit ? yellow : '#3c3f3c', fg: hit ? yellow : '#d6d5cf' }; }),
+        bm: b, bmLabel: b ? 'Remove bookmark' : 'Bookmark job', bBg: b ? yellow : 'transparent', bFill: b ? '#16181a' : 'none', bStroke: b ? '#16181a' : '#d6d5cf',
+        toggle: () => this.setState(s => ({ bm: s.bm.includes(j.id) ? s.bm.filter(x => x !== j.id) : [...s.bm, j.id] })) };
+    };
+
+    const isDefault = !q && S.area === 'all' && S.wt === 'All' && S.minSal === 0 && !S.lv.length;
+    const v = S.view;
+    const empty = v === 'empty' || (v === 'default' && list.length === 0);
+    const count = v === 'empty' ? 0 : isDefault ? 149 : list.length;
+
+    const chips = [];
+    if (q) chips.push({ label: '“' + S.q + '”', remove: () => this.setState({ q: '' }) });
+    if (S.area !== 'all') chips.push({ label: st.find(s => s.id === S.area).name, remove: () => this.setState({ area: 'all' }) });
+    if (S.wt !== 'All') chips.push({ label: S.wt + ' Line', remove: () => this.setState({ wt: 'All' }) });
+    if (S.minSal) chips.push({ label: '≥ $' + S.minSal + 'k', remove: () => this.setState({ minSal: 0 }) });
+    S.lv.forEach(l => chips.push({ label: l, remove: () => this.setState(s => ({ lv: s.lv.filter(x => x !== l) })) }));
+
+    const pages = isDefault ? ['1', '2', '3', '…', '15'] : ['1'];
+    const reset = () => this.setState({ q: '', area: 'all', wt: 'All', minSal: 0, incNo: true, lv: [], view: S.view === 'empty' ? 'default' : S.view });
+
+    return {
+      views: [['default', 'Default'], ['loading', 'Loading'], ['empty', 'Empty'], ['error', 'Error']].map(([id, label]) => ({ label, bg: v === id ? '#1a1a1a' : '#fff', fg: v === id ? '#fff' : '#1a1a1a', pick: () => this.setState({ view: id }) })),
+      q: S.q, hasQ: !!S.q, setQ: e => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }),
+      stations, stationRows, lines, levels,
+      opH: lineOn('Hybrid') ? 1 : 0.15, opO: lineOn('On-site') ? 1 : 0.15, opR: lineOn('Remote') ? 1 : 0.15,
+      minSal: S.minSal, minSalLabel: S.minSal ? '$' + S.minSal + 'k+' : 'Any', setMinSal: e => this.setState({ minSal: +e.target.value }),
+      incNo: S.incNo, toggleIncNo: () => this.setState(s => ({ incNo: !s.incNo })),
+      sort: S.sort, setSort: e => this.setState({ sort: e.target.value }),
+      reset, allStations: () => this.setState({ area: 'all', view: 'default' }), retry: () => this.setState({ view: 'default' }),
+      chips, activeCount: chips.length,
+      countLabel: v === 'loading' || v === 'error' ? '— jobs' : count + (count === 1 ? ' job' : ' jobs'),
+      list: list.map(deco), mlist: list.slice(0, 4).map(deco),
+      showList: v === 'default' && list.length > 0, isLoading: v === 'loading', isEmpty: empty, isError: v === 'error',
+      skel: ['62%', '48%', '70%', '55%', '66%', '44%'].map(w => ({ w })), mskel: ['80%', '65%', '72%'].map(w => ({ w })),
+      showPager: v === 'default' && list.length > 0,
+      pages: pages.map(p => ({ label: p, current: p === '1' ? 'page' : 'false', bg: p === '1' ? '#16181a' : '#fff', fg: p === '1' ? '#fff' : '#16181a', bd: p === '1' ? '#16181a' : '#cfcec7' })),
+      rangeLabel: isDefault ? 'Showing 1–10 of 149' : 'Showing ' + list.length + ' of ' + list.length,
+      mPageLabel: isDefault ? 'Page 1 of 15' : 'Page 1 of 1',
+      bmCount: String(S.bm.length),
+    };
+  }
+}
+</script>
+</body>
+</html>

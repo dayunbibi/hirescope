@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:32px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · BOOKMARKS · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">Your saved route. It uses the same row as Jobs, and removing a job can be undone.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">Bookmarks are saved in the browser (localStorage), so there’s no account. Remove every job to see the empty state.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<span style="font:500 14px 'IBM Plex Mono',monospace;color:#555;margin-right:8px">STATE</span>
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+<button onClick="{{ v.pick }}" style="height:40px;padding:0 18px;border-radius:99px;border:1px solid #1a1a1a;background:{{ v.bg }};color:{{ v.fg }};font:500 15px 'IBM Plex Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:64px;align-items:flex-start;flex-wrap:wrap">
+
+<div style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Desktop · 1440</div>
+<div data-screen-label="Bookmarks Desktop" style="width:1440px;min-height:760px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Companies</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Bookmarks <span style="font:600 12px 'Overpass Mono',monospace;margin-left:4px">{{ count }}</span></a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:40px 48px 24px">
+<div style="display:flex;flex-direction:column;gap:8px"><div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">YOUR SAVED ROUTE</div><h1 style="margin:0;font:800 48px/1 'Overpass',sans-serif;letter-spacing:-.03em">Bookmarks</h1><div style="font-size:17px;color:#4a4c49">{{ subLabel }}</div></div>
+<a href="#" style="height:48px;padding:0 22px;border-radius:99px;border:1.5px solid #16181a;background:#fff;display:flex;align-items:center;font:700 15px 'Overpass',sans-serif">Browse all jobs →</a>
+</div>
+<div style="padding:0 48px;flex:1">
+<sc-if value="{{ undo }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;background:#fff;border:1.5px solid #16181a;border-radius:12px;padding:8px 8px 8px 18px;font-size:15px"><span>Removed <b>{{ undoTitle }}</b> from bookmarks.</span><button onClick="{{ doUndo }}" style="height:40px;padding:0 18px;border-radius:99px;border:0;background:#16181a;color:#fff;font:700 14px 'Overpass',sans-serif;cursor:pointer">Undo</button></div>
+</sc-if>
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;overflow:hidden">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px 120px;gap:16px;padding:14px 24px;font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#8d908c;border-bottom:1px solid #2c2f2d"><div>POSTED</div><div>LINE</div><div>ROLE · COMPANY · STACK</div><div>LEVEL</div><div>SALARY (CAD)</div><div></div></div>
+<sc-for list="{{ list }}" as="j" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px 120px;gap:16px;padding:16px 24px;align-items:center;border-top:1px solid #262927">
+<div style="font:600 15px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85)">{{ j.posted }}</div>
+<div style="display:flex;align-items:center;gap:8px;font:600 15px 'Overpass',sans-serif"><span style="width:12px;height:12px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }}</div>
+<div style="display:flex;gap:14px;align-items:flex-start;min-width:0"><span style="width:40px;height:40px;flex:none;border-radius:50%;background:#f5f4ef;color:#16181a;display:grid;place-items:center;font:800 16px 'Overpass',sans-serif">{{ j.ini }}</span><div style="display:flex;flex-direction:column;gap:6px;min-width:0"><a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a><div style="font-size:14px;color:#b4b6b1">{{ j.c }} · {{ j.loc }}</div><div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #3c3f3c;color:#d6d5cf;padding:2px 8px;border-radius:99px">{{ tg.n }}</span></sc-for></div></div></div>
+<div style="font-size:15px;color:#d6d5cf">{{ j.lvl }}</div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+<button onClick="{{ j.remove }}" aria-label="{{ j.aria }}" style="height:44px;padding:0 14px;border-radius:99px;border:0;background:oklch(0.85 0.15 85);color:#16181a;display:flex;align-items:center;gap:8px;font:700 14px 'Overpass',sans-serif;cursor:pointer;justify-self:end"><svg width="12" height="15" viewBox="0 0 14 16" fill="#16181a"><path d="M2 1h10v14l-5-4-5 4z"></path></svg>Remove</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:64px 40px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:40px;align-items:center">
+<div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.52 0.19 28)">NO SAVED STOPS</div>
+<div style="font:800 32px/1.1 'Overpass',sans-serif;letter-spacing:-.02em">You haven’t bookmarked any jobs yet.</div>
+<div style="font-size:16px;color:#4a4c49;line-height:1.5;max-width:520px">Tap the bookmark on any job to save it here. Bookmarks stay in this browser.</div>
+<a href="#" style="margin-top:8px;height:48px;padding:0 24px;border-radius:99px;background:#16181a;color:#fff;display:flex;align-items:center;font:800 16px 'Overpass',sans-serif">Find jobs to save →</a>
+</div>
+<div style="position:relative;height:120px">
+<span style="position:absolute;left:0;right:0;top:54px;height:10px;border-radius:5px;background:repeating-linear-gradient(90deg,#cfcec7 0 18px,transparent 18px 30px)"></span>
+<span style="position:absolute;left:0;top:44px;width:30px;height:30px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span>
+<span style="position:absolute;left:calc(50% - 15px);top:44px;width:30px;height:30px;border-radius:50%;background:#fff;border:3px dashed #9a9c98;box-sizing:border-box"></span>
+<span style="position:absolute;right:0;top:44px;width:30px;height:30px;border-radius:50%;background:#fff;border:3px dashed #9a9c98;box-sizing:border-box"></span>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:56px 40px;display:flex;flex-direction:column;gap:12px;align-items:flex-start"><div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div><div style="font:800 28px 'Overpass',sans-serif">Your 3 bookmarks are safe, but we can’t load their details.</div><div style="font-size:16px;color:#b4b6b1">The HireScope API isn’t responding. Try again in a moment.</div><button onClick="{{ retry }}" style="margin-top:8px;height:44px;padding:0 22px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Retry</button></div>
+</sc-if>
+</div>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · 390</div>
+<div data-screen-label="Bookmarks Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;background:#16181a;color:#f5f4ef"><div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div><button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button></div>
+<div style="padding:22px 16px 14px;display:flex;justify-content:space-between;align-items:baseline"><h1 style="margin:0;font:800 34px/1 'Overpass',sans-serif;letter-spacing:-.03em">Bookmarks</h1><span style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">{{ count }} saved</span></div>
+<div style="padding:0 12px 20px;display:flex;flex-direction:column;gap:10px;min-height:360px">
+<sc-if value="{{ undo }}" hint-placeholder-val="{{ false }}"><div role="status" style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1.5px solid #16181a;border-radius:12px;padding:6px 6px 6px 14px;font-size:14px"><span>Bookmark removed</span><button onClick="{{ doUndo }}" style="height:44px;padding:0 16px;border-radius:99px;border:0;background:#16181a;color:#fff;font:700 14px 'Overpass',sans-serif">Undo</button></div></sc-if>
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ list }}" as="j" hint-placeholder-count="3">
+<article style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px;font:600 13px 'Overpass Mono',monospace"><span style="width:10px;height:10px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }} · <span style="color:oklch(0.85 0.15 85)">{{ j.posted }}</span></div><button onClick="{{ j.remove }}" aria-label="{{ j.aria }}" style="width:44px;height:44px;margin:-8px -8px -8px 0;border-radius:50%;border:0;background:oklch(0.85 0.15 85);display:grid;place-items:center"><svg width="13" height="16" viewBox="0 0 14 16" fill="#16181a"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button></div>
+<div style="display:flex;gap:12px;align-items:flex-start"><span style="width:36px;height:36px;flex:none;border-radius:50%;background:#f5f4ef;color:#16181a;display:grid;place-items:center;font:800 15px 'Overpass',sans-serif">{{ j.ini }}</span><div style="display:flex;flex-direction:column;gap:3px;min-width:0"><a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a><span style="font-size:14px;color:#b4b6b1">{{ j.c }} · {{ j.loc }} · {{ j.lvl }}</span></div></div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+<div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #3c3f3c;color:#d6d5cf;padding:2px 8px;border-radius:99px">{{ tg.n }}</span></sc-for></div>
+</article>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.52 0.19 28)">NO SAVED STOPS</div><div style="font:800 22px/1.15 'Overpass',sans-serif">You haven’t bookmarked any jobs yet.</div><div style="font-size:15px;color:#4a4c49;line-height:1.5">Tap the bookmark on any job to save it here.</div><a href="#" style="margin-top:6px;height:48px;border-radius:99px;background:#16181a;color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px 'Overpass',sans-serif">Find jobs to save →</a></div></sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)">SERVICE DISRUPTION</div><div style="font:800 20px 'Overpass',sans-serif">Bookmarks are safe, but we can’t load their details.</div><button onClick="{{ retry }}" style="height:48px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif">Retry</button></div></sc-if>
+</div>
+<footer style="padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'default', saved: [1, 2, 3], undo: null };
+  renderVals() {
+    const S = this.state, v = S.view;
+    const LC = { Hybrid: 'oklch(0.8 0.15 85)', Remote: 'oklch(0.6 0.2 28)' };
+    const ALL = [
+      { id: 1, t: 'Senior Machine Learning Systems Engineer (CAD)', c: 'PointClickCare', loc: 'Mississauga', wt: 'Hybrid', lvl: 'Senior', sal: '$154k–$193k', skills: ['Python', 'Java', 'AWS', 'Azure'], posted: 'Sep 24' },
+      { id: 2, t: 'Junior Linux Kernel Engineer – Ubuntu', c: 'Canonical', loc: 'Anywhere', wt: 'Remote', lvl: 'Entry', sal: null, skills: ['Python', 'Rust'], posted: 'Sep 23' },
+      { id: 3, t: 'Contract Staff Front End Engineer', c: 'Mozilla', loc: 'Canada', wt: 'Remote', lvl: 'Senior', sal: null, skills: ['JavaScript', 'HTML', 'CSS'], posted: 'Sep 22' },
+    ];
+    const saved = v === 'empty' ? [] : S.saved;
+    const list = ALL.filter(j => saved.includes(j.id)).map(j => ({
+      ...j, ini: j.c[0], lineCol: LC[j.wt], sal: j.sal || 'Salary not disclosed', salCol: j.sal ? '#f5f4ef' : '#8d908c',
+      tags: j.skills.map(n => ({ n })), aria: 'Remove ' + j.t + ' from bookmarks',
+      remove: () => this.setState(s => ({ saved: s.saved.filter(x => x !== j.id), undo: j.id })),
+    }));
+    const undoJob = ALL.find(j => j.id === S.undo);
+    const n = list.length;
+    return {
+      views: [['default', 'Saved jobs'], ['empty', 'Empty'], ['error', 'Error']].map(([id, label]) => ({ label, bg: v === id ? '#1a1a1a' : '#fff', fg: v === id ? '#fff' : '#1a1a1a', pick: () => this.setState({ view: id, saved: id === 'default' ? [1, 2, 3] : S.saved, undo: null }) })),
+      list, count: String(v === 'error' ? 3 : n), subLabel: n ? n + (n === 1 ? ' job' : ' jobs') + ' saved in this browser' : 'Nothing saved yet',
+      showList: v === 'default' && n > 0, isEmpty: v !== 'error' && n === 0, isError: v === 'error',
+      undo: v === 'default' && !!undoJob, undoTitle: undoJob ? undoJob.t : '',
+      doUndo: () => this.setState(s => ({ saved: [...s.saved, s.undo].sort(), undo: null })),
+      retry: () => this.setState({ view: 'default' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

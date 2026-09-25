@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;500;700;800;900&family=Chivo+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+input::placeholder{color:#8a8c88}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:40px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · HOME · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">Final Home in the Line Map direction. Stations, lines, search and bookmarks all work.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">Anything not in the real dataset is marked <span style="font:500 12px 'IBM Plex Mono',monospace;border:1px dashed #888;padding:1px 5px;border-radius:3px">SAMPLE</span> or drawn dashed. The preview only has the 3 example jobs, so some filters show the empty state on purpose.</div>
+</div>
+<div style="display:flex;gap:80px;align-items:flex-start;flex-wrap:wrap">
+
+<!-- ================= 2a LINE MAP ================= -->
+<div id="home-desktop" style="display:flex;flex-direction:column;gap:20px;width:1440px">
+<div style="display:flex;align-items:baseline;gap:16px">
+<div style="font:600 18px 'IBM Plex Mono',monospace;background:#1a1a1a;color:#fff;padding:6px 12px;border-radius:6px">2a</div>
+<div style="font:600 24px 'IBM Plex Sans',sans-serif;color:#1a1a1a">Line Map</div>
+<div style="font:400 18px 'IBM Plex Sans',sans-serif;color:#555">The GTA as a transit map. Work types are lines, areas are stations, and jobs show up on a departures board. Area counts are sample data; Remote 61 is real.</div>
+</div>
+<div data-screen-label="2a Line Map Home" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif;letter-spacing:-.01em"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Home</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="display:grid;grid-template-columns:420px 880px;gap:44px;padding:48px 48px 40px">
+<div style="display:flex;flex-direction:column;gap:22px">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">DEVELOPER JOBS · TORONTO / GTA</div>
+<h1 style="margin:0;font:800 50px/1.02 'Overpass',sans-serif;letter-spacing:-.03em;text-wrap:balance">Toronto’s developer jobs, mapped like the subway.</h1>
+<p style="margin:0;font-size:18px;line-height:1.5;color:#4a4c49;text-wrap:pretty">HireScope scrapes live developer postings across the GTA. Pick a station to see who’s hiring there, or just search.</p>
+<div style="display:flex;align-items:center;height:56px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 6px 0 20px;gap:10px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg>
+<input value="{{ q1 }}" onChange="{{ setQ1 }}" placeholder="Job title, company or skill" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 17px 'Overpass',sans-serif;color:#16181a">
+<button style="height:44px;padding:0 20px;border-radius:99px;background:#16181a;color:#fff;border:0;font:700 15px 'Overpass',sans-serif;cursor:pointer">Search</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">WORK TYPE = LINE</div>
+<sc-for list="{{ lines1 }}" as="l" hint-placeholder-count="4">
+<button onClick="{{ l.pick }}" style="display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;height:44px;padding:0 14px;border-radius:10px;border:0;cursor:pointer;background:{{ l.bg }};color:#16181a;font:700 16px 'Overpass',sans-serif;text-align:left">
+<span style="height:8px;border-radius:4px;background:{{ l.col }}"></span><span>{{ l.label }}</span><span style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">{{ l.n }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="position:relative;width:880px;height:500px;background:#fff;border:1px solid #deddd6;border-radius:20px;overflow:hidden">
+<div style="position:absolute;left:0;right:0;bottom:0;height:40px;background:oklch(0.94 0.025 230);display:flex;align-items:center;padding-left:24px;font:600 11px 'Overpass Mono',monospace;letter-spacing:.18em;color:oklch(0.45 0.05 230)">LAKE ONTARIO</div>
+<div style="position:absolute;right:20px;top:18px;font:500 12px 'Overpass Mono',monospace;color:#6a6c68;text-align:right;line-height:1.5">Big stations = interchanges<br>Tap a station for its jobs</div>
+<svg width="880" height="500" style="position:absolute;left:0;top:0">
+<polyline points="70,430 150,350 480,350 480,190 540,130 680,130" fill="none" stroke="oklch(0.8 0.15 85)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opH }}"></polyline>
+<polyline points="230,350 330,250 330,190 480,190" fill="none" stroke="oklch(0.6 0.14 155)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opO }}"></polyline>
+<polyline points="330,190 330,90" fill="none" stroke="oklch(0.6 0.14 155)" stroke-width="10" stroke-linecap="round" stroke-opacity="{{ opO }}"></polyline>
+<polyline points="480,350 540,410 860,410" fill="none" stroke="oklch(0.6 0.2 28)" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" stroke-opacity="{{ opR }}"></polyline>
+</svg>
+<sc-for list="{{ stations }}" as="s" hint-placeholder-count="7">
+<button onClick="{{ s.pick }}" aria-label="{{ s.name }}" style="position:absolute;left:{{ s.bx }}px;top:{{ s.by }}px;width:44px;height:44px;padding:0;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;opacity:{{ s.op }}"><span style="width:{{ s.d }}px;height:{{ s.d }}px;border-radius:50%;box-sizing:border-box;background:{{ s.cBg }};border:5px solid {{ s.cBd }};box-shadow:{{ s.ring }}"></span></button>
+<button onClick="{{ s.pick }}" style="position:absolute;left:{{ s.tx }}px;top:{{ s.ty }}px;padding:2px 4px;border:0;background:transparent;display:flex;flex-direction:column;gap:3px;text-align:left;cursor:pointer;opacity:{{ s.op }}">
+<span style="font:700 15px 'Overpass',sans-serif;color:#16181a;white-space:nowrap">{{ s.name }}</span>
+<span style="display:flex;gap:6px;align-items:center"><span style="font:600 12px 'Overpass Mono',monospace;background:{{ s.chipBg }};color:{{ s.chipFg }};padding:2px 7px;border-radius:4px">{{ s.countLabel }}</span><sc-if value="{{ s.sample }}" hint-placeholder-val="{{ true }}"><span style="font:600 10px 'Overpass Mono',monospace;color:#6a6c68;border:1px dashed #9a9c98;padding:1px 4px;border-radius:3px;letter-spacing:.06em">SAMPLE</span></sc-if></span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="margin:0 48px;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #deddd6;border-radius:16px">
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:4px;border-right:1px solid #e8e7e1"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">TOTAL JOBS</div><div style="font:800 38px 'Overpass',sans-serif;letter-spacing:-.03em">149</div></div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:4px;border-right:1px solid #e8e7e1"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">REMOTE JOBS</div><div style="font:800 38px 'Overpass',sans-serif;letter-spacing:-.03em">61</div></div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:4px;border-right:1px solid #e8e7e1"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">COMPANIES HIRING</div><div style="font:800 38px 'Overpass',sans-serif;letter-spacing:-.03em">26</div></div>
+<div style="padding:20px 24px;display:flex;flex-direction:column;gap:4px"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">TOP SKILL</div><div style="font:800 38px 'Overpass',sans-serif;letter-spacing:-.03em">Python <span style="font:600 16px 'Overpass Mono',monospace;color:#6a6c68">45 jobs</span></div></div>
+</div>
+<div style="margin:24px 48px 0;background:#16181a;color:#f5f4ef;border-radius:16px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #2c2f2d">
+<div style="display:flex;align-items:baseline;gap:14px"><span style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.14em;color:oklch(0.85 0.15 85)">DEPARTURES</span><span style="font:700 20px 'Overpass',sans-serif">{{ board1Title }}</span></div>
+<a href="#" style="font:700 15px 'Overpass',sans-serif;color:oklch(0.85 0.15 85)">View all jobs →</a>
+</div>
+<div style="display:grid;grid-template-columns:80px 110px minmax(0,2.2fr) 1fr 90px 190px 1.3fr 44px;gap:16px;padding:10px 24px;font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#8d908c"><div>POSTED</div><div>LINE</div><div>ROLE</div><div>LOCATION</div><div>LEVEL</div><div>SALARY</div><div>STACK</div><div></div></div>
+<sc-for list="{{ board1 }}" as="j" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:80px 110px minmax(0,2.2fr) 1fr 90px 190px 1.3fr 44px;gap:16px;padding:14px 24px;align-items:center;border-top:1px solid #2c2f2d;font-size:15px">
+<div style="font:600 15px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85)">{{ j.posted }}</div>
+<div style="display:flex;align-items:center;gap:8px;font-weight:600"><span style="width:12px;height:12px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }}</div>
+<div style="display:flex;gap:12px;align-items:center;min-width:0"><span style="width:36px;height:36px;flex:none;border-radius:50%;background:#f5f4ef;color:#16181a;display:grid;place-items:center;font:800 15px 'Overpass',sans-serif">{{ j.ini }}</span><div style="display:flex;flex-direction:column;gap:1px;min-width:0"><a href="#" style="font-weight:700;font-size:16px">{{ j.t }}</a><span style="color:#a9aba6;font-size:14px">{{ j.c }}</span></div></div>
+<div style="color:#d6d5cf">{{ j.loc }}</div>
+<div style="color:#d6d5cf">{{ j.lvl }}</div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.sal1 }}">{{ j.sal }}</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #3c3f3c;color:#d6d5cf;padding:2px 7px;border-radius:99px">{{ tg.n }}</span></sc-for></div>
+<button onClick="{{ j.toggle }}" aria-label="Bookmark" style="width:44px;height:44px;border-radius:50%;border:1px solid #3c3f3c;background:{{ j.b1Bg }};display:grid;place-items:center;cursor:pointer"><svg width="13" height="16" viewBox="0 0 14 16" fill="{{ j.b1Fill }}" stroke="{{ j.b1Stroke }}" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button>
+</div>
+</sc-for>
+<sc-if value="{{ board1Empty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:40px 24px;border-top:1px solid #2c2f2d;display:flex;flex-direction:column;gap:6px"><div style="font:700 18px 'Overpass',sans-serif">No departures match.</div><div style="color:#a9aba6;font-size:15px">This preview only has 3 example postings. Try the Remote station or clear the filters.</div></div>
+</sc-if>
+</div>
+<div style="margin:56px 48px 0;display:grid;grid-template-columns:260px 1fr;gap:40px;align-items:center">
+<h2 style="margin:0;font:800 28px 'Overpass',sans-serif;letter-spacing:-.02em">How it works</h2>
+<div style="position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+<div style="position:absolute;left:14px;right:14px;top:13px;height:6px;border-radius:3px;background:#16181a"></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 16px 'Overpass',sans-serif">1 · Collect</div><div style="font-size:15px;color:#4a4c49;line-height:1.45">Postings from Greenhouse, Lever, RemoteOK and Jobicy.</div></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 16px 'Overpass',sans-serif">2 · Extract</div><div style="font-size:15px;color:#4a4c49;line-height:1.45">Skills, salary and work type, parsed automatically.</div></div>
+<div style="position:relative;display:flex;flex-direction:column;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 16px 'Overpass',sans-serif">3 · Explore</div><div style="font-size:15px;color:#4a4c49;line-height:1.45">Search jobs and explore hiring trends.</div></div>
+</div>
+</div>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a;padding-top:14px">Mobile · 390</div>
+<div data-screen-label="Home Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;background:#16181a;color:#f5f4ef"><div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div><button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button></div>
+<div style="padding:26px 16px 8px;display:flex;flex-direction:column;gap:14px">
+<div style="font:700 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">DEVELOPER JOBS · TORONTO / GTA</div>
+<h1 style="margin:0;font:800 36px/1.02 'Overpass',sans-serif;letter-spacing:-.03em">Toronto’s developer jobs, mapped like the subway.</h1>
+<p style="margin:0;font-size:16px;line-height:1.5;color:#4a4c49">HireScope scrapes live developer postings across the GTA. Pick a station or just search.</p>
+<div style="display:flex;align-items:center;height:52px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 6px 0 16px;gap:8px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg><input value="{{ q1 }}" onChange="{{ setQ1 }}" aria-label="Search jobs" placeholder="Title, company or skill" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 16px 'Overpass',sans-serif;color:#16181a"><button style="height:40px;padding:0 14px;border-radius:99px;background:#16181a;color:#fff;border:0;font:700 14px 'Overpass',sans-serif">Search</button></div>
+<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px"><sc-for list="{{ lines1 }}" as="l" hint-placeholder-count="4"><button onClick="{{ l.pick }}" style="flex:none;height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:99px;border:1.5px solid #16181a;background:{{ l.bg }};color:#16181a;font:700 14px 'Overpass',sans-serif"><span style="width:18px;height:6px;border-radius:3px;background:{{ l.col }}"></span>{{ l.label }}<span style="font:500 12px 'Overpass Mono',monospace;color:#4a4c49">{{ l.n }}</span></button></sc-for></div>
+</div>
+<div style="margin:12px 16px 0;display:grid;grid-template-columns:1fr 1fr;background:#fff;border:1px solid #deddd6;border-radius:16px">
+<div style="padding:14px 16px;border-right:1px solid #eceae4;border-bottom:1px solid #eceae4"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">TOTAL JOBS</div><div style="font:800 28px 'Overpass',sans-serif">149</div></div>
+<div style="padding:14px 16px;border-bottom:1px solid #eceae4"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">REMOTE JOBS</div><div style="font:800 28px 'Overpass',sans-serif">61</div></div>
+<div style="padding:14px 16px;border-right:1px solid #eceae4"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">COMPANIES</div><div style="font:800 28px 'Overpass',sans-serif">26</div></div>
+<div style="padding:14px 16px"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.08em;color:#6a6c68">TOP SKILL</div><div style="font:800 28px 'Overpass',sans-serif">Python</div></div>
+</div>
+<div style="margin:20px 16px 0;background:#fff;border:1px solid #deddd6;border-radius:16px;padding:16px 12px 8px">
+<div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68;padding:0 4px 8px">STATIONS · TAP TO SEE JOBS</div>
+<div style="position:relative;display:flex;flex-direction:column">
+<span style="position:absolute;left:25px;top:22px;bottom:22px;width:6px;border-radius:3px;background:#16181a"></span>
+<sc-for list="{{ stations }}" as="s" hint-placeholder-count="7"><button onClick="{{ s.pick }}" style="position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;min-height:48px;padding:0 4px;border:0;background:transparent;text-align:left;font:700 15px 'Overpass',sans-serif;color:#16181a;opacity:{{ s.op }}"><span style="justify-self:center;width:20px;height:20px;border-radius:50%;box-sizing:border-box;background:{{ s.cBg }};border:4px solid {{ s.cBd }};box-shadow:{{ s.ring }}"></span><span>{{ s.name }}</span><span style="display:flex;gap:6px;align-items:center"><sc-if value="{{ s.sample }}" hint-placeholder-val="{{ true }}"><span style="font:600 9px 'Overpass Mono',monospace;color:#6a6c68;border:1px dashed #9a9c98;padding:0 3px;border-radius:3px">SAMPLE</span></sc-if><span style="font:600 12px 'Overpass Mono',monospace;background:{{ s.chipBg }};color:{{ s.chipFg }};padding:2px 7px;border-radius:4px">{{ s.countLabel }}</span></span></button></sc-for>
+</div>
+</div>
+<div style="margin:20px 12px 0;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px"><div><div style="font:700 11px 'Overpass Mono',monospace;letter-spacing:.14em;color:oklch(0.52 0.19 28)">DEPARTURES</div><div style="font:800 18px 'Overpass',sans-serif">{{ board1Title }}</div></div><a href="#" style="font:700 14px 'Overpass',sans-serif;min-height:44px;display:flex;align-items:center">View all →</a></div>
+<sc-for list="{{ board1 }}" as="j" hint-placeholder-count="2"><article style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:8px;font:600 13px 'Overpass Mono',monospace"><span style="width:10px;height:10px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }} · {{ j.lvl }} · <span style="color:oklch(0.85 0.15 85)">{{ j.posted }}</span></div><button onClick="{{ j.toggle }}" aria-label="Bookmark" style="width:44px;height:44px;margin:-8px -8px -8px 0;border-radius:50%;border:1px solid #3c3f3c;background:{{ j.b1Bg }};display:grid;place-items:center"><svg width="13" height="16" viewBox="0 0 14 16" fill="{{ j.b1Fill }}" stroke="{{ j.b1Stroke }}" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button></div><a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a><div style="font-size:14px;color:#b4b6b1">{{ j.c }} · {{ j.loc }}</div><div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.sal1 }}">{{ j.sal }}</div></article></sc-for>
+<sc-if value="{{ board1Empty }}" hint-placeholder-val="{{ false }}"><div style="background:#16181a;color:#b4b6b1;border-radius:16px;padding:20px;font-size:15px;line-height:1.5"><b style="color:#f5f4ef">No departures match.</b> Try the Remote station or clear the filters.</div></sc-if>
+</div>
+<div style="margin:28px 16px 0;display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font:800 22px 'Overpass',sans-serif">How it works</h2>
+<div style="position:relative;display:flex;flex-direction:column;gap:16px;padding-left:40px"><span style="position:absolute;left:13px;top:10px;bottom:10px;width:6px;border-radius:3px;background:#16181a"></span>
+<div style="position:relative"><span style="position:absolute;left:-40px;top:0;width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 15px 'Overpass',sans-serif">1 · Collect</div><div style="font-size:14px;color:#4a4c49">Postings from Greenhouse, Lever, RemoteOK and Jobicy.</div></div>
+<div style="position:relative"><span style="position:absolute;left:-40px;top:0;width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 15px 'Overpass',sans-serif">2 · Extract</div><div style="font-size:14px;color:#4a4c49">Skills, salary and work type, parsed automatically.</div></div>
+<div style="position:relative"><span style="position:absolute;left:-40px;top:0;width:32px;height:32px;border-radius:50%;background:#fff;border:6px solid #16181a;box-sizing:border-box"></span><div style="font:700 15px 'Overpass',sans-serif">3 · Explore</div><div style="font-size:14px;color:#4a4c49">Search jobs and explore hiring trends.</div></div>
+</div>
+</div>
+<footer style="margin-top:28px;padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q1: '', wt1: 'All', station: 'remote', q2: '', wt2: 'All', tick: 'PY', q3: '', wt3: 'All', picked: ['Python', 'AWS'], bm: [2] };
+
+  jobs() {
+    return [
+      { id: 1, t: 'Senior Machine Learning Systems Engineer (CAD)', c: 'PointClickCare', ini: 'P', loc: 'Mississauga', area: 'mississauga', wt: 'Hybrid', lvl: 'Senior', sal: '$154k–$193k', hasSal: true, skills: ['Python', 'Java', 'AWS', 'Azure'], posted: 'Sep 24' },
+      { id: 2, t: 'Junior Linux Kernel Engineer – Ubuntu', c: 'Canonical', ini: 'C', loc: 'Anywhere', area: 'remote', wt: 'Remote', lvl: 'Entry', sal: 'Salary not disclosed', hasSal: false, skills: ['Python', 'Rust'], posted: 'Sep 23' },
+      { id: 3, t: 'Contract Staff Front End Engineer', c: 'Mozilla', ini: 'M', loc: 'Canada', area: 'remote', wt: 'Remote', lvl: 'Senior', sal: 'Salary not disclosed', hasSal: false, skills: ['JavaScript', 'HTML', 'CSS'], posted: 'Sep 22' },
+    ];
+  }
+
+  ok(j, q, wt) {
+    if (wt !== 'All' && j.wt !== wt) return false;
+    if (!q) return true;
+    return (j.t + ' ' + j.c + ' ' + j.skills.join(' ')).toLowerCase().includes(q.toLowerCase());
+  }
+
+  deco(j, hl) {
+    const S = this.state, b = S.bm.includes(j.id);
+    const LC = { Hybrid: 'oklch(0.8 0.15 85)', 'On-site': 'oklch(0.6 0.14 155)', Remote: 'oklch(0.6 0.2 28)' };
+    const lime = 'oklch(0.88 0.17 125)', blue = 'oklch(0.52 0.15 255)';
+    const picked = S.picked;
+    const tags = j.skills.map(n => {
+      const on = picked.includes(n), tk = hl === n;
+      return { n, bg2: tk ? lime : 'transparent', fg2: tk ? '#0c0d0e' : '#b4b8b2', bd2: tk ? lime : '#2a2d30', bg3: on ? blue : '#efeee8', fg3: on ? '#fff' : '#1b1d22' };
+    });
+    const score = j.skills.filter(s => picked.includes(s)).length;
+    return {
+      ...j, tags, score, lineCol: LC[j.wt],
+      matchLabel: picked.length ? score + ' of ' + picked.length + ' of your skills' : '',
+      sal1: j.hasSal ? '#f5f4ef' : '#8d908c', sal2: j.hasSal ? '#f1f2ee' : '#8a8e89', sal3: j.hasSal ? '#1b1d22' : '#6b6e75',
+      b1Bg: b ? 'oklch(0.85 0.15 85)' : 'transparent', b1Fill: b ? '#16181a' : 'none', b1Stroke: b ? '#16181a' : '#d6d5cf',
+      b2Bg: b ? lime : 'transparent', b2Fill: b ? '#0c0d0e' : 'none', b2Stroke: b ? '#0c0d0e' : '#b4b8b2',
+      b3Bg: b ? '#1b1d22' : '#fff', b3Fill: b ? '#fff' : 'none', b3Stroke: b ? '#fff' : '#4b4e55',
+      toggle: () => this.setState(s => ({ bm: s.bm.includes(j.id) ? s.bm.filter(x => x !== j.id) : [...s.bm, j.id] })),
+    };
+  }
+
+  renderVals() {
+    const S = this.state, all = this.jobs();
+    const LC = { Hybrid: 'oklch(0.8 0.15 85)', 'On-site': 'oklch(0.6 0.14 155)', Remote: 'oklch(0.6 0.2 28)' };
+    const counts = { All: 149, Remote: 61, Hybrid: 71, 'On-site': 17 };
+    const wtList = ['All', 'Remote', 'Hybrid', 'On-site'];
+
+    // 2a
+    const lineOn = l => S.wt1 === 'All' || S.wt1 === l;
+    const lines1 = wtList.map(l => ({
+      label: l === 'All' ? 'All lines' : l + ' Line', n: counts[l], col: l === 'All' ? '#16181a' : LC[l],
+      bg: S.wt1 === l ? '#fff' : 'transparent', pick: () => this.setState({ wt1: l }),
+    }));
+    const st = [
+      { id: 'oakville', name: 'Oakville', x: 70, y: 430, n: 3, lines: ['Hybrid'], lx: 22, ly: -12 },
+      { id: 'mississauga', name: 'Mississauga', x: 230, y: 350, n: 30, lines: ['Hybrid', 'On-site'], lx: -40, ly: 24 },
+      { id: 'downtown', name: 'Downtown Toronto', x: 480, y: 350, n: 38, lines: ['Hybrid', 'Remote'], lx: 26, ly: -62 },
+      { id: 'northyork', name: 'North York', x: 480, y: 190, n: 8, lines: ['Hybrid', 'On-site'], lx: 26, ly: -2 },
+      { id: 'vaughan', name: 'Vaughan', x: 330, y: 90, n: 3, lines: ['On-site'], lx: 22, ly: -16 },
+      { id: 'markham', name: 'Markham', x: 680, y: 130, n: 6, lines: ['Hybrid'], lx: -34, ly: 24 },
+      { id: 'remote', name: 'Remote · Anywhere in Canada', x: 760, y: 410, n: 61, real: true, lines: ['Remote'], lx: -110, ly: -62 },
+    ];
+    const stations = st.map(s => {
+      const sel = S.station === s.id, inter = s.lines.length > 1, d = inter ? 28 : 22;
+      return {
+        ...s, d, bx: s.x - 22, by: s.y - 22, tx: s.x + s.lx, ty: s.y + s.ly,
+        op: s.lines.some(lineOn) ? 1 : 0.25, sample: !s.real,
+        cBg: sel ? '#16181a' : '#fff', cBd: inter || sel ? '#16181a' : LC[s.lines[0]],
+        ring: sel ? '0 0 0 6px rgba(22,24,26,.18)' : 'none',
+        chipBg: sel ? '#16181a' : '#efeee8', chipFg: sel ? '#fff' : '#16181a',
+        countLabel: s.n + ' jobs', pick: () => this.setState({ station: s.id, q1: '' }),
+      };
+    });
+    const curSt = st.find(s => s.id === S.station);
+    const b1 = S.q1 ? all.filter(j => this.ok(j, S.q1, S.wt1)) : all.filter(j => j.area === S.station && this.ok(j, '', S.wt1));
+
+    // 2b
+    const T = [['PY', 'Python', 45], ['GO', 'Go', 40], ['K8S', 'Kubernetes', 35], ['AWS', 'AWS', 34], ['ML', 'Machine Learning', 31], ['RCT', 'React', 29], ['TS', 'TypeScript', 23], ['JAVA', 'Java', 23], ['DKR', 'Docker', 20], ['AZR', 'Azure', 19]];
+    const lime = 'oklch(0.88 0.17 125)';
+    const rows = T.map(([sym, name, n], i) => {
+      const sel = S.tick === sym;
+      return { sym, name, n, rank: i + 1, share: (n / 149 * 100).toFixed(1) + '%', barW: (n / 45 * 100) + '%',
+        bg: sel ? '#1a1d20' : 'transparent', symCol: sel ? lime : '#f1f2ee', barCol: sel ? lime : '#5b605b',
+        pick: () => this.setState({ tick: sym, q2: '' }) };
+    });
+    const quote = rows.find(r => r.sym === S.tick);
+    const o2 = S.q2 ? all.filter(j => this.ok(j, S.q2, S.wt2)) : all.filter(j => j.skills.includes(quote.name) && this.ok(j, '', S.wt2));
+    const seg2 = wtList.map(l => ({ label: l, n: counts[l], bg: S.wt2 === l ? '#f1f2ee' : '#151719', fg: S.wt2 === l ? '#0c0d0e' : '#d4d7d1', pick: () => this.setState({ wt2: l }) }));
+
+    // 2c
+    const blue = 'oklch(0.52 0.15 255)';
+    const N = [
+      ['Python', 330, 250, 45], ['Java', 170, 150, 23], ['AWS', 470, 130, 34], ['Azure', 320, 70, 19], ['Machine Learning', 200, 380, 31], ['Rust', 110, 270, 0],
+      ['Go', 620, 300, 40], ['Kubernetes', 610, 150, 35], ['Docker', 770, 210, 20], ['React', 560, 440, 29], ['TypeScript', 720, 380, 23],
+      ['JavaScript', 760, 490, 0], ['HTML', 640, 530, 0], ['CSS', 820, 530, 0],
+    ];
+    const pos = {}; N.forEach(([n, x, y]) => pos[n] = [x, y]);
+    const E = [
+      ['Python', 'Java', 1], ['Python', 'AWS', 1], ['Python', 'Azure', 1], ['Java', 'AWS', 1], ['Java', 'Azure', 1], ['AWS', 'Azure', 1], ['Python', 'Rust', 1],
+      ['JavaScript', 'HTML', 1], ['JavaScript', 'CSS', 1], ['HTML', 'CSS', 1],
+      ['Go', 'Kubernetes', 0], ['Kubernetes', 'Docker', 0], ['Kubernetes', 'AWS', 0], ['Go', 'Docker', 0], ['React', 'TypeScript', 0], ['TypeScript', 'JavaScript', 0], ['Python', 'Machine Learning', 0], ['Machine Learning', 'AWS', 0], ['React', 'JavaScript', 0],
+    ];
+    const P = S.picked;
+    const nbr = new Set(); E.forEach(([a, b]) => { if (P.includes(a)) nbr.add(b); if (P.includes(b)) nbr.add(a); });
+    const edges = E.map(([a, b, real]) => {
+      const both = P.includes(a) && P.includes(b), one = P.includes(a) || P.includes(b);
+      return { x1: pos[a][0], y1: pos[a][1], x2: pos[b][0], y2: pos[b][1], col: both ? blue : '#1b1d22', w: both ? 3 : 1.5, op: both ? 1 : one ? 0.6 : 0.2, dash: real ? 'none' : '5 5' };
+    });
+    const nodes = N.map(([name, x, y, n]) => {
+      const sel = P.includes(name), near = nbr.has(name) && !sel, d = n ? Math.round(18 + n * 1.1) : 16, box = 160;
+      return {
+        name, sel, d, box, left: x - box / 2, top: y - d / 2, nLabel: n ? String(n) : '',
+        bg: sel ? blue : n ? '#fff' : '#fbfaf7',
+        bd: sel ? '3px solid ' + blue : n ? (near ? '2px solid ' + blue : '2px solid #1b1d22') : '1.5px dashed #8a8c92',
+        ring: sel ? '0 0 0 6px oklch(0.52 0.15 255 / .18)' : 'none', fg: sel ? blue : '#1b1d22',
+        pick: () => this.setState(s => ({ picked: s.picked.includes(name) ? s.picked.filter(p => p !== name) : [...s.picked, name] })),
+      };
+    });
+    let m3 = all.filter(j => this.ok(j, S.q3, S.wt3)).map(j => this.deco(j));
+    if (P.length) m3 = m3.filter(j => j.score > 0).sort((a, b) => b.score / b.skills.length - a.score / a.skills.length || b.score - a.score);
+    const seg3 = wtList.map(l => ({ label: l, bg: S.wt3 === l ? '#1b1d22' : 'transparent', fg: S.wt3 === l ? '#fff' : '#1b1d22', bd: S.wt3 === l ? '#1b1d22' : '#c9c7bf', pick: () => this.setState({ wt3: l }) }));
+
+    return {
+      q1: S.q1, setQ1: e => this.setState({ q1: e.target.value }), lines1,
+      opH: lineOn('Hybrid') ? 1 : 0.15, opO: lineOn('On-site') ? 1 : 0.15, opR: lineOn('Remote') ? 1 : 0.15,
+      stations, board1: b1.map(j => this.deco(j)), board1Empty: b1.length === 0,
+      board1Title: S.q1 ? 'Results for “' + S.q1 + '”' : 'from ' + curSt.name,
+
+      q2: S.q2, setQ2: e => this.setState({ q2: e.target.value }), rows, quote, seg2,
+      orders2: o2.map(j => this.deco(j, quote.name)), orders2Empty: o2.length === 0,
+      orders2Title: S.q2 ? 'Results for “' + S.q2 + '”' : 'Open orders · ' + quote.sym,
+
+      q3: S.q3, setQ3: e => this.setState({ q3: e.target.value }), seg3, edges, nodes,
+      clearPicks: () => this.setState({ picked: [] }),
+      match3: m3, match3Empty: m3.length === 0,
+      match3Title: P.length ? 'Jobs that match your stack' : 'Latest postings',
+      pickedLabel: P.length ? P.join(' + ') : 'tap stars above to filter',
+    };
+  }
+}
+</script>
+</body>
+</html>

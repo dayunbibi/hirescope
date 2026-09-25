@@ -5,10 +5,8 @@ type SearchBarProps = {
   onSearchChange: (value: string) => void;
   placeholder?: string;
   className?: string;
-  // Optional work type "line" chips shown under the search (used on Home)
-  workTypes?: string[];
-  selectedWorkType?: string;
-  onWorkTypeChange?: (workType: string) => void;
+  // Adds a "Search" submit button and handles Enter (Home)
+  onSubmit?: () => void;
 };
 
 // Horizontal work type chips; "All" uses an ink dot
@@ -16,10 +14,12 @@ export function LineChips({
   workTypes,
   selectedWorkType,
   onWorkTypeChange,
+  counts,
 }: {
   workTypes: string[];
   selectedWorkType: string;
   onWorkTypeChange: (workType: string) => void;
+  counts?: Record<string, number>;
 }) {
   return (
     <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
@@ -43,6 +43,11 @@ export function LineChips({
               className={`size-2.5 rounded-full ${lineColor[workType] ?? "bg-ink"}`}
             />
             {workType}
+            {counts && (
+              <span className="font-mono text-xs font-medium text-muted">
+                {counts[workType] ?? 0}
+              </span>
+            )}
           </button>
         );
       })}
@@ -55,14 +60,18 @@ export default function SearchBar({
   searchTerm,
   onSearchChange,
   placeholder = "Job title, company or skill",
-  // Default keeps Home's spacing until Home is redesigned
-  className = "mb-8",
-  workTypes,
-  selectedWorkType = "All",
-  onWorkTypeChange,
+  className = "",
+  onSubmit,
 }: SearchBarProps) {
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
+    <form
+      role="search"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit?.();
+      }}
+      className={className}
+    >
       <div className="flex h-[52px] items-center gap-2.5 rounded-full border-2 border-ink bg-card pl-4 pr-1 focus-within:shadow-[0_0_0_4px_rgba(22,24,26,0.12)] md:h-14 md:pl-5 md:pr-1.5">
         <svg
           aria-hidden="true"
@@ -96,15 +105,16 @@ export default function SearchBar({
             ×
           </button>
         )}
-      </div>
 
-      {workTypes && onWorkTypeChange && (
-        <LineChips
-          workTypes={workTypes}
-          selectedWorkType={selectedWorkType}
-          onWorkTypeChange={onWorkTypeChange}
-        />
-      )}
-    </div>
+        {onSubmit && (
+          <button
+            type="submit"
+            className="h-10 shrink-0 rounded-full bg-ink px-3.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:h-11 md:px-5 md:text-[15px]"
+          >
+            Search
+          </button>
+        )}
+      </div>
+    </form>
   );
 }

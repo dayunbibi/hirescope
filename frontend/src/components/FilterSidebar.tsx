@@ -1,4 +1,6 @@
 import { lineColor } from "@/components/JobRow";
+import LineMap from "@/components/LineMap";
+import type { Job } from "@/data/jobs";
 import { stations } from "@/lib/area";
 
 export type JobFilters = {
@@ -19,6 +21,7 @@ export type FilterCounts = {
 };
 
 type FilterSidebarProps = {
+  jobs: Job[];
   filters: JobFilters;
   counts: FilterCounts;
   onChange: (patch: Partial<JobFilters>) => void;
@@ -35,6 +38,7 @@ const sectionLabel =
 
 // Job filters: stations, lines, salary and experience level
 export default function FilterSidebar({
+  jobs,
   filters,
   counts,
   onChange,
@@ -86,16 +90,20 @@ export default function FilterSidebar({
       </div>
 
       {/* Location as a station radio list */}
-      <div
-        role="radiogroup"
-        aria-labelledby="station-label"
-        className="flex flex-col gap-2 border-b border-hairline-soft px-5 py-[18px]"
-      >
+      <div className="flex flex-col gap-2 border-b border-hairline-soft px-5 py-[18px]">
         <p id="station-label" className={sectionLabel}>
           LOCATION · STATION
         </p>
 
-        <div className="flex flex-col">
+        <LineMap
+          compact
+          jobs={jobs}
+          selectedWorkType={filters.workType}
+          selectedStation={filters.area === "all" ? null : filters.area}
+          onSelectStation={(stationId) => onChange({ area: stationId ?? "all" })}
+        />
+
+        <div role="radiogroup" aria-labelledby="station-label" className="flex flex-col">
           {stationRows.map((station) => {
             const isSelected = filters.area === station.id;
 

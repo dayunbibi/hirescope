@@ -281,6 +281,7 @@ function JobsPageContent() {
     "h-11 border-[1.5px] border-ink bg-card px-3.5 text-[15px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
   const filterPanelProps = {
+    jobs,
     filters: query,
     counts,
     onChange: (patch: Partial<JobFilters>) => updateQuery(patch),

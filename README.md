@@ -10,18 +10,33 @@ HireScope is a working application. The Next.js frontend has seven pages, all co
 
 Current focus: replacing the remaining placeholder content, improving UI consistency and responsive behavior, and preparing for deployment. See [Known Limitations](#known-limitations) and [Roadmap](#roadmap).
 
+## Design: Line Map
+
+The UI draws the GTA job market as a transit map. The design handoff (spec, tokens and HTML prototypes) lives in [`design/line-map/`](design/line-map/README.md).
+
+- **Work types are lines:** Hybrid (yellow), Remote (red), On-site (green)
+- **Areas are stations:** Downtown Toronto, Mississauga, North York, Markham, Vaughan, Oakville, Remote · Canada. Free-text job locations are mapped to stations on the frontend (`lib/area.ts`).
+- **Job lists are dark "departures boards"** with the posted date in yellow
+- **States:** API errors show "Service disruption" with a Retry button; empty results show "No departures"
+
+Station counts and every statistic are computed from real API data. A station with no postings stays on the map, dimmed and labelled "No service".
+
+Design tokens are defined with Tailwind v4 `@theme` in `frontend/src/app/globals.css`. Fonts are Overpass and Overpass Mono, and all icons are inline SVGs.
+
 ## Features
 
 ### Home (`/`)
 
+- Interactive line map: pick a station to see its latest postings, or a line to highlight a work type
+- Keyword search (submitting opens `/jobs?q=`)
 - Summary statistics: total jobs, remote jobs, companies hiring, top skill
-- Keyword search and work type filter
-- Latest job listings
-- Technology demand and work type distribution computed from current postings
+- Departures board of the latest postings, with a link to the matching `/jobs` filters
+- On mobile the map becomes a vertical station list
 
 ### Jobs (`/jobs`)
 
-- Filter by keyword, location, minimum salary, work type, and experience level
+- Filter by keyword, location (mini line map and station list), minimum salary, work type, and experience level
+- Filters are kept in the URL, so filtered results can be shared
 - Sort by relevance (title matches first), newest (posting date), or salary
 - Paginated results
 - Collapsible filter panel on mobile
@@ -73,7 +88,7 @@ All pages include loading, empty, and error states, and handle missing data such
 - React 19
 - TypeScript
 - Tailwind CSS 4
-- Material Symbols (icons)
+- Inline SVG icons (no icon font)
 
 Charts are built with plain HTML elements styled with Tailwind CSS (proportional bars sized with inline widths and heights). No charting library is installed.
 
@@ -204,11 +219,13 @@ backend/
     run_scraper.py     Scraper entry point
 frontend/
   src/
-    app/               Pages (App Router)
-    components/        Shared UI components
+    app/               Pages (App Router) and globals.css (design tokens)
+    components/        Shared UI (LineMap, JobRow board, JobCard, StateBlocks, ...)
     hooks/             useBookmarks
-    lib/api.ts         Backend API client
+    lib/               API client, station mapping, formatting, company stats
     data/              Job and Company types
+design/
+  line-map/            Line Map design handoff: README spec and HTML prototypes
 ```
 
 ## Screenshots

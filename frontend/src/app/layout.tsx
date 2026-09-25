@@ -33,14 +33,6 @@ export default function RootLayout({
       lang="en"
       className={`${overpass.variable} ${overpassMono.variable} h-full antialiased`}
     >
-      <head>
-        {/* Material Symbols stay until every page is migrated to inline SVG icons */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-
       <body className="flex min-h-full flex-col">
         <TopNav />
         <MobileNav />

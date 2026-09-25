@@ -213,7 +213,7 @@ export default function FilterSidebar({
             }
             className="size-[18px] shrink-0 accent-ink"
           />
-          Include jobs without a listed salary ({counts.noSalary})
+          Include jobs without a listed annual salary ({counts.noSalary})
         </label>
       </div>
 

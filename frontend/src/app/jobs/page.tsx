@@ -15,6 +15,7 @@ import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Job } from "@/data/jobs";
 import { getJobs } from "@/lib/api";
 import { getStation, getStationName, stations } from "@/lib/area";
+import { annualSalaryMidpoint } from "@/lib/format";
 
 const PAGE_SIZE = 10;
 
@@ -75,7 +76,10 @@ function writeQuery(query: JobsQuery) {
   return params.toString();
 }
 
-const hasSalary = (job: Job) => job.salaryMin !== null || job.salaryMax !== null;
+// Hourly contract rates count as "no annual salary" for the salary filter and sort
+const hasSalary = (job: Job) => annualSalaryMidpoint(job) !== null;
+const annualSalaryTop = (job: Job) =>
+  hasSalary(job) ? (job.salaryMax ?? job.salaryMin ?? 0) : null;
 const postedTime = (job: Job) => Date.parse(job.postedAt) || 0;
 
 // Title matches rank above skill matches, which rank above company matches
@@ -189,8 +193,8 @@ function JobsPageContent() {
       if (query.levels.length > 0 && !query.levels.includes(job.experienceLevel)) return false;
 
       if (query.minSalary > 0) {
-        if (hasSalary(job)) {
-          const salary = job.salaryMax ?? job.salaryMin ?? 0;
+        const salary = annualSalaryTop(job);
+        if (salary !== null) {
           if (salary < query.minSalary * 1000) return false;
         } else if (!query.includeNoSalary) {
           return false;
@@ -212,7 +216,7 @@ function JobsPageContent() {
 
       // Salaried jobs first, highest top of range first
       if (query.sort === "salary") {
-        const salaryOf = (job: Job) => job.salaryMax ?? job.salaryMin ?? -1;
+        const salaryOf = (job: Job) => annualSalaryTop(job) ?? -1;
         return salaryOf(second) - salaryOf(first) || newestFirst;
       }
 

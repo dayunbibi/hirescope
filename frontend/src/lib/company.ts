@@ -1,16 +1,9 @@
 import type { Job } from "@/data/jobs";
+import { annualSalaryMidpoint } from "@/lib/format";
 
 // Company names from /companies and /jobs are matched case-insensitively
 export const isSameCompany = (first: string, second: string) =>
   first.trim().toLowerCase() === second.trim().toLowerCase();
-
-// Midpoint of a posting's salary range, or the one end that is listed
-function salaryMidpoint(job: Job) {
-  if (job.salaryMin !== null && job.salaryMax !== null) {
-    return (job.salaryMin + job.salaryMax) / 2;
-  }
-  return job.salaryMin ?? job.salaryMax;
-}
 
 // Stats for one company, computed from its postings because the /companies
 // fields (technologies, averageSalary) are empty or 0 in the current data
@@ -22,11 +15,9 @@ export function companyStats(jobs: Job[]) {
     }
   }
 
-  // ponytail: values under $10k are hourly contract rates stored as salary; skipped
-  // here until the backend normalizes pay periods
   const salaries = jobs
-    .map(salaryMidpoint)
-    .filter((salary): salary is number => salary !== null && salary >= 10_000);
+    .map(annualSalaryMidpoint)
+    .filter((salary): salary is number => salary !== null);
 
   return {
     openRoles: jobs.length,

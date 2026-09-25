@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:32px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · JOB DETAIL · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">A job reads like a platform sign: which line, which station, and when it departs.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">We only have the key fields, not the full description, so the page sends you to the original posting. The Mozilla case shows the no-link state; that link is missing on purpose for the demo.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<span style="font:500 14px 'IBM Plex Mono',monospace;color:#555;margin-right:8px">CASE</span>
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="5">
+<button onClick="{{ v.pick }}" style="height:40px;padding:0 18px;border-radius:99px;border:1px solid #1a1a1a;background:{{ v.bg }};color:{{ v.fg }};font:500 15px 'IBM Plex Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:64px;align-items:flex-start;flex-wrap:wrap">
+
+<div style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Desktop · 1440</div>
+<div data-screen-label="Job Detail Desktop" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="padding:20px 48px 0;display:flex;align-items:center;gap:10px;font:600 14px 'Overpass',sans-serif;color:#4a4c49"><a href="#" style="display:flex;align-items:center;height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #cfcec7;background:#fff;color:#16181a">← Back to jobs</a><span style="margin-left:8px">Jobs</span><span>/</span><span>{{ j.c }}</span></div>
+
+<sc-if value="{{ showJob }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:48px;padding:32px 48px 36px;align-items:end">
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.08em"><span style="width:44px;height:8px;border-radius:4px;background:{{ j.lineCol }}"></span>{{ j.lineUpper }} LINE · {{ j.locUpper }}</div>
+<h1 style="margin:0;font:800 52px/1.02 'Overpass',sans-serif;letter-spacing:-.03em;text-wrap:balance;max-width:900px">{{ j.t }}</h1>
+<div style="display:flex;align-items:center;gap:14px;font-size:18px"><span style="width:44px;height:44px;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 18px 'Overpass',sans-serif">{{ j.ini }}</span><a href="#" style="font-weight:700;text-decoration:underline;text-underline-offset:3px">{{ j.c }}</a><span style="color:#4a4c49">{{ j.loc }}</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{ j.hasLink }}" hint-placeholder-val="{{ true }}">
+<a href="#" style="height:56px;border-radius:99px;background:#16181a;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font:800 17px 'Overpass',sans-serif;text-decoration:none">View original posting <span aria-hidden="true">↗</span></a>
+<div style="font:500 12px 'Overpass Mono',monospace;color:#4a4c49;text-align:center">Opens {{ j.src }} in a new tab</div>
+</sc-if>
+<sc-if value="{{ j.noLink }}" hint-placeholder-val="{{ false }}">
+<button disabled="{{ true }}" aria-describedby="nolink" style="height:56px;border-radius:99px;background:#e2e1db;color:#6a6c68;border:1.5px dashed #b5b4ad;font:800 17px 'Overpass',sans-serif;cursor:not-allowed">Original posting unavailable</button>
+<div id="nolink" style="font:500 12px/1.5 'Overpass Mono',monospace;color:#4a4c49;text-align:center">The source didn’t include a link. Search {{ j.c }}’s careers page.</div>
+</sc-if>
+<button onClick="{{ toggleBm }}" aria-pressed="{{ bm }}" style="height:52px;border-radius:99px;border:1.5px solid #16181a;background:{{ bmBg }};color:#16181a;font:700 16px 'Overpass',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px"><svg width="13" height="16" viewBox="0 0 14 16" fill="{{ bmFill }}" stroke="#16181a" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg>{{ bmLabel }}</button>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:48px;padding:0 48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;display:grid;grid-template-columns:repeat(4,1fr)">
+<div style="padding:24px;border-right:1px solid #2c2f2d;display:flex;flex-direction:column;gap:10px"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">WORK TYPE</div><div style="display:flex;align-items:center;gap:10px;font:800 24px 'Overpass',sans-serif"><span style="width:14px;height:14px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }}</div></div>
+<div style="padding:24px;border-right:1px solid #2c2f2d;display:flex;flex-direction:column;gap:10px"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">EXPERIENCE</div><div style="font:800 24px 'Overpass',sans-serif">{{ j.lvl }}</div></div>
+<div style="padding:24px;border-right:1px solid #2c2f2d;display:flex;flex-direction:column;gap:10px"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">SALARY · CAD</div><div style="font:700 {{ j.salSize }}px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div><sc-if value="{{ j.noSal }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#a9aba6;line-height:1.4">62% of GTA postings don’t list pay.</div></sc-if></div>
+<div style="padding:24px;display:flex;flex-direction:column;gap:10px"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">POSTED</div><div style="font:700 24px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85)">{{ j.posted }}</div></div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:800 22px 'Overpass',sans-serif">Tech stack</h2><span style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">Tap a skill to see every job that asks for it</span></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="4"><a href="#" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;border-radius:99px;border:1.5px solid #16181a;font:700 16px 'Overpass',sans-serif;text-decoration:none">{{ tg.n }}<span style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">{{ tg.c }}</span></a></sc-for></div>
+</div>
+<div style="border:1.5px dashed #b5b4ad;border-radius:16px;padding:20px 24px;display:flex;gap:16px;align-items:flex-start;font-size:15px;line-height:1.5;color:#4a4c49"><span style="flex:none;width:28px;height:28px;border-radius:50%;border:2px solid #4a4c49;display:grid;place-items:center;font:700 14px 'Overpass Mono',monospace">i</span><div>HireScope stores the key fields of each posting: title, company, location, work type, level, salary, skills and date. <b style="color:#16181a">The full job description lives on the original posting.</b></div></div>
+</div>
+<aside style="display:flex;flex-direction:column;gap:16px">
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:12px"><span style="width:44px;height:44px;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 18px 'Overpass',sans-serif">{{ j.ini }}</span><div><div style="font:800 18px 'Overpass',sans-serif">{{ j.c }}</div><div style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">{{ j.openLabel }}</div></div></div>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ j.info }}" as="f" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #eceae4;font-size:15px"><span style="color:#4a4c49">{{ f.k }}</span><span style="font-weight:{{ f.w }};color:{{ f.col }};font-style:{{ f.fs }}">{{ f.v }}</span></div></sc-for>
+</div>
+<a href="#" style="height:44px;border-radius:99px;border:1.5px solid #16181a;display:flex;align-items:center;justify-content:center;font:700 15px 'Overpass',sans-serif;text-decoration:none">Company page →</a>
+</div>
+<div style="font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49;padding:0 4px">Source: {{ j.src }} · collected {{ j.posted }}, 2026</div>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="padding:32px 48px;display:flex;flex-direction:column;gap:18px">
+<span style="height:12px;width:220px;border-radius:3px;background:#e2e1db"></span><span style="height:48px;width:760px;border-radius:6px;background:#e2e1db"></span><span style="height:18px;width:320px;border-radius:4px;background:#e2e1db"></span>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:48px;margin-top:20px"><span style="height:120px;border-radius:16px;background:#2c2f2d"></span><span style="height:220px;border-radius:16px;background:#e2e1db"></span></div>
+</div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="margin:32px 48px 0;background:#16181a;color:#f5f4ef;border-radius:16px;padding:56px 40px;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+<div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div>
+<div style="font:800 30px 'Overpass',sans-serif">We couldn’t load this job.</div>
+<div style="font-size:16px;color:#b4b6b1;max-width:520px;line-height:1.5">The HireScope API isn’t responding. If you bookmarked it, it’s still saved.</div>
+<div style="display:flex;gap:10px;margin-top:8px"><button onClick="{{ retry }}" style="height:44px;padding:0 22px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Retry</button><a href="#" style="height:44px;padding:0 22px;border-radius:99px;border:1px solid #4a4d4a;display:flex;align-items:center;font:700 15px 'Overpass',sans-serif">Back to jobs</a></div>
+</div>
+</sc-if>
+<footer style="margin-top:64px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · 390</div>
+<div data-screen-label="Job Detail Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7;position:relative">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 8px;height:60px;background:#16181a;color:#f5f4ef">
+<a href="#" aria-label="Back to jobs" style="width:44px;height:44px;display:grid;place-items:center;font:700 20px 'Overpass',sans-serif">←</a>
+<div style="font:800 17px 'Overpass',sans-serif">HireScope</div>
+<button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button>
+</div>
+<sc-if value="{{ showJob }}" hint-placeholder-val="{{ true }}">
+<div style="padding:22px 16px 120px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:8px;font:700 12px 'Overpass Mono',monospace;letter-spacing:.08em"><span style="width:32px;height:7px;border-radius:4px;background:{{ j.lineCol }}"></span>{{ j.lineUpper }} LINE · {{ j.locUpper }}</div>
+<h1 style="margin:0;font:800 30px/1.08 'Overpass',sans-serif;letter-spacing:-.02em">{{ j.t }}</h1>
+<div style="display:flex;align-items:center;gap:10px;font-size:16px"><span style="width:36px;height:36px;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 15px 'Overpass',sans-serif">{{ j.ini }}</span><a href="#" style="font-weight:700;text-decoration:underline">{{ j.c }}</a><span style="color:#4a4c49">{{ j.loc }}</span></div>
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;display:grid;grid-template-columns:1fr 1fr">
+<div style="padding:16px;border-right:1px solid #2c2f2d;border-bottom:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">WORK TYPE</div><div style="display:flex;align-items:center;gap:8px;font:800 18px 'Overpass',sans-serif;margin-top:6px"><span style="width:11px;height:11px;border-radius:50%;background:{{ j.lineCol }}"></span>{{ j.wt }}</div></div>
+<div style="padding:16px;border-bottom:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">EXPERIENCE</div><div style="font:800 18px 'Overpass',sans-serif;margin-top:6px">{{ j.lvl }}</div></div>
+<div style="padding:16px;border-right:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">SALARY · CAD</div><div style="font:700 15px 'Overpass Mono',monospace;margin-top:6px;color:{{ j.salCol }}">{{ j.sal }}</div></div>
+<div style="padding:16px"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.12em;color:#a9aba6">POSTED</div><div style="font:700 18px 'Overpass Mono',monospace;margin-top:6px;color:oklch(0.85 0.15 85)">{{ j.posted }}</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px"><h2 style="margin:0;font:800 18px 'Overpass',sans-serif">Tech stack</h2><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="4"><a href="#" style="height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;border-radius:99px;border:1.5px solid #16181a;font:700 15px 'Overpass',sans-serif;text-decoration:none">{{ tg.n }}<span style="font:500 12px 'Overpass Mono',monospace;color:#4a4c49">{{ tg.c }}</span></a></sc-for></div></div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:16px;display:flex;flex-direction:column">
+<div style="font:800 16px 'Overpass',sans-serif;padding-bottom:6px">{{ j.c }} <span style="font:500 12px 'Overpass Mono',monospace;color:#4a4c49">{{ j.openLabel }}</span></div>
+<sc-for list="{{ j.info }}" as="f" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #eceae4;font-size:14px"><span style="color:#4a4c49">{{ f.k }}</span><span style="font-weight:{{ f.w }};color:{{ f.col }};font-style:{{ f.fs }}">{{ f.v }}</span></div></sc-for>
+</div>
+<div style="font-size:14px;line-height:1.5;color:#4a4c49;border:1.5px dashed #b5b4ad;border-radius:14px;padding:14px">The full job description is on the original posting.</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:12px 16px 22px;background:#f5f4ef;border-top:1px solid #deddd6;display:flex;gap:8px">
+<button onClick="{{ toggleBm }}" aria-label="{{ bmLabel }}" style="width:52px;height:52px;flex:none;border-radius:50%;border:1.5px solid #16181a;background:{{ bmBg }};display:grid;place-items:center"><svg width="14" height="17" viewBox="0 0 14 16" fill="{{ bmFill }}" stroke="#16181a" stroke-width="1.6"><path d="M2 1h10v14l-5-4-5 4z"></path></svg></button>
+<sc-if value="{{ j.hasLink }}" hint-placeholder-val="{{ true }}"><a href="#" style="flex:1;height:52px;border-radius:99px;background:#16181a;color:#fff;display:flex;align-items:center;justify-content:center;font:800 16px 'Overpass',sans-serif">View original posting ↗</a></sc-if>
+<sc-if value="{{ j.noLink }}" hint-placeholder-val="{{ false }}"><button disabled="{{ true }}" style="flex:1;height:52px;border-radius:99px;background:#e2e1db;color:#6a6c68;border:1.5px dashed #b5b4ad;font:800 15px 'Overpass',sans-serif">Original posting unavailable</button></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="padding:22px 16px 40px;display:flex;flex-direction:column;gap:14px"><span style="height:10px;width:50%;border-radius:3px;background:#e2e1db"></span><span style="height:64px;border-radius:6px;background:#e2e1db"></span><span style="height:14px;width:60%;border-radius:3px;background:#e2e1db"></span><span style="height:140px;border-radius:16px;background:#2c2f2d"></span><span style="height:90px;border-radius:16px;background:#e2e1db"></span></div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="margin:22px 16px 40px;background:#16181a;color:#f5f4ef;border-radius:16px;padding:28px 20px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:8px;font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:9px;height:9px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div><div style="font:800 22px 'Overpass',sans-serif">We couldn’t load this job.</div><div style="font-size:15px;color:#b4b6b1;line-height:1.5">The HireScope API isn’t responding.</div><button onClick="{{ retry }}" style="margin-top:6px;height:48px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif">Retry</button></div>
+</sc-if>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'pcc', bm: [2] };
+
+  renderVals() {
+    const S = this.state;
+    const LC = { Hybrid: 'oklch(0.8 0.15 85)', 'On-site': 'oklch(0.6 0.14 155)', Remote: 'oklch(0.6 0.2 28)' };
+    const SK = { Python: 45, Go: 40, Kubernetes: 35, AWS: 34, 'Machine Learning': 31, React: 29, TypeScript: 23, Java: 23, Docker: 20, Azure: 19 };
+    const U = v => v ? { v, w: 700, col: '#16181a', fs: 'normal' } : { v: 'Unknown', w: 500, col: '#6a6c68', fs: 'italic' };
+    const J = {
+      pcc: { id: 1, t: 'Senior Machine Learning Systems Engineer (CAD)', c: 'PointClickCare', loc: 'Mississauga', wt: 'Hybrid', lvl: 'Senior', sal: '$154k–$193k', skills: ['Python', 'Java', 'AWS', 'Azure'], posted: 'Sep 24', src: 'Greenhouse', link: true, open: 46, industry: 'Healthcare software', hq: 'Mississauga', size: null },
+      can: { id: 2, t: 'Junior Linux Kernel Engineer – Ubuntu', c: 'Canonical', loc: 'Anywhere', wt: 'Remote', lvl: 'Entry', sal: null, skills: ['Python', 'Rust'], posted: 'Sep 23', src: 'Greenhouse', link: true, open: 24, industry: null, hq: null, size: null },
+      moz: { id: 3, t: 'Contract Staff Front End Engineer', c: 'Mozilla', loc: 'Canada', wt: 'Remote', lvl: 'Senior', sal: null, skills: ['JavaScript', 'HTML', 'CSS'], posted: 'Sep 22', src: 'RemoteOK', link: false, open: null, industry: null, hq: null, size: null },
+    };
+    const v = S.view, key = J[v] ? v : 'pcc', raw = J[key];
+    const j = {
+      ...raw, ini: raw.c[0], lineCol: LC[raw.wt], lineUpper: raw.wt.toUpperCase(), locUpper: raw.loc.toUpperCase(),
+      sal: raw.sal || 'Not disclosed', noSal: !raw.sal, salCol: raw.sal ? '#f5f4ef' : '#a9aba6', salSize: raw.sal ? 22 : 20,
+      hasLink: raw.link, noLink: !raw.link,
+      tags: raw.skills.map(n => ({ n, c: SK[n] ? SK[n] + ' jobs' : '' })),
+      openLabel: raw.open ? raw.open + ' open roles' : 'Open roles: —',
+      info: [{ k: 'Industry', ...U(raw.industry) }, { k: 'Headquarters', ...U(raw.hq) }, { k: 'Company size', ...U(raw.size) }],
+    };
+    const bm = S.bm.includes(raw.id);
+    return {
+      views: [['pcc', 'PointClickCare · salary'], ['can', 'Canonical · no salary'], ['moz', 'Mozilla · no link'], ['loading', 'Loading'], ['error', 'Error']].map(([id, label]) => ({ label, bg: v === id ? '#1a1a1a' : '#fff', fg: v === id ? '#fff' : '#1a1a1a', pick: () => this.setState({ view: id }) })),
+      j, showJob: !!J[v], isLoading: v === 'loading', isError: v === 'error',
+      bm, bmLabel: bm ? 'Saved to bookmarks' : 'Bookmark this job', bmBg: bm ? 'oklch(0.85 0.15 85)' : '#fff', bmFill: bm ? '#16181a' : 'none',
+      toggleBm: () => this.setState(s => ({ bm: s.bm.includes(raw.id) ? s.bm.filter(x => x !== raw.id) : [...s.bm, raw.id] })),
+      retry: () => this.setState({ view: 'pcc' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import JobCard from "@/components/JobCard";
-import type { Company } from "@/data/companies";
-import type { Job } from "@/data/jobs";
+import CompanyFacts, { knownValue } from "@/components/CompanyFacts";
+import CompanyRoles from "@/components/CompanyRoles";
+import { ErrorBlock } from "@/components/StateBlocks";
 import { getCompanies, getJobs } from "@/lib/api";
+import { getStation, getStationName } from "@/lib/area";
+import { isSameCompany } from "@/lib/company";
 
 type CompanyDetailPageProps = {
   params: Promise<{
@@ -12,438 +12,130 @@ type CompanyDetailPageProps = {
   }>;
 };
 
-// Formats a salary value into a short display format
-function formatSalary(salary: number | null) {
-  if (salary === null) {
-    return "Not disclosed";
-  }
+const backLinkClassName =
+  "inline-flex h-11 items-center rounded-full border-[1.5px] border-hairline-strong bg-card px-4 text-sm font-semibold text-ink hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
-  return `$${Math.round(salary / 1000)}k`;
+function BackToCompanies() {
+  return (
+    <div className="px-4 pt-5 md:px-12">
+      <Link href="/companies" className={backLinkClassName}>
+        ← All companies
+      </Link>
+    </div>
+  );
 }
 
-// Converts incomplete backend values into cleaner display text
-function formatCompanyValue(
-  value: string,
-  fallback: string
-) {
-  if (!value || value === "Unknown") {
-    return fallback;
-  }
-
-  return value;
+// Human place name for a location string: a Line Map station, or the raw text
+function placeName(location: string) {
+  const station = getStation(location);
+  return station === "other" ? location : getStationName(station);
 }
 
-// Displays detailed information about one selected company
-export default async function CompanyDetailPage({
-  params,
-}: CompanyDetailPageProps) {
-  // Reads the company ID from the dynamic URL
+// Displays one company "terminal" and its open roles
+export default async function CompanyDetailPage({ params }: CompanyDetailPageProps) {
   const { id } = await params;
 
-  // Fetches companies and jobs from the backend API
-  let companies: Company[] = [];
-  let allJobs: Job[] = [];
+  const [companiesResult, jobsResult] = await Promise.allSettled([getCompanies(), getJobs()]);
 
-  try {
-    [companies, allJobs] = await Promise.all([
-      getCompanies(),
-      getJobs(),
-    ]);
-  } catch {
-    companies = [];
-    allJobs = [];
-  }
-
-  // Finds the matching company from the fetched companies
-  const company = companies.find(
-    (item) => item.id === Number(id)
-  );
-
-  // Displays a fallback page when the company does not exist
-  if (!company) {
+  if (companiesResult.status === "rejected" || jobsResult.status === "rejected") {
     return (
-      <>
-        <Header />
-
-        <main className="min-h-screen bg-[#FBF9F7] px-5 py-20">
-          <section className="mx-auto max-w-5xl rounded-xl border border-[#E0BFBF] bg-white p-12 text-center shadow-sm">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Company not found
-            </h1>
-
-            <p className="mt-3 text-gray-500">
-              The requested company profile could not be found.
-            </p>
-
-            <Link
-              href="/companies"
-              className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                arrow_back
-              </span>
-
-              Back to Companies
-            </Link>
-          </section>
-        </main>
-
-        <Footer />
-      </>
+      <main className="flex-1">
+        <BackToCompanies />
+        <div className="px-4 pt-6 md:px-12">
+          <ErrorBlock description="Company data is temporarily unavailable. Try again in a moment." />
+        </div>
+      </main>
     );
   }
 
-  // Finds jobs connected to the selected company
-  const companyJobs = allJobs.filter(
-    (job) =>
-      job.company.toLowerCase() ===
-      company.name.toLowerCase()
-  );
+  const company = companiesResult.value.find((item) => item.id === Number(id));
 
-  // Counts the company's current open roles by experience level
-  const experienceBreakdown = (
-    ["Entry", "Mid-Level", "Senior", "Lead"] as const
-  ).map((level) => {
-    const count = companyJobs.filter(
-      (job) => job.experienceLevel === level
-    ).length;
-
-    return {
-      level,
-      count,
-      percentage:
-        companyJobs.length > 0
-          ? Math.round((count / companyJobs.length) * 100)
-          : 0,
-    };
-  });
-
-  const displayIndustry = formatCompanyValue(
-    company.industry,
-    "Industry not available"
-  );
-
-  const displayLocation = formatCompanyValue(
-    company.location,
-    "Location not available"
-  );
-
-  const displaySize = formatCompanyValue(
-    company.size,
-    "Size not available"
-  );
-
-  const displayDescription =
-    company.description.trim() !== ""
-      ? company.description
-      : "A detailed company description is not currently available. More information will appear here as the HireScope backend collects additional company data.";
-
-  return (
-    <>
-      {/* Global website header */}
-      <Header />
-
-      <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
-        <div className="mx-auto max-w-6xl">
-          {/* Back navigation */}
+  if (!company) {
+    return (
+      <main className="flex-1">
+        <BackToCompanies />
+        <section className="mx-4 mt-6 flex flex-col items-start gap-3 rounded-2xl bg-ink px-5 py-8 text-paper md:mx-12 md:px-8 md:py-14">
+          <p className="font-mono text-xs font-bold tracking-[0.12em] text-signal md:text-[13px]">
+            NOT IN SERVICE
+          </p>
+          <h1 className="text-[22px] font-extrabold tracking-[-0.02em] md:text-[28px]">
+            Company not found
+          </h1>
+          <p className="max-w-[520px] text-[15px] leading-normal text-board-muted md:text-base">
+            This company may no longer be hiring, or the link is wrong.
+          </p>
           <Link
             href="/companies"
-            className="inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
+            className="mt-2 inline-flex h-11 items-center rounded-full bg-signal px-5 text-[15px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
           >
-            <span className="material-symbols-outlined text-[18px]">
-              arrow_back
-            </span>
-
-            All Companies
+            Browse all companies
           </Link>
-
-          {/* Company summary card */}
-          <section className="mt-6 rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm md:p-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div className="flex items-start gap-5">
-                {/* Temporary company logo */}
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-[#E0BFBF] bg-[#F5F3F1] text-3xl font-bold text-[#800020]">
-                  {company.name.charAt(0)}
-                </div>
-
-                <div>
-                  {/* Company name */}
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                    {company.name}
-                  </h1>
-
-                  {/* Company metadata */}
-                  <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600">
-                    {/* Industry */}
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                        domain
-                      </span>
-
-                      <span>{displayIndustry}</span>
-                    </div>
-
-                    {/* Location */}
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                        location_on
-                      </span>
-
-                      <span>{displayLocation}</span>
-                    </div>
-
-                    {/* Company size */}
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                        groups
-                      </span>
-
-                      <span>{displaySize}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Temporary company action button */}
-              <button
-                type="button"
-                disabled
-                className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-200 px-6 py-3 text-sm font-medium text-gray-500"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  open_in_new
-                </span>
-
-                Website unavailable
-              </button>
-            </div>
-          </section>
-
-          {/* Main company content */}
-          <div className="mt-6 grid gap-6 lg:grid-cols-3">
-            {/* Main information column */}
-            <section className="space-y-6 lg:col-span-2">
-              {/* Company overview */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Company Overview
-                </h2>
-
-                <p className="mt-4 leading-7 text-gray-600">
-                  {displayDescription}
-                </p>
-              </article>
-
-              {/* Technology stack */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Popular Technologies
-                </h2>
-
-                {company.technologies.length > 0 ? (
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    {company.technologies.map(
-                      (technology) => (
-                        <span
-                          key={technology}
-                          className="rounded-lg bg-[#F7EDEE] px-4 py-2 text-sm font-medium text-[#800020]"
-                        >
-                          {technology}
-                        </span>
-                      )
-                    )}
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm text-gray-500">
-                    Technology information is not currently available.
-                  </p>
-                )}
-              </article>
-
-              {/* Open roles by experience level */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Open Roles by Experience Level
-                </h2>
-
-                <p className="mt-2 text-sm text-gray-500">
-                  Based on current job postings
-                </p>
-
-                {companyJobs.length > 0 ? (
-                  <div className="mt-6 space-y-4">
-                    {experienceBreakdown.map((experience) => (
-                      <div key={experience.level}>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-700">
-                            {experience.level}
-                          </span>
-
-                          <span className="text-gray-500">
-                            {experience.count} ({experience.percentage}%)
-                          </span>
-                        </div>
-
-                        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#EAE8E6]">
-                          <div
-                            className="h-full rounded-full bg-[#800020]"
-                            style={{
-                              width: `${experience.percentage}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm text-gray-500">
-                    No open roles are currently listed for this company.
-                  </p>
-                )}
-              </article>
-            </section>
-
-            {/* Company statistics sidebar */}
-            <aside className="space-y-6">
-              {/* Company statistics */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Company Statistics
-                </h2>
-
-                <div className="mt-6 space-y-5">
-                  {/* Open jobs */}
-                  <div className="flex items-center justify-between border-b border-[#E4E2E0] pb-4">
-                    <span className="text-sm text-gray-500">
-                      Open Jobs
-                    </span>
-
-                    <span className="text-xl font-bold text-[#800020]">
-                      {company.openJobs}
-                    </span>
-                  </div>
-
-                  {/* Average salary */}
-                  <div className="flex items-center justify-between border-b border-[#E4E2E0] pb-4">
-                    <span className="text-sm text-gray-500">
-                      Average Salary
-                    </span>
-
-                    <span className="text-xl font-bold text-gray-900">
-                      {formatSalary(
-                        company.averageSalary
-                      )}
-                    </span>
-                  </div>
-
-                  {/* Company size */}
-                  <div className="flex items-center justify-between gap-5">
-                    <span className="text-sm text-gray-500">
-                      Company Size
-                    </span>
-
-                    <span className="text-right font-semibold text-gray-900">
-                      {displaySize}
-                    </span>
-                  </div>
-                </div>
-              </article>
-
-              {/* Company location */}
-              <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Location
-                </h2>
-
-                <div className="mt-5 flex items-start gap-3">
-                  <span className="material-symbols-outlined text-[#800020]">
-                    location_on
-                  </span>
-
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {displayLocation}
-                    </p>
-
-                    {company.location !==
-                      "Unknown" && (
-                      <p className="mt-1 text-sm text-gray-500">
-                        Toronto and Greater Toronto Area
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </article>
-            </aside>
-          </div>
-
-          {/* Company job listings */}
-          <section className="mt-10">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                  Open Positions
-                </h2>
-
-                <p className="mt-2 text-gray-600">
-                  {companyJobs.length} matching job
-                  {companyJobs.length !== 1
-                    ? "s"
-                    : ""}{" "}
-                  currently available
-                </p>
-              </div>
-
-              <Link
-                href="/jobs"
-                className="inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-              >
-                Browse All Jobs
-
-                <span className="material-symbols-outlined text-[18px]">
-                  arrow_forward
-                </span>
-              </Link>
-            </div>
-
-            {companyJobs.length > 0 ? (
-              <div className="mt-6 grid gap-5">
-                {companyJobs.map((job) => (
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="mt-6 rounded-xl border border-[#E0BFBF] bg-white p-10 text-center shadow-sm">
-                <span className="material-symbols-outlined text-[40px] text-[#800020]">
-                  work_off
-                </span>
-
-                <h3 className="mt-4 text-xl font-semibold text-gray-900">
-                  No matching positions yet
-                </h3>
-
-                <p className="mt-2 text-gray-500">
-                  No current jobs from this company were found in the
-                  HireScope database.
-                </p>
-
-                <Link
-                  href="/jobs"
-                  className="mt-6 inline-block rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-                >
-                  Explore Other Jobs
-                </Link>
-              </div>
-            )}
-          </section>
-        </div>
+        </section>
       </main>
+    );
+  }
 
-      {/* Global website footer */}
-      <Footer />
-    </>
+  const allJobs = jobsResult.value;
+  const companyJobs = allJobs.filter((job) => isSameCompany(job.company, company.name));
+
+  // Rank among companies by open roles, for the one-line fact
+  const openRolesByCompany = new Map<string, number>();
+  for (const job of allJobs) {
+    const key = job.company.trim().toLowerCase();
+    openRolesByCompany.set(key, (openRolesByCompany.get(key) ?? 0) + 1);
+  }
+  const isTopHirer =
+    companyJobs.length > 0 && companyJobs.length === Math.max(...openRolesByCompany.values());
+
+  const fact =
+    companyJobs.length === 0
+      ? "No open postings in the data right now."
+      : `${companyJobs.length} of ${allJobs.length} postings we track${
+          isTopHirer ? ", the most of any company" : ""
+        }.`;
+
+  // The company location when known, otherwise the station most of its postings list
+  let terminal = knownValue(company.location);
+  if (terminal) {
+    terminal = placeName(terminal);
+  } else if (companyJobs.length > 0) {
+    const stationCounts = new Map<string, number>();
+    for (const job of companyJobs) {
+      const station = getStation(job.location);
+      stationCounts.set(station, (stationCounts.get(station) ?? 0) + 1);
+    }
+    const [topStation] = [...stationCounts].sort((first, second) => second[1] - first[1])[0];
+    terminal = topStation === "other" ? null : getStationName(topStation);
+  }
+
+  return (
+    <main className="flex-1">
+      <BackToCompanies />
+
+      {/* Header and info strip */}
+      <div className="grid gap-4 px-4 pb-5 pt-6 md:gap-6 md:px-12 md:pb-9 md:pt-7 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-end xl:gap-12">
+        <div className="flex items-center gap-4 md:gap-6">
+          <span
+            aria-hidden="true"
+            className="grid size-16 shrink-0 place-items-center rounded-full bg-ink text-[28px] font-extrabold text-paper outline-2 outline-offset-[5px] outline-ink md:size-24 md:text-[42px] md:outline-[3px] md:outline-offset-8"
+          >
+            {company.name.trim().charAt(0).toUpperCase() || "?"}
+          </span>
+          <div className="flex min-w-0 flex-col gap-1 pl-1.5 md:gap-2 md:pl-3">
+            <p className="font-mono text-[11px] font-bold tracking-[0.1em] text-brand-text md:text-[13px]">
+              TERMINAL{terminal ? ` · ${terminal.toUpperCase()}` : ""}
+            </p>
+            <h1 className="break-words text-[28px] font-extrabold leading-[1.05] tracking-[-0.02em] md:text-[52px] md:leading-none md:tracking-[-0.03em]">
+              {company.name}
+            </h1>
+            <p className="text-[15px] text-muted md:text-[17px]">{fact}</p>
+          </div>
+        </div>
+
+        <CompanyFacts company={company} strip />
+      </div>
+
+      <CompanyRoles companyName={company.name} jobs={companyJobs} />
+    </main>
   );
 }

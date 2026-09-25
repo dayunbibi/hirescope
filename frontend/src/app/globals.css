@@ -1,76 +1,98 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Line Map design tokens (see design/line-map/README.md) */
+@theme {
+  --color-ink: #16181a;
+  --color-paper: #f5f4ef;
+  --color-card: #ffffff;
+  --color-hairline: #deddd6;
+  --color-hairline-strong: #cfcec7;
+  --color-hairline-soft: #eceae4;
+  --color-muted: #4a4c49;
+  --color-muted-2: #6a6c68;
+
+  /* Dark "departures board" surfaces */
+  --color-board-divider: #262927;
+  --color-board-divider-2: #2c2f2d;
+  --color-board-edge: #3c3f3c;
+  --color-board-text: #d6d5cf;
+  --color-board-soft: #c9c8c2;
+  --color-board-muted: #b4b6b1;
+  --color-board-faint: #8d908c;
+
+  /* Work type lines */
+  --color-line-hybrid: oklch(0.8 0.15 85);
+  --color-line-remote: oklch(0.6 0.2 28);
+  --color-line-onsite: oklch(0.6 0.14 155);
+
+  --color-signal: oklch(0.85 0.15 85);
+  --color-brand: oklch(0.6 0.2 28);
+  --color-brand-text: oklch(0.52 0.19 28);
+  --color-error: oklch(0.72 0.17 28);
+  --color-error-dot: oklch(0.65 0.2 28);
+  --color-lake: oklch(0.94 0.025 230);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-overpass), sans-serif;
+  --font-mono: var(--font-overpass-mono), monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
-/* Brand-styled range slider, used by the job filter sidebar */
-input[type="range"].brand-range {
+/* Line Map range slider (ink thumb on a hairline track), used by the job filters */
+input[type="range"].line-range {
   -webkit-appearance: none;
   appearance: none;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"].line-range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 9999px;
-  background: #e0bfbf;
+  background: var(--color-hairline-strong);
+}
+
+input[type="range"].line-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-hairline-strong);
+}
+
+input[type="range"].line-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  border: 3px solid var(--color-card);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+input[type="range"].line-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  border: 3px solid var(--color-card);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+input[type="range"].line-range:focus-visible {
   outline: none;
 }
 
-input[type="range"].brand-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #800020;
-  border: 2px solid #fbf9f7;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  transition: transform 0.15s ease;
+input[type="range"].line-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--color-ink), 0 0 0 6px rgba(22, 24, 26, 0.18);
 }
 
-input[type="range"].brand-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-}
-
-input[type="range"].brand-range:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.25);
-}
-
-input[type="range"].brand-range::-moz-range-track {
-  height: 4px;
-  border-radius: 9999px;
-  background: #e0bfbf;
-}
-
-input[type="range"].brand-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #800020;
-  border: 2px solid #fbf9f7;
-  cursor: pointer;
-}
-
-input[type="range"].brand-range:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.25);
+input[type="range"].line-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--color-ink), 0 0 0 6px rgba(22, 24, 26, 0.18);
 }

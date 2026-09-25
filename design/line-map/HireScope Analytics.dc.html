@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:32px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · ANALYTICS · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">A network status report: one snapshot of the market, with no invented trends.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">Every number here comes from your brief. The date range and role filters work in the UI. In the preview they show a notice instead of changing the numbers.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<span style="font:500 14px 'IBM Plex Mono',monospace;color:#555;margin-right:8px">STATE</span>
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="3">
+<button onClick="{{ v.pick }}" style="height:40px;padding:0 18px;border-radius:99px;border:1px solid #1a1a1a;background:{{ v.bg }};color:{{ v.fg }};font:500 15px 'IBM Plex Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:64px;align-items:flex-start;flex-wrap:wrap">
+
+<div style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Desktop · 1440</div>
+<div data-screen-label="Analytics Desktop" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Jobs</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Analytics</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:40px 48px 24px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">NETWORK STATUS · SEP 24, 2026</div>
+<h1 style="margin:0;font:800 48px/1 'Overpass',sans-serif;letter-spacing:-.03em">Analytics</h1>
+<div style="font-size:17px;color:#4a4c49;max-width:640px">A snapshot of the GTA developer job market today. We don’t have history yet, so there are no trend lines.</div>
+</div>
+<div style="display:flex;gap:12px;align-items:center">
+<div role="group" aria-label="Date range" style="display:flex;background:#fff;border:1.5px solid #16181a;border-radius:99px;padding:3px">
+<sc-for list="{{ ranges }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.pick }}" aria-pressed="{{ r.on }}" style="height:40px;padding:0 16px;border-radius:99px;border:0;background:{{ r.bg }};color:{{ r.fg }};font:700 14px 'Overpass',sans-serif;cursor:pointer">{{ r.label }}</button></sc-for>
+</div>
+<select value="{{ role }}" onChange="{{ setRole }}" aria-label="Role" style="height:48px;padding:0 16px;border-radius:99px;border:1.5px solid #16181a;background:#fff;font:700 15px 'Overpass',sans-serif;color:#16181a;cursor:pointer"><option value="all">All roles</option><option value="backend">Backend</option><option value="frontend">Frontend</option><option value="fullstack">Full stack</option><option value="ml">ML / Data</option><option value="platform">Platform / DevOps</option></select>
+</div>
+</div>
+<sc-if value="{{ filtered }}" hint-placeholder-val="{{ false }}">
+<div style="margin:0 48px 20px;border:1.5px dashed #b5b4ad;border-radius:12px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:#4a4c49"><span>Filtered by <b style="color:#16181a">{{ filterLabel }}</b>. Preview data is all-time, so the live app recalculates every chart from posting dates.</span><button onClick="{{ clear }}" style="height:40px;padding:0 16px;border-radius:99px;border:1.5px solid #16181a;background:#fff;font:700 14px 'Overpass',sans-serif;cursor:pointer">Reset</button></div>
+</sc-if>
+
+<sc-if value="{{ isDefault }}" hint-placeholder-val="{{ true }}">
+<div style="margin:0 48px;display:grid;grid-template-columns:repeat(4,1fr);background:#16181a;color:#f5f4ef;border-radius:16px">
+<div style="padding:24px;border-right:1px solid #2c2f2d"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">TOTAL ACTIVE JOBS</div><div style="font:800 48px/1.1 'Overpass Mono',monospace;letter-spacing:-.04em;margin-top:8px">149</div></div>
+<div style="padding:24px;border-right:1px solid #2c2f2d"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">HIRING COMPANIES</div><div style="font:800 48px/1.1 'Overpass Mono',monospace;letter-spacing:-.04em;margin-top:8px">26</div></div>
+<div style="padding:24px;border-right:1px solid #2c2f2d"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">JOBS WITH SALARY</div><div style="font:800 48px/1.1 'Overpass Mono',monospace;letter-spacing:-.04em;margin-top:8px">56 <span style="font:600 16px 'Overpass Mono',monospace;color:#a9aba6;letter-spacing:0">38%</span></div></div>
+<div style="padding:24px"><div style="font:600 12px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">AVERAGE SALARY · CAD</div><div style="font:800 48px/1.1 'Overpass Mono',monospace;letter-spacing:-.04em;margin-top:8px;color:oklch(0.85 0.15 85)">~$120k</div><div style="font-size:13px;color:#a9aba6;margin-top:4px">Midpoint of 56 postings that list pay</div></div>
+</div>
+<div style="margin:24px 48px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px">
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font:800 21px 'Overpass',sans-serif">Salary by experience level</h2><div style="font-size:14px;color:#4a4c49;margin-top:4px">Average midpoint, CAD. Only postings that list pay.</div></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:grid;grid-template-columns:96px 1fr 70px;gap:14px;align-items:center"><span style="font:700 15px 'Overpass',sans-serif">Lead</span><span style="height:26px;border-radius:6px;background:#f0efe9"><span style="display:block;height:26px;width:100%;border-radius:6px;background:oklch(0.8 0.15 85)"></span></span><span style="font:700 15px 'Overpass Mono',monospace;text-align:right">$146k</span></div>
+<div style="display:grid;grid-template-columns:96px 1fr 70px;gap:14px;align-items:center"><span style="font:700 15px 'Overpass',sans-serif">Senior</span><span style="height:26px;border-radius:6px;background:#f0efe9"><span style="display:block;height:26px;width:79.5%;border-radius:6px;background:#16181a"></span></span><span style="font:700 15px 'Overpass Mono',monospace;text-align:right">$116k</span></div>
+<div style="display:grid;grid-template-columns:96px 1fr 70px;gap:14px;align-items:center"><span style="font:700 15px 'Overpass',sans-serif">Mid-Level</span><span style="height:26px;border-radius:6px;background:#f0efe9"><span style="display:block;height:26px;width:47.9%;border-radius:6px;background:oklch(0.6 0.2 28)"></span></span><span style="font:700 15px 'Overpass Mono',monospace;text-align:right">$70k</span></div>
+<div style="display:grid;grid-template-columns:96px 1fr 70px;gap:14px;align-items:center"><span style="font:700 15px 'Overpass',sans-serif">Entry</span><span style="height:26px;border-radius:6px;background:#f0efe9"><span style="display:block;height:26px;width:51.4%;border-radius:6px;box-sizing:border-box;border:2px dashed oklch(0.5 0.14 155);background:repeating-linear-gradient(135deg,oklch(0.88 0.08 155) 0 6px,#fff 6px 12px)"></span></span><span style="font:700 15px 'Overpass Mono',monospace;text-align:right">$75k</span></div>
+</div>
+<div style="font-size:13px;color:#4a4c49;border-top:1px solid #eceae4;padding-top:12px">Entry is based on <b>1 posting</b>, so read it as a single data point, not an average.</div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div><h2 style="margin:0;font:800 21px 'Overpass',sans-serif">Work type breakdown</h2><div style="font-size:14px;color:#4a4c49;margin-top:4px">Each line’s length is its share of 149 jobs.</div></div>
+<div style="display:flex;flex-direction:column;gap:22px;padding-top:6px">
+<a href="#" style="display:flex;flex-direction:column;gap:8px;text-decoration:none"><div style="display:flex;justify-content:space-between;font:700 16px 'Overpass',sans-serif"><span>Hybrid Line</span><span style="font-family:'Overpass Mono',monospace">71 · 48%</span></div><div style="position:relative;height:12px"><span style="position:absolute;left:0;top:0;height:12px;width:47.7%;border-radius:6px;background:oklch(0.8 0.15 85)"></span><span style="position:absolute;left:calc(47.7% - 10px);top:-4px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid #16181a;box-sizing:border-box"></span></div></a>
+<a href="#" style="display:flex;flex-direction:column;gap:8px;text-decoration:none"><div style="display:flex;justify-content:space-between;font:700 16px 'Overpass',sans-serif"><span>Remote Line</span><span style="font-family:'Overpass Mono',monospace">61 · 41%</span></div><div style="position:relative;height:12px"><span style="position:absolute;left:0;top:0;height:12px;width:40.9%;border-radius:6px;background:oklch(0.6 0.2 28)"></span><span style="position:absolute;left:calc(40.9% - 10px);top:-4px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid #16181a;box-sizing:border-box"></span></div></a>
+<a href="#" style="display:flex;flex-direction:column;gap:8px;text-decoration:none"><div style="display:flex;justify-content:space-between;font:700 16px 'Overpass',sans-serif"><span>On-site Line</span><span style="font-family:'Overpass Mono',monospace">17 · 11%</span></div><div style="position:relative;height:12px"><span style="position:absolute;left:0;top:0;height:12px;width:11.4%;border-radius:6px;background:oklch(0.6 0.14 155)"></span><span style="position:absolute;left:calc(11.4% - 10px);top:-4px;width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid #16181a;box-sizing:border-box"></span></div></a>
+</div>
+</div>
+</div>
+<div style="margin:24px 48px 0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px">
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div><h2 style="margin:0;font:800 21px 'Overpass',sans-serif">Most requested technologies</h2><div style="font-size:14px;color:#4a4c49;margin-top:4px">Jobs mentioning each skill. One job can list several.</div></div><span style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">Top 10</span></div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ skills }}" as="s" hint-placeholder-count="10">
+<a href="#" style="display:grid;grid-template-columns:28px 150px 1fr 44px;gap:12px;align-items:center;height:32px;text-decoration:none"><span style="font:500 13px 'Overpass Mono',monospace;color:#6a6c68">{{ s.rank }}</span><span style="font:700 15px 'Overpass',sans-serif">{{ s.name }}</span><span style="height:14px;border-radius:4px;background:#f0efe9"><span style="display:block;height:14px;width:{{ s.w }};border-radius:4px;background:{{ s.col }}"></span></span><span style="font:700 14px 'Overpass Mono',monospace;text-align:right">{{ s.n }}</span></a>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div><h2 style="margin:0;font:800 21px 'Overpass',sans-serif">Top hiring companies</h2><div style="font-size:14px;color:#4a4c49;margin-top:4px">Open roles. These 5 make up 76% of all jobs.</div></div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ cos }}" as="c" hint-placeholder-count="5">
+<a href="#" style="display:grid;grid-template-columns:40px 1fr 44px;gap:12px;align-items:center;min-height:52px;text-decoration:none"><span style="width:36px;height:36px;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 15px 'Overpass',sans-serif">{{ c.ini }}</span><span style="display:flex;flex-direction:column;gap:5px"><span style="font:700 15px 'Overpass',sans-serif">{{ c.name }}</span><span style="height:8px;border-radius:4px;background:#f0efe9"><span style="display:block;height:8px;width:{{ c.w }};border-radius:4px;background:#16181a"></span></span></span><span style="font:800 17px 'Overpass Mono',monospace;text-align:right">{{ c.n }}</span></a>
+</sc-for>
+</div>
+<a href="#" style="font:700 15px 'Overpass',sans-serif;color:oklch(0.5 0.19 28);margin-top:auto">All 26 companies →</a>
+</div>
+</div>
+<div style="margin:24px 48px 0;background:#fff;border:1px solid #deddd6;border-radius:16px;padding:24px;display:grid;grid-template-columns:300px minmax(0,1fr);gap:40px;align-items:center">
+<div><h2 style="margin:0;font:800 21px 'Overpass',sans-serif">Experience level mix</h2><div style="font-size:14px;color:#4a4c49;margin-top:4px;line-height:1.5">Only 6 of 149 roles are entry-level. The GTA market is heavily senior.</div></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;height:40px;border-radius:10px;overflow:hidden;gap:3px"><span style="flex:66;background:#16181a"></span><span style="flex:42;background:oklch(0.6 0.2 28)"></span><span style="flex:35;background:oklch(0.8 0.15 85)"></span><span style="flex:6;background:oklch(0.6 0.14 155)"></span></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+<div style="display:flex;gap:10px;align-items:flex-start"><span style="width:14px;height:14px;margin-top:3px;border-radius:3px;background:#16181a"></span><div><div style="font:700 15px 'Overpass',sans-serif">Senior</div><div style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">66 · 44%</div></div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><span style="width:14px;height:14px;margin-top:3px;border-radius:3px;background:oklch(0.6 0.2 28)"></span><div><div style="font:700 15px 'Overpass',sans-serif">Mid-Level</div><div style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">42 · 28%</div></div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><span style="width:14px;height:14px;margin-top:3px;border-radius:3px;background:oklch(0.8 0.15 85)"></span><div><div style="font:700 15px 'Overpass',sans-serif">Lead</div><div style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">35 · 23%</div></div></div>
+<div style="display:flex;gap:10px;align-items:flex-start"><span style="width:14px;height:14px;margin-top:3px;border-radius:3px;background:oklch(0.6 0.14 155)"></span><div><div style="font:700 15px 'Overpass',sans-serif">Entry</div><div style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">6 · 4%</div></div></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="margin:0 48px;display:flex;flex-direction:column;gap:24px">
+<span style="height:120px;border-radius:16px;background:#2c2f2d"></span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px"><span style="height:300px;border-radius:16px;background:#e8e7e1"></span><span style="height:300px;border-radius:16px;background:#e8e7e1"></span></div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px"><span style="height:380px;border-radius:16px;background:#e8e7e1"></span><span style="height:380px;border-radius:16px;background:#e8e7e1"></span></div>
+</div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="margin:0 48px;background:#16181a;color:#f5f4ef;border-radius:16px;padding:56px 40px;display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+<div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div>
+<div style="font:800 30px 'Overpass',sans-serif">Network status is unavailable.</div>
+<div style="font-size:16px;color:#b4b6b1;max-width:520px;line-height:1.5">We can’t reach the HireScope API, so the charts can’t load. Nothing is shown rather than stale or made-up numbers.</div>
+<button onClick="{{ retry }}" style="margin-top:8px;height:44px;padding:0 22px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Retry</button>
+</div>
+</sc-if>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Mobile · 390</div>
+<div data-screen-label="Analytics Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;background:#16181a;color:#f5f4ef"><div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div><button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button></div>
+<div style="padding:22px 16px;display:flex;flex-direction:column;gap:14px">
+<div style="font:700 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">NETWORK STATUS · SEP 24, 2026</div>
+<h1 style="margin:0;font:800 34px/1 'Overpass',sans-serif;letter-spacing:-.03em">Analytics</h1>
+<div style="font-size:15px;color:#4a4c49;line-height:1.5">Today’s snapshot. No history yet, so no trend lines.</div>
+<div style="display:flex;gap:4px;overflow-x:auto;scrollbar-width:none"><sc-for list="{{ ranges }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.pick }}" style="flex:none;height:44px;padding:0 14px;border-radius:99px;border:1.5px solid {{ r.mbd }};background:{{ r.bg }};color:{{ r.fg }};font:700 14px 'Overpass',sans-serif">{{ r.label }}</button></sc-for></div>
+<select value="{{ role }}" onChange="{{ setRole }}" aria-label="Role" style="height:48px;padding:0 14px;border-radius:99px;border:1.5px solid #16181a;background:#fff;font:700 15px 'Overpass',sans-serif;color:#16181a"><option value="all">All roles</option><option value="backend">Backend</option><option value="frontend">Frontend</option><option value="fullstack">Full stack</option><option value="ml">ML / Data</option><option value="platform">Platform / DevOps</option></select>
+<sc-if value="{{ isDefault }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:1fr 1fr;background:#16181a;color:#f5f4ef;border-radius:16px">
+<div style="padding:16px;border-right:1px solid #2c2f2d;border-bottom:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">ACTIVE JOBS</div><div style="font:800 30px 'Overpass Mono',monospace;margin-top:4px">149</div></div>
+<div style="padding:16px;border-bottom:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">COMPANIES</div><div style="font:800 30px 'Overpass Mono',monospace;margin-top:4px">26</div></div>
+<div style="padding:16px;border-right:1px solid #2c2f2d"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">WITH SALARY</div><div style="font:800 30px 'Overpass Mono',monospace;margin-top:4px">56 <span style="font-size:13px;color:#a9aba6">38%</span></div></div>
+<div style="padding:16px"><div style="font:600 10px 'Overpass Mono',monospace;letter-spacing:.1em;color:#a9aba6">AVG SALARY</div><div style="font:800 30px 'Overpass Mono',monospace;margin-top:4px;color:oklch(0.85 0.15 85)">~$120k</div></div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font:800 18px 'Overpass',sans-serif">Salary by level</h2>
+<div style="display:grid;grid-template-columns:78px 1fr 50px;gap:10px;align-items:center;font-size:14px"><b>Lead</b><span style="height:18px;border-radius:4px;background:#f0efe9"><span style="display:block;height:18px;width:100%;border-radius:4px;background:oklch(0.8 0.15 85)"></span></span><b style="font-family:'Overpass Mono',monospace;text-align:right">$146k</b></div>
+<div style="display:grid;grid-template-columns:78px 1fr 50px;gap:10px;align-items:center;font-size:14px"><b>Senior</b><span style="height:18px;border-radius:4px;background:#f0efe9"><span style="display:block;height:18px;width:79.5%;border-radius:4px;background:#16181a"></span></span><b style="font-family:'Overpass Mono',monospace;text-align:right">$116k</b></div>
+<div style="display:grid;grid-template-columns:78px 1fr 50px;gap:10px;align-items:center;font-size:14px"><b>Mid-Level</b><span style="height:18px;border-radius:4px;background:#f0efe9"><span style="display:block;height:18px;width:47.9%;border-radius:4px;background:oklch(0.6 0.2 28)"></span></span><b style="font-family:'Overpass Mono',monospace;text-align:right">$70k</b></div>
+<div style="display:grid;grid-template-columns:78px 1fr 50px;gap:10px;align-items:center;font-size:14px"><b>Entry</b><span style="height:18px;border-radius:4px;background:#f0efe9"><span style="display:block;height:18px;width:51.4%;border-radius:4px;box-sizing:border-box;border:2px dashed oklch(0.5 0.14 155);background:repeating-linear-gradient(135deg,oklch(0.88 0.08 155) 0 6px,#fff 6px 12px)"></span></span><b style="font-family:'Overpass Mono',monospace;text-align:right">$75k</b></div>
+<div style="font-size:13px;color:#4a4c49">Entry: based on 1 posting.</div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font:800 18px 'Overpass',sans-serif">Work type</h2>
+<div style="display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px"><span style="flex:71;background:oklch(0.8 0.15 85)"></span><span style="flex:61;background:oklch(0.6 0.2 28)"></span><span style="flex:17;background:oklch(0.6 0.14 155)"></span></div>
+<div style="display:flex;flex-direction:column;gap:6px;font-size:15px"><div style="display:flex;justify-content:space-between"><span style="display:flex;gap:8px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.8 0.15 85)"></span><b>Hybrid</b></span><span style="font-family:'Overpass Mono',monospace">71 · 48%</span></div><div style="display:flex;justify-content:space-between"><span style="display:flex;gap:8px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.6 0.2 28)"></span><b>Remote</b></span><span style="font-family:'Overpass Mono',monospace">61 · 41%</span></div><div style="display:flex;justify-content:space-between"><span style="display:flex;gap:8px;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.6 0.14 155)"></span><b>On-site</b></span><span style="font-family:'Overpass Mono',monospace">17 · 11%</span></div></div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px">
+<h2 style="margin:0 0 4px;font:800 18px 'Overpass',sans-serif">Most requested technologies</h2>
+<sc-for list="{{ skills }}" as="s" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:118px 1fr 28px;gap:10px;align-items:center;font-size:14px"><b>{{ s.name }}</b><span style="height:10px;border-radius:3px;background:#f0efe9"><span style="display:block;height:10px;width:{{ s.w }};border-radius:3px;background:{{ s.col }}"></span></span><span style="font:700 13px 'Overpass Mono',monospace;text-align:right">{{ s.n }}</span></div></sc-for>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:4px">
+<h2 style="margin:0 0 6px;font:800 18px 'Overpass',sans-serif">Top hiring companies</h2>
+<sc-for list="{{ cos }}" as="c" hint-placeholder-count="5"><a href="#" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;border-top:1px solid #eceae4;font:700 15px 'Overpass',sans-serif;text-decoration:none"><span>{{ c.name }}</span><span style="font-family:'Overpass Mono',monospace">{{ c.n }}</span></a></sc-for>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font:800 18px 'Overpass',sans-serif">Experience level mix</h2>
+<div style="display:flex;height:28px;border-radius:8px;overflow:hidden;gap:2px"><span style="flex:66;background:#16181a"></span><span style="flex:42;background:oklch(0.6 0.2 28)"></span><span style="flex:35;background:oklch(0.8 0.15 85)"></span><span style="flex:6;background:oklch(0.6 0.14 155)"></span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px"><span><b>Senior</b> 66 · 44%</span><span><b>Mid</b> 42 · 28%</span><span><b>Lead</b> 35 · 23%</span><span><b>Entry</b> 6 · 4%</span></div>
+</div>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><div aria-busy="true" style="display:flex;flex-direction:column;gap:12px"><span style="height:150px;border-radius:16px;background:#2c2f2d"></span><span style="height:200px;border-radius:16px;background:#e8e7e1"></span><span style="height:160px;border-radius:16px;background:#e8e7e1"></span></div></sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)">SERVICE DISRUPTION</div><div style="font:800 20px 'Overpass',sans-serif">Network status is unavailable.</div><button onClick="{{ retry }}" style="height:48px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif">Retry</button></div></sc-if>
+</div>
+<footer style="padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'default', range: 'all', role: 'all' };
+  renderVals() {
+    const S = this.state, v = S.view;
+    const R = [['all', 'All time'], ['7', 'Last 7 days'], ['30', 'Last 30 days'], ['90', 'Last 90 days']];
+    const ranges = R.map(([id, label]) => { const on = S.range === id; return { label, on, bg: on ? '#16181a' : '#fff', fg: on ? '#fff' : '#16181a', mbd: on ? '#16181a' : '#cfcec7', pick: () => this.setState({ range: id }) }; });
+    const roleNames = { all: 'All roles', backend: 'Backend', frontend: 'Frontend', fullstack: 'Full stack', ml: 'ML / Data', platform: 'Platform / DevOps' };
+    const SK = [['Python', 45], ['Go', 40], ['Kubernetes', 35], ['AWS', 34], ['Machine Learning', 31], ['React', 29], ['TypeScript', 23], ['Java', 23], ['Docker', 20], ['Azure', 19]];
+    const CO = [['PointClickCare', 46], ['Canonical', 24], ['Faire', 20], ['Zensurance', 13], ['Achievers', 11]];
+    const parts = [];
+    if (S.range !== 'all') parts.push(R.find(r => r[0] === S.range)[1].toLowerCase());
+    if (S.role !== 'all') parts.push(roleNames[S.role]);
+    return {
+      views: [['default', 'Default'], ['loading', 'Loading'], ['error', 'Error']].map(([id, label]) => ({ label, bg: v === id ? '#1a1a1a' : '#fff', fg: v === id ? '#fff' : '#1a1a1a', pick: () => this.setState({ view: id }) })),
+      ranges, role: S.role, setRole: e => this.setState({ role: e.target.value }),
+      filtered: v === 'default' && parts.length > 0, filterLabel: parts.join(' · '),
+      clear: () => this.setState({ range: 'all', role: 'all' }), retry: () => this.setState({ view: 'default' }),
+      isDefault: v === 'default', isLoading: v === 'loading', isError: v === 'error',
+      skills: SK.map(([name, n], i) => ({ name, n, rank: i + 1, w: (n / 45 * 100) + '%', col: i === 0 ? 'oklch(0.6 0.2 28)' : '#16181a' })),
+      cos: CO.map(([name, n]) => ({ name, n, ini: name[0], w: (n / 46 * 100) + '%' })),
+    };
+  }
+}
+</script>
+</body>
+</html>

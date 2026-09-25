@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6e6e2;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+input::placeholder{color:#8a8c88}
+</style>
+</helmet>
+<section style="padding:80px;display:flex;flex-direction:column;gap:32px;font-family:'IBM Plex Sans',sans-serif">
+<div style="display:flex;flex-direction:column;gap:8px;max-width:1400px">
+<div style="font:600 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#666">2a LINE MAP · COMPANIES + COMPANY DETAIL · 1440 + 390</div>
+<div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#1a1a1a">Companies are terminals. Their size on the map is their open roles.</div>
+<div style="font:400 17px 'IBM Plex Sans',sans-serif;color:#555">Unknown fields are shown quietly. If all three are unknown they collapse into one line instead of three empty rows. Open-role counts for the top 5 are real. The per-level breakdown on the detail page is <span style="font:500 12px 'IBM Plex Mono',monospace;border:1px dashed #888;padding:1px 5px;border-radius:3px">SAMPLE</span> data.</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<span style="font:500 14px 'IBM Plex Mono',monospace;color:#555;margin-right:8px">DIRECTORY STATE</span>
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+<button onClick="{{ v.pick }}" style="height:40px;padding:0 18px;border-radius:99px;border:1px solid #1a1a1a;background:{{ v.bg }};color:{{ v.fg }};font:500 15px 'IBM Plex Sans',sans-serif;cursor:pointer">{{ v.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:64px;align-items:flex-start;flex-wrap:wrap">
+
+<!-- DIRECTORY DESKTOP -->
+<div style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Companies · Desktop</div>
+<div data-screen-label="Companies Desktop" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:40px 48px 28px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">TERMINALS · WHO’S HIRING</div>
+<h1 style="margin:0;font:800 48px/1 'Overpass',sans-serif;letter-spacing:-.03em">Companies</h1>
+<div style="font-size:17px;color:#4a4c49">26 companies hiring developers in the GTA, sorted by open roles.</div>
+</div>
+<div style="display:flex;align-items:center;width:520px;height:56px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 20px;gap:10px">
+<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg>
+<input value="{{ q }}" onChange="{{ setQ }}" aria-label="Search companies" placeholder="Search companies or technologies" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 17px 'Overpass',sans-serif;color:#16181a">
+</div>
+</div>
+<div style="padding:0 48px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;min-height:44px"><div style="font:800 18px 'Overpass',sans-serif">{{ countLabel }}</div><div style="font:500 13px 'Overpass Mono',monospace;color:#4a4c49">Sorted by open roles</div></div>
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+<sc-for list="{{ cos }}" as="c" hint-placeholder-count="6">
+<article style="background:#fff;border:1px solid #deddd6;border-radius:18px;display:flex;flex-direction:column;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:22px 22px 18px;gap:12px">
+<div style="display:flex;gap:14px;align-items:center;min-width:0"><span style="width:52px;height:52px;flex:none;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 22px 'Overpass',sans-serif;box-shadow:0 0 0 5px #fff,0 0 0 7px #16181a">{{ c.ini }}</span><div style="min-width:0"><a href="#" style="font:800 20px 'Overpass',sans-serif;letter-spacing:-.01em">{{ c.name }}</a><div style="font-size:14px;color:{{ c.indCol }};font-style:{{ c.indFs }};margin-top:2px">{{ c.industry }}</div></div></div>
+<div style="text-align:right;flex:none"><div style="font:800 32px/1 'Overpass Mono',monospace;letter-spacing:-.04em">{{ c.open }}</div><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.08em;color:#4a4c49;margin-top:4px">OPEN ROLES</div><sc-if value="{{ c.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;border:1px dashed #9a9c98;padding:0 4px;border-radius:3px;color:#6a6c68">SAMPLE</span></sc-if></div>
+</div>
+<div style="padding:0 22px 18px;display:flex;flex-direction:column">
+<sc-if value="{{ c.allUnknown }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 0;border-top:1px solid #eceae4;font-size:14px;color:#6a6c68;font-style:italic">Industry, location and size not listed</div></sc-if>
+<sc-for list="{{ c.info }}" as="f" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eceae4;font-size:15px"><span style="color:#4a4c49">{{ f.k }}</span><span style="font-weight:{{ f.w }};color:{{ f.col }};font-style:{{ f.fs }}">{{ f.v }}</span></div></sc-for>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eceae4;font-size:15px"><span style="color:#4a4c49">Avg salary</span><span style="font:{{ c.salW }} 14px 'Overpass Mono',monospace;color:{{ c.salCol }}">{{ c.avg }}</span></div>
+</div>
+<div style="margin-top:auto;padding:14px 22px 20px;border-top:1px solid #eceae4;display:flex;justify-content:space-between;align-items:center;gap:10px">
+<div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ c.tech }}" as="t" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #cfcec7;padding:3px 9px;border-radius:99px">{{ t.n }}</span></sc-for></div>
+<a href="#" aria-label="{{ c.aria }}" style="width:44px;height:44px;flex:none;border-radius:50%;background:#16181a;color:#fff;display:grid;place-items:center;font:700 18px 'Overpass',sans-serif;text-decoration:none">→</a>
+</div>
+</article>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:center;padding:12px 0"><button style="height:48px;padding:0 28px;border-radius:99px;border:1.5px solid #16181a;background:#fff;font:700 16px 'Overpass',sans-serif;color:#16181a;cursor:pointer">{{ moreLabel }}</button></div>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+<div aria-busy="true" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px"><sc-for list="{{ skel }}" as="k" hint-placeholder-count="6"><div style="background:#fff;border:1px solid #deddd6;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px"><div style="display:flex;gap:14px;align-items:center"><span style="width:52px;height:52px;border-radius:50%;background:#e8e7e1"></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><span style="height:16px;width:{{ k.w }};border-radius:3px;background:#e2e1db"></span><span style="height:10px;width:40%;border-radius:3px;background:#eceae4"></span></div></div><span style="height:10px;border-radius:3px;background:#eceae4"></span><span style="height:10px;border-radius:3px;background:#eceae4"></span><span style="height:10px;width:60%;border-radius:3px;background:#eceae4"></span></div></sc-for></div>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="background:#16181a;color:#f5f4ef;border-radius:18px;padding:56px 32px;display:flex;flex-direction:column;gap:12px;align-items:flex-start"><div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.85 0.15 85)">NO TERMINAL FOUND</div><div style="font:800 28px 'Overpass',sans-serif">No companies match “{{ qShow }}”.</div><div style="font-size:16px;color:#b4b6b1">Check the spelling, or search a technology like Python or Go.</div><button onClick="{{ clearQ }}" style="margin-top:8px;height:44px;padding:0 20px;border-radius:99px;border:0;background:oklch(0.85 0.15 85);color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Clear search</button></div>
+</sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:18px;padding:56px 32px;display:flex;flex-direction:column;gap:12px;align-items:flex-start"><div style="display:flex;align-items:center;gap:10px;font:700 13px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.65 0.2 28)"></span>SERVICE DISRUPTION</div><div style="font:800 28px 'Overpass',sans-serif">We can’t reach the HireScope API right now.</div><div style="font-size:16px;color:#b4b6b1">Company data is temporarily unavailable.</div><button onClick="{{ retry }}" style="margin-top:8px;height:44px;padding:0 22px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif;cursor:pointer">Retry</button></div>
+</sc-if>
+</div>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<!-- DETAIL DESKTOP -->
+<div style="display:flex;flex-direction:column;gap:14px;width:1440px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Company Detail · Desktop</div>
+<div data-screen-label="Company Detail Desktop" style="width:1440px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:4px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:68px;background:#16181a;color:#f5f4ef">
+<div style="display:flex;align-items:center;gap:12px;font:800 20px 'Overpass',sans-serif"><span style="position:relative;width:28px;height:28px;border-radius:50%;border:5px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:36px;height:7px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div>
+<nav style="display:flex;gap:4px;font:600 15px 'Overpass',sans-serif">
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Home</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Jobs</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Analytics</a>
+<a href="#" aria-current="page" style="padding:10px 16px;border-radius:99px;background:#f5f4ef;color:#16181a">Companies</a>
+<a href="#" style="padding:10px 16px;color:#c9c8c2">Bookmarks</a>
+</nav>
+<div style="font:500 13px 'Overpass Mono',monospace;color:#c9c8c2">Updated Sep 24, 2026</div>
+</div>
+<div style="padding:20px 48px 0"><a href="#" style="display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:99px;border:1.5px solid #cfcec7;background:#fff;font:600 14px 'Overpass',sans-serif">← All companies</a></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:48px;padding:28px 48px 36px;align-items:end">
+<div style="display:flex;gap:24px;align-items:center">
+<span style="width:96px;height:96px;flex:none;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 42px 'Overpass',sans-serif;box-shadow:0 0 0 8px #f5f4ef,0 0 0 11px #16181a">P</span>
+<div style="display:flex;flex-direction:column;gap:8px"><div style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">TERMINAL · MISSISSAUGA</div><h1 style="margin:0;font:800 52px/1 'Overpass',sans-serif;letter-spacing:-.03em">PointClickCare</h1><div style="font-size:17px;color:#4a4c49">The biggest hirer in the dataset: 46 of 149 GTA developer postings.</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:1px solid #deddd6;border-radius:16px">
+<div style="padding:16px 18px;border-right:1px solid #eceae4"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">INDUSTRY</div><div style="font:700 16px 'Overpass',sans-serif;margin-top:6px">Healthcare software</div></div>
+<div style="padding:16px 18px;border-right:1px solid #eceae4"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">LOCATION</div><div style="font:700 16px 'Overpass',sans-serif;margin-top:6px">Mississauga</div></div>
+<div style="padding:16px 18px"><div style="font:600 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:#6a6c68">SIZE</div><div style="font:500 16px 'Overpass',sans-serif;margin-top:6px;color:#6a6c68;font-style:italic">Unknown</div></div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:420px minmax(0,1fr);gap:32px;padding:0 48px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:800 20px 'Overpass',sans-serif">Open roles by level</h2><span style="font:600 9px 'Overpass Mono',monospace;border:1px dashed #9a9c98;padding:1px 4px;border-radius:3px;color:#6a6c68">SAMPLE SPLIT</span></div>
+<div style="font:800 44px/1 'Overpass Mono',monospace;letter-spacing:-.04em">46 <span style="font:500 14px 'Overpass Mono',monospace;color:#4a4c49;letter-spacing:0">open roles</span></div>
+<div style="display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px"><sc-for list="{{ lvBars }}" as="b" hint-placeholder-count="4"><span style="flex:{{ b.n }};background:{{ b.col }}"></span></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ lvBars }}" as="b" hint-placeholder-count="4">
+<button onClick="{{ b.pick }}" aria-pressed="{{ b.on }}" style="display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center;height:44px;padding:0 12px;border-radius:10px;border:1.5px solid {{ b.bd }};background:{{ b.bg }};font:700 15px 'Overpass',sans-serif;color:#16181a;text-align:left;cursor:pointer"><span style="width:12px;height:12px;border-radius:3px;background:{{ b.col }}"></span>{{ b.label }}<span style="font:600 14px 'Overpass Mono',monospace">{{ b.n }}</span></button>
+</sc-for>
+</div>
+<div style="font-size:13px;color:#4a4c49">Tap a level to filter the departures.</div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font:800 20px 'Overpass',sans-serif">Technologies</h2>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ pccTech }}" as="t" hint-placeholder-count="5"><a href="#" style="height:40px;display:flex;align-items:center;padding:0 14px;border-radius:99px;border:1.5px solid #16181a;font:700 14px 'Overpass',sans-serif;text-decoration:none">{{ t.n }}</a></sc-for></div>
+<div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid #eceae4;font-size:15px"><span style="color:#4a4c49">Avg salary</span><span style="font:700 14px 'Overpass Mono',monospace">$174k <span style="font-weight:500;color:#6a6c68">· 1 posting</span></span></div>
+</div>
+</div>
+<div style="background:#16181a;color:#f5f4ef;border-radius:16px;overflow:hidden">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid #2c2f2d"><div style="display:flex;align-items:baseline;gap:14px"><span style="font:700 13px 'Overpass Mono',monospace;letter-spacing:.14em;color:oklch(0.85 0.15 85)">DEPARTURES</span><span style="font:700 19px 'Overpass',sans-serif">{{ detailTitle }}</span></div><a href="#" style="font:700 15px 'Overpass',sans-serif;color:oklch(0.85 0.15 85)">Open in Jobs →</a></div>
+<sc-for list="{{ pccJobs }}" as="j" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:72px 100px minmax(0,1fr) 88px 196px;gap:16px;padding:16px 24px;align-items:center;border-top:1px solid #262927">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span style="font:600 15px 'Overpass Mono',monospace;color:oklch(0.85 0.15 85)">{{ j.posted }}</span><sc-if value="{{ j.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;color:#a9aba6;border:1px dashed #5a5d5a;padding:0 4px;border-radius:3px">SAMPLE</span></sc-if></div>
+<div style="display:flex;align-items:center;gap:8px;font:600 15px 'Overpass',sans-serif"><span style="width:12px;height:12px;border-radius:50%;background:oklch(0.8 0.15 85)"></span>{{ j.wt }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;min-width:0"><a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a><div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ j.tags }}" as="tg" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #3c3f3c;color:#d6d5cf;padding:2px 8px;border-radius:99px">{{ tg.n }}</span></sc-for></div></div>
+<div style="font-size:15px;color:#d6d5cf">{{ j.lvl }}</div>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+</div>
+</sc-for>
+<sc-if value="{{ detailEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 24px;border-top:1px solid #262927;font-size:16px;color:#b4b6b1">No example postings at this level in the preview. The live app lists them all here.</div></sc-if>
+</div>
+</div>
+<footer style="margin-top:56px;padding:22px 48px;border-top:1px solid #deddd6;display:flex;justify-content:space-between;font:500 13px 'Overpass Mono',monospace;color:#4a4c49">
+<div>Sources: Greenhouse, Lever, RemoteOK, Jobicy · Updated Sep 24, 2026</div>
+<div style="display:flex;gap:24px"><a href="#">GitHub</a><a href="#">About the data</a></div>
+</footer>
+</div>
+</div>
+
+<!-- MOBILE -->
+<div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Companies · Mobile</div>
+<div data-screen-label="Companies Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 20px;height:60px;background:#16181a;color:#f5f4ef"><div style="display:flex;align-items:center;gap:10px;font:800 18px 'Overpass',sans-serif"><span style="position:relative;width:24px;height:24px;border-radius:50%;border:4px solid oklch(0.6 0.2 28);box-sizing:border-box;display:grid;place-items:center"><span style="position:absolute;width:30px;height:6px;background:oklch(0.6 0.2 28)"></span></span>HireScope</div><button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button></div>
+<div style="padding:22px 16px 14px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h1 style="margin:0;font:800 34px/1 'Overpass',sans-serif;letter-spacing:-.03em">Companies</h1><span style="font:600 14px 'Overpass Mono',monospace;color:#4a4c49">26</span></div>
+<div style="display:flex;align-items:center;height:52px;background:#fff;border:2px solid #16181a;border-radius:99px;padding:0 16px;gap:10px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#16181a" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="6.5"></circle><path d="M13.5 13.5 19 19"></path></svg><input value="{{ q }}" onChange="{{ setQ }}" aria-label="Search companies" placeholder="Search companies" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 16px 'Overpass',sans-serif;color:#16181a"></div>
+</div>
+<div style="padding:0 12px 20px;display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ mcos }}" as="c" hint-placeholder-count="4">
+<a href="#" style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;text-decoration:none">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div style="display:flex;gap:12px;align-items:center;min-width:0"><span style="width:44px;height:44px;flex:none;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 18px 'Overpass',sans-serif">{{ c.ini }}</span><div style="min-width:0"><div style="font:800 17px 'Overpass',sans-serif">{{ c.name }}</div><div style="font-size:13px;color:{{ c.indCol }};font-style:{{ c.indFs }}">{{ c.mSub }}</div></div></div><div style="text-align:right"><div style="font:800 24px/1 'Overpass Mono',monospace">{{ c.open }}</div><div style="font:600 10px 'Overpass Mono',monospace;color:#4a4c49">OPEN</div></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;border-top:1px solid #eceae4;padding-top:10px"><span style="color:#4a4c49">Avg salary</span><span style="font:{{ c.salW }} 13px 'Overpass Mono',monospace;color:{{ c.salCol }}">{{ c.avg }}</span></div>
+<div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ c.tech }}" as="t" hint-placeholder-count="3"><span style="font:500 12px 'Overpass Mono',monospace;border:1px solid #cfcec7;padding:2px 8px;border-radius:99px">{{ t.n }}</span></sc-for></div>
+</a>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ mskel }}" as="k" hint-placeholder-count="3"><div style="background:#fff;border:1px solid #deddd6;border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center"><span style="width:44px;height:44px;border-radius:50%;background:#e8e7e1"></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><span style="height:14px;width:{{ k.w }};border-radius:3px;background:#e2e1db"></span><span style="height:10px;width:50%;border-radius:3px;background:#eceae4"></span></div></div></sc-for></sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.85 0.15 85)">NO TERMINAL FOUND</div><div style="font:800 20px 'Overpass',sans-serif">No companies match “{{ qShow }}”.</div><button onClick="{{ clearQ }}" style="height:48px;border-radius:99px;border:0;background:oklch(0.85 0.15 85);color:#16181a;font:700 15px 'Overpass',sans-serif">Clear search</button></div></sc-if>
+<sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}"><div role="alert" style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;gap:10px"><div style="font:700 12px 'Overpass Mono',monospace;letter-spacing:.12em;color:oklch(0.72 0.17 28)">SERVICE DISRUPTION</div><div style="font:800 20px 'Overpass',sans-serif">Can’t reach the HireScope API.</div><button onClick="{{ retry }}" style="height:48px;border-radius:99px;border:0;background:#f5f4ef;color:#16181a;font:700 15px 'Overpass',sans-serif">Retry</button></div></sc-if>
+</div>
+<footer style="padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;width:390px">
+<div style="font:600 16px 'IBM Plex Mono',monospace;color:#1a1a1a">Company Detail · Mobile</div>
+<div data-screen-label="Company Detail Mobile" style="width:390px;background:#f5f4ef;color:#16181a;font-family:'Overpass',sans-serif;border-radius:28px;overflow:hidden;border:1px solid #cfcec7">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 8px;height:60px;background:#16181a;color:#f5f4ef"><a href="#" aria-label="All companies" style="width:44px;height:44px;display:grid;place-items:center;font:700 20px 'Overpass',sans-serif">←</a><div style="font:800 17px 'Overpass',sans-serif">HireScope</div><button aria-label="Open menu" style="width:44px;height:44px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px"><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span><span style="width:20px;height:2px;background:#f5f4ef"></span></button></div>
+<div style="padding:24px 16px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:16px;align-items:center"><span style="width:64px;height:64px;flex:none;border-radius:50%;background:#16181a;color:#f5f4ef;display:grid;place-items:center;font:800 28px 'Overpass',sans-serif;box-shadow:0 0 0 5px #f5f4ef,0 0 0 7px #16181a">P</span><div><div style="font:700 11px 'Overpass Mono',monospace;letter-spacing:.1em;color:oklch(0.52 0.19 28)">TERMINAL · MISSISSAUGA</div><h1 style="margin:4px 0 0;font:800 28px/1.05 'Overpass',sans-serif;letter-spacing:-.02em">PointClickCare</h1></div></div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:14px;padding:4px 14px">
+<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px"><span style="color:#4a4c49">Industry</span><b>Healthcare software</b></div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eceae4;font-size:14px"><span style="color:#4a4c49">Location</span><b>Mississauga</b></div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eceae4;font-size:14px"><span style="color:#4a4c49">Size</span><span style="color:#6a6c68;font-style:italic">Unknown</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eceae4;font-size:14px"><span style="color:#4a4c49">Avg salary</span><span style="font:700 13px 'Overpass Mono',monospace">$174k · 1 posting</span></div>
+</div>
+<div style="background:#fff;border:1px solid #deddd6;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:800 17px 'Overpass',sans-serif">46 open roles</div><span style="font:600 9px 'Overpass Mono',monospace;border:1px dashed #9a9c98;padding:1px 4px;border-radius:3px;color:#6a6c68">SAMPLE SPLIT</span></div>
+<div style="display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px"><sc-for list="{{ lvBars }}" as="b" hint-placeholder-count="4"><span style="flex:{{ b.n }};background:{{ b.col }}"></span></sc-for></div>
+<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none"><sc-for list="{{ lvBars }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.pick }}" style="flex:none;height:44px;display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:99px;border:1.5px solid {{ b.mbd }};background:{{ b.bg }};font:700 14px 'Overpass',sans-serif;color:#16181a"><span style="width:10px;height:10px;border-radius:3px;background:{{ b.col }}"></span>{{ b.short }} {{ b.n }}</button></sc-for></div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 style="margin:0;font:800 19px 'Overpass',sans-serif">{{ detailTitle }}</h2></div>
+<sc-for list="{{ pccJobs }}" as="j" hint-placeholder-count="2">
+<article style="background:#16181a;color:#f5f4ef;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;font:600 13px 'Overpass Mono',monospace"><span style="width:10px;height:10px;border-radius:50%;background:oklch(0.8 0.15 85)"></span>{{ j.wt }} · {{ j.lvl }} · <span style="color:oklch(0.85 0.15 85)">{{ j.posted }}</span><sc-if value="{{ j.sample }}" hint-placeholder-val="{{ false }}"><span style="font:600 9px 'Overpass Mono',monospace;color:#a9aba6;border:1px dashed #5a5d5a;padding:0 4px;border-radius:3px">SAMPLE</span></sc-if></div>
+<a href="#" style="font:700 17px/1.25 'Overpass',sans-serif">{{ j.t }}</a>
+<div style="font:600 14px 'Overpass Mono',monospace;color:{{ j.salCol }}">{{ j.sal }}</div>
+</article>
+</sc-for>
+<sc-if value="{{ detailEmpty }}" hint-placeholder-val="{{ false }}"><div style="background:#16181a;color:#b4b6b1;border-radius:16px;padding:20px;font-size:15px">No example postings at this level in the preview.</div></sc-if>
+</div>
+<footer style="padding:18px 20px 26px;border-top:1px solid #deddd6;font:500 12px/1.6 'Overpass Mono',monospace;color:#4a4c49">Sources: Greenhouse, Lever, RemoteOK, Jobicy<br>Updated Sep 24, 2026</footer>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'default', q: '', lvl: null };
+
+  renderVals() {
+    const S = this.state, v = S.view;
+    const C = [
+      { name: 'PointClickCare', open: 46, industry: 'Healthcare software', loc: 'Mississauga', size: null, avg: '$174k', avgN: 1, tech: ['Python', 'Java', 'AWS', 'Azure', 'Machine Learning'] },
+      { name: 'Canonical', open: 24, industry: null, loc: 'Remote', size: null, tech: ['Python', 'Rust', 'Go', 'Kubernetes'] },
+      { name: 'Faire', open: 20, industry: null, loc: 'Toronto', size: null, tech: ['Go', 'Kubernetes', 'AWS'] },
+      { name: 'Zensurance', open: 13, industry: null, loc: null, size: null, tech: ['Python', 'React', 'TypeScript'] },
+      { name: 'Achievers', open: 11, industry: null, loc: null, size: null, tech: ['React', 'TypeScript'] },
+      { name: 'Mozilla', open: 3, sample: true, industry: null, loc: 'Remote', size: null, tech: ['JavaScript', 'HTML', 'CSS'] },
+    ];
+    const U = (k, val) => val ? { k, v: val, w: 700, col: '#16181a', fs: 'normal' } : { k, v: 'Unknown', w: 500, col: '#6a6c68', fs: 'italic' };
+    const q = (v === 'empty' ? 'Shopify' : S.q).trim().toLowerCase();
+    const list = C.filter(c => !q || (c.name + ' ' + c.tech.join(' ')).toLowerCase().includes(q)).map(c => {
+      const allUnknown = !c.industry && !c.loc && !c.size;
+      return { ...c, ini: c.name[0], aria: 'Open ' + c.name,
+        industry: c.industry || 'Industry unknown', indCol: c.industry ? '#4a4c49' : '#6a6c68', indFs: c.industry ? 'normal' : 'italic',
+        mSub: [c.industry, c.loc].filter(Boolean).join(' · ') || 'Details not listed',
+        allUnknown, info: allUnknown ? [] : [U('Location', c.loc), U('Size', c.size)],
+        avg: c.avg ? c.avg + ' · ' + c.avgN + ' posting' : 'No salary data yet', salCol: c.avg ? '#16181a' : '#6a6c68', salW: c.avg ? 700 : 500,
+        tech: c.tech.map(n => ({ n })) };
+    });
+    const empty = v === 'empty' || (v === 'default' && list.length === 0);
+
+    const LVC = { Senior: '#16181a', 'Mid-Level': 'oklch(0.6 0.2 28)', Lead: 'oklch(0.8 0.15 85)', Entry: 'oklch(0.6 0.14 155)' };
+    const lvBars = [['Senior', 'Senior', 20], ['Mid-Level', 'Mid', 12], ['Lead', 'Lead', 10], ['Entry', 'Entry', 4]].map(([label, short, n]) => {
+      const on = S.lvl === label;
+      return { label, short, n, on, col: LVC[label], bg: on ? '#efeee8' : '#fff', bd: on ? '#16181a' : 'transparent', mbd: on ? '#16181a' : '#cfcec7',
+        pick: () => this.setState(s => ({ lvl: s.lvl === label ? null : label })) };
+    });
+    const PJ = [
+      { t: 'Senior Machine Learning Systems Engineer (CAD)', wt: 'Hybrid', lvl: 'Senior', sal: '$154k–$193k', salCol: '#f5f4ef', posted: 'Sep 24', tags: ['Python', 'Java', 'AWS', 'Azure'] },
+      { t: 'Lead Machine Learning Engineer', wt: 'Hybrid', lvl: 'Lead', sal: 'Salary not disclosed', salCol: '#8d908c', posted: 'Sep 19', sample: true, tags: ['Python', 'Machine Learning', 'Azure'] },
+    ].map(j => ({ ...j, tags: j.tags.map(n => ({ n })) })).filter(j => !S.lvl || j.lvl === S.lvl);
+
+    return {
+      views: [['default', 'Default'], ['loading', 'Loading'], ['empty', 'No results'], ['error', 'Error']].map(([id, label]) => ({ label, bg: v === id ? '#1a1a1a' : '#fff', fg: v === id ? '#fff' : '#1a1a1a', pick: () => this.setState({ view: id }) })),
+      q: S.q, qShow: v === 'empty' ? 'Shopify' : S.q, setQ: e => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '', view: 'default' }),
+      retry: () => this.setState({ view: 'default' }),
+      cos: list, mcos: list.slice(0, 4), showList: v === 'default' && list.length > 0,
+      isLoading: v === 'loading', isEmpty: empty, isError: v === 'error',
+      countLabel: v === 'loading' || v === 'error' ? '— companies' : empty ? '0 companies' : q ? list.length + ' of 26 companies' : 'Showing 6 of 26 companies',
+      moreLabel: 'Show all 26 companies',
+      skel: ['60%', '45%', '70%', '50%', '65%', '40%'].map(w => ({ w })), mskel: ['60%', '45%', '70%'].map(w => ({ w })),
+      lvBars, pccTech: ['Python', 'Java', 'AWS', 'Azure', 'Machine Learning'].map(n => ({ n })),
+      pccJobs: PJ, detailEmpty: PJ.length === 0,
+      detailTitle: S.lvl ? S.lvl + ' roles at PointClickCare' : 'All roles at PointClickCare',
+    };
+  }
+}
+</script>
+</body>
+</html>

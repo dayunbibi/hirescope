@@ -1,58 +1,120 @@
-type SearchFilterProps = {
+import { lineColor } from "@/components/JobRow";
+
+type SearchBarProps = {
   searchTerm: string;
-  selectedWorkType: string;
-  workTypes: string[];
   onSearchChange: (value: string) => void;
-  onWorkTypeChange: (workType: string) => void;
+  placeholder?: string;
+  className?: string;
+  // Adds a "Search" submit button and handles Enter (Home)
+  onSubmit?: () => void;
 };
 
-// Displays the job search input and work type filter buttons
-export default function SearchFilter({
-  searchTerm,
-  selectedWorkType,
+// Horizontal work type chips; "All" uses an ink dot
+export function LineChips({
   workTypes,
-  onSearchChange,
+  selectedWorkType,
   onWorkTypeChange,
-}: SearchFilterProps) {
+  counts,
+}: {
+  workTypes: string[];
+  selectedWorkType: string;
+  onWorkTypeChange: (workType: string) => void;
+  counts?: Record<string, number>;
+}) {
   return (
-    <section className="mb-8 rounded-xl border border-[#E0BFBF] bg-white p-4 shadow-sm sm:p-6">
-      {/* Job search input */}
-      <div className="relative">
-        <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-gray-400">
-          search
-        </span>
+    <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
+      {workTypes.map((workType) => {
+        const isSelected = selectedWorkType === workType;
+
+        return (
+          <button
+            key={workType}
+            type="button"
+            onClick={() => onWorkTypeChange(workType)}
+            aria-pressed={isSelected}
+            className={`flex h-11 shrink-0 items-center gap-2 rounded-full border-[1.5px] px-3.5 text-sm font-bold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${
+              isSelected
+                ? "border-ink bg-card"
+                : "border-hairline-strong hover:border-ink"
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`size-2.5 rounded-full ${lineColor[workType] ?? "bg-ink"}`}
+            />
+            {workType}
+            {counts && (
+              <span className="font-mono text-xs font-medium text-muted">
+                {counts[workType] ?? 0}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Pill keyword search with a clear button
+export default function SearchBar({
+  searchTerm,
+  onSearchChange,
+  placeholder = "Job title, company or skill",
+  className = "",
+  onSubmit,
+}: SearchBarProps) {
+  return (
+    <form
+      role="search"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit?.();
+      }}
+      className={className}
+    >
+      <div className="flex h-[52px] items-center gap-2.5 rounded-full border-2 border-ink bg-card pl-4 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink md:h-14 md:pl-5 md:pr-1.5">
+        <svg
+          aria-hidden="true"
+          width="18"
+          height="18"
+          viewBox="0 0 20 20"
+          fill="none"
+          strokeWidth="2.2"
+          className="shrink-0 stroke-ink"
+        >
+          <circle cx="8.5" cy="8.5" r="6.5" />
+          <path d="M13.5 13.5 19 19" />
+        </svg>
 
         <input
-          type="text"
-          placeholder="Search by job title, company, or skill"
+          type="search"
           value={searchTerm}
           onChange={(event) => onSearchChange(event.target.value)}
-          className="w-full rounded-lg border border-[#E0BFBF] py-3 pl-11 pr-4 text-gray-900 outline-none transition focus:border-[#800020] focus:ring-2 focus:ring-[#800020]/15"
+          aria-label="Keyword"
+          placeholder={placeholder}
+          className="min-w-0 flex-1 bg-transparent text-base font-medium text-ink outline-none placeholder:text-[#8a8c88] md:text-[17px] [&::-webkit-search-cancel-button]:hidden"
         />
-      </div>
 
-      {/* Work type filter buttons */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {workTypes.map((workType) => {
-          const isSelected = selectedWorkType === workType;
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => onSearchChange("")}
+            aria-label="Clear keyword"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-[#efeee8] text-base font-bold focus-visible:outline-2 focus-visible:outline-ink"
+          >
+            ×
+          </button>
+        )}
 
-          return (
-            <button
-              key={workType}
-              type="button"
-              onClick={() => onWorkTypeChange(workType)}
-              aria-pressed={isSelected}
-              className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 ${
-                isSelected
-                  ? "border-[#800020] bg-[#800020] text-white"
-                  : "border-[#E0BFBF] bg-white text-gray-700 hover:border-[#800020]/40 hover:bg-[#FBF2F3]"
-              }`}
-            >
-              {workType}
-            </button>
-          );
-        })}
+        {onSubmit && (
+          <button
+            type="submit"
+            className="h-10 shrink-0 rounded-full bg-ink px-3.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:h-11 md:px-5 md:text-[15px]"
+          >
+            Search
+          </button>
+        )}
       </div>
-    </section>
+    </form>
   );
 }

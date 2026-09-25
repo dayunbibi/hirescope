@@ -10,58 +10,74 @@ HireScope is a working application. The Next.js frontend has seven pages, all co
 
 Current focus: replacing the remaining placeholder content, improving UI consistency and responsive behavior, and preparing for deployment. See [Known Limitations](#known-limitations) and [Roadmap](#roadmap).
 
+## Design: Line Map
+
+The UI draws the GTA job market as a transit map. The design handoff (spec, tokens and HTML prototypes) lives in [`design/line-map/`](design/line-map/README.md).
+
+- **Work types are lines:** Hybrid (yellow), Remote (red), On-site (green)
+- **Areas are stations:** Downtown Toronto, Mississauga, North York, Markham, Vaughan, Oakville, Remote · Canada. Free-text job locations are mapped to stations on the frontend (`lib/area.ts`).
+- **Job lists are dark "departures boards"** with the posted date in yellow
+- **States:** API errors show "Service disruption" with a Retry button; empty results show "No departures"
+
+Station counts and every statistic are computed from real API data. A station with no postings stays on the map, dimmed and labelled "No service".
+
+Design tokens are defined with Tailwind v4 `@theme` in `frontend/src/app/globals.css`. Fonts are Overpass and Overpass Mono, and all icons are inline SVGs.
+
 ## Features
 
 ### Home (`/`)
 
+- Interactive line map: pick a station to see its latest postings, or a line to highlight a work type
+- Keyword search (submitting opens `/jobs?q=`)
 - Summary statistics: total jobs, remote jobs, companies hiring, top skill
-- Keyword search and work type filter
-- Latest job listings
-- Technology demand and work type distribution computed from current postings
+- Departures board of the latest postings, with a link to the matching `/jobs` filters
+- On mobile the map becomes a vertical station list
 
 ### Jobs (`/jobs`)
 
-- Filter by keyword, location, minimum salary, work type, and experience level
+- Filter by keyword, location (mini line map and station list), minimum salary, work type, and experience level
+- Filters are kept in the URL, so filtered results can be shared
 - Sort by relevance (title matches first), newest (posting date), or salary
+- Removable chips for every active filter
 - Paginated results
-- Collapsible filter panel on mobile
+- Filter sidebar on desktop; below 1024px the filters open in a bottom sheet, with quick work type chips above the results
 
 ### Job Detail (`/jobs/[id]`)
 
-- Title, company, location, salary range, work type, and experience level
-- Technology stack
-- Job overview: work type, experience level, salary, and posted date
-- "View Original Posting" link when a source URL is available
+- Title, company, work type line and station, with salary, experience level and posted date
+- Tech stack
+- "View original posting" link when a source URL is available
 - Bookmark button
-- Company summary and related jobs
+- Company summary with a link to the company page, and related jobs (same line or a shared skill)
 
 ### Companies (`/companies`)
 
-- Search by name, filter by industry and company size
-- Sort by open jobs, average salary, or name
-- Incremental "Load more" listing
+- Company cards ("terminals") sorted by open roles, with the average salary and top technologies computed from each company's jobs
+- Search by company name or technology
+- The first six companies are shown, with a "Show all" button
 
 ### Company Detail (`/companies/[id]`)
 
-- Company overview, industry, location, and size
-- Technology stack
-- Open job count and average salary
-- Open roles by experience level
-- Current job listings for the company
+- Header with the company's main station, open-role count and a one-line fact (e.g. top hirer)
+- Industry, location and size when known
+- Open roles by experience level; select a level to filter the company's departures board
+- Technologies (each links to a `/jobs` search) and average salary
+- Departures board of the company's jobs, with a link to them on `/jobs`
 
 ### Analytics (`/analytics`)
 
-- Summary statistics
-- Salary distribution
-- Work type distribution
-- Technology ranking
-- Experience level demand
-- Date range (by posting date) and role filters applied across all charts
+- Summary: total jobs, hiring companies, jobs with salary, and average annual salary (hourly rates are excluded and counted separately)
+- Salary by experience level, with levels based on fewer than three postings flagged as a rough signal
+- Work type breakdown (each line links to `/jobs`)
+- Top 10 technologies and top hiring companies
+- Experience level mix
+- Date range (by posting date) and role filters, kept in the URL and applied to every chart
 
 ### Bookmarks (`/bookmarks`)
 
-- Saved jobs stored in the browser (`localStorage`), synced across open tabs
-- Filter by work type, sort by newest, salary, or company
+- Saved jobs stored in the browser (`localStorage`), synced across open tabs, newest first
+- Departures board with a Remove button and an Undo bar for the last removal
+- Notes saved jobs that are no longer listed by the API
 
 All pages include loading, empty, and error states, and handle missing data such as null salaries, empty skill lists, and unknown company details.
 
@@ -73,7 +89,7 @@ All pages include loading, empty, and error states, and handle missing data such
 - React 19
 - TypeScript
 - Tailwind CSS 4
-- Material Symbols (icons)
+- Inline SVG icons (no icon font)
 
 Charts are built with plain HTML elements styled with Tailwind CSS (proportional bars sized with inline widths and heights). No charting library is installed.
 
@@ -204,11 +220,13 @@ backend/
     run_scraper.py     Scraper entry point
 frontend/
   src/
-    app/               Pages (App Router)
-    components/        Shared UI components
+    app/               Pages (App Router) and globals.css (design tokens)
+    components/        Shared UI (LineMap, JobRow board, JobCard, StateBlocks, ...)
     hooks/             useBookmarks
-    lib/api.ts         Backend API client
+    lib/               API client, station mapping, formatting, company stats
     data/              Job and Company types
+design/
+  line-map/            Line Map design handoff: README spec and HTML prototypes
 ```
 
 ## Screenshots

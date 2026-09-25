@@ -167,114 +167,83 @@ Never display misleading statistics simply to make the dashboard look populated.
 
 ---
 
-# HireScope Design System
+# HireScope Design System — "Line Map"
 
-The application should feel like a polished professional recruitment analytics product.
+The full design handoff lives in `design/line-map/`.
+Read `design/line-map/README.md` before any UI work, and use the `.dc.html` files as visual references (they are HTML prototypes, not production code).
 
-The design should communicate:
+The concept: the GTA job market drawn as a transit map.
 
-- professionalism
-- clarity
-- trust
-- data intelligence
-- modern software
-- restrained visual sophistication
+- Work types are lines: Hybrid (yellow), Remote (red), On-site (green)
+- Areas are stations
+- Job lists are dark "departures boards"
+- API errors are "Service disruption"; empty results are "No departures"
 
-The interface should not look like a generic Tailwind template.
-
----
-
-## Primary Visual Identity
-
-Primary accent:
-
-#800020
-
-Dark burgundy:
-
-#570013
-
-Warm background:
-
-#FBF9F7
-
-Soft border:
-
-#E0BFBF
-
-Use burgundy intentionally.
-
-Do not make every element burgundy.
-
-The accent should primarily emphasize:
-
-- primary actions
-- selected states
-- important statistics
-- links
-- chart highlights
-- interactive focus states
+Keep this metaphor consistent, but never let it get in the way of usability.
+A first-time visitor must understand the site within 3 seconds, and a job seeker must reach a job in 2 clicks.
 
 ---
 
-# UI Design Direction
+## Design Tokens
 
-Improve the visual hierarchy using:
+Tokens are defined in `frontend/src/app/globals.css` with Tailwind v4 `@theme` (there is no tailwind.config file).
+Use the token classes (`bg-ink`, `bg-paper`, `text-muted`, `bg-line-remote`, `text-signal`, `border-hairline`, …) instead of raw hex values.
 
-- better typography
-- intentional whitespace
-- consistent spacing
-- refined card proportions
-- subtle borders
-- subtle shadows
-- strong alignment
-- clear grouping
-- restrained use of accent colors
+Core colors:
 
-The design should feel premium but not decorative.
+- ink `#16181a`: text, nav bar, departures board, primary buttons
+- paper `#f5f4ef`: page background
+- card `#ffffff`: cards and inputs
+- hairline `#deddd6` / hairline-strong `#cfcec7` / hairline-soft `#eceae4`: borders and dividers
+- muted `#4a4c49` / muted-2 `#6a6c68`: secondary text and labels
+- line-hybrid, line-remote (also the brand color), line-onsite: work type lines
+- signal: posted dates on dark, bookmarked state, primary actions on dark
 
-Prefer clean surfaces and hierarchy over adding more visual elements.
+Experience level colors are used consistently everywhere:
+Senior = ink, Mid-Level = remote red, Lead = hybrid yellow, Entry = on-site green.
 
----
-
-# Cards
-
-Avoid making every section look like an identical card.
-
-Use cards when they create meaningful grouping.
-
-Cards should generally have:
-
-- subtle borders
-- restrained shadows
-- consistent padding
-- clear hierarchy
-
-Avoid excessive:
-
-- rounded corners
-- large shadows
-- nested cards
-- decorative containers
+Do not reintroduce the old burgundy palette.
 
 ---
 
 # Typography
 
-Maintain a clear hierarchy between:
+- Overpass (400/600/700/800) for all UI and headings
+- Overpass Mono for numbers, dates, salaries, eyebrow labels and skill tags
 
-- page titles
-- section headings
-- card titles
-- statistics
-- body text
-- metadata
+Both fonts are loaded with `next/font/google` in `layout.tsx`.
+Follow the type scale in the handoff README (page H1 800 48px desktop / 34px mobile, row titles 700 17px, mono eyebrows 13px with 0.1em tracking).
 
 Important numbers should be visually prominent.
-
 Secondary metadata should remain visually quiet.
 
-Avoid excessive font weights.
+---
+
+# Shape and Surfaces
+
+- Pills (`rounded-full`) for buttons, inputs and chips
+- Cards: 16px radius; company cards 18px
+- No shadows, except focus rings
+- Page padding: 48px desktop, 16px mobile
+
+---
+
+# Shared Components
+
+Reuse these before creating anything new:
+
+- `TopNav`, `MobileNav`, `Footer` (rendered once in `app/layout.tsx`; pages must not render their own header or footer)
+- `JobRow.tsx`: the departures board (`JobBoard` default export), `JobRow`, `BookmarkToggle`, `CompanyAvatar`, `SkillTags`, `lineColor`
+- `JobCard.tsx`: the mobile departures card
+- `StateBlocks.tsx`: `LoadingBlock`, `EmptyBlock` ("No departures"), `ErrorBlock` ("Service disruption" + Retry)
+
+---
+
+# Data Honesty in the Design
+
+Items marked `SAMPLE` in the design mocks are placeholders.
+In production, compute them from real API data or hide them.
+Never display invented numbers or trends.
 
 ---
 
@@ -342,12 +311,9 @@ Do not rely only on color to communicate important information.
 
 # Icons
 
-Continue using Material Symbols where appropriate.
-
-Do not introduce a new icon library unless necessary.
-
+Use inline SVG icons (the handoff uses a search magnifier and a bookmark shape).
+Material Symbols is being phased out: do not add new usages, and remove the font link once no page uses it.
 Avoid emojis as interface icons.
-
 ---
 
 # Animation
@@ -472,7 +438,7 @@ Do NOT interpret that as permission to completely redesign the application.
 Instead:
 
 1. Inspect the existing design.
-2. Preserve the HireScope identity.
+2. Preserve the Line Map identity.
 3. Identify the weakest visual areas.
 4. Improve typography.
 5. Improve spacing.

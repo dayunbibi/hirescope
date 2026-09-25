@@ -100,8 +100,14 @@ export function CompanyAvatar({
   );
 }
 
-// Skill tags in mono pills
-export function SkillTags({ skills }: { skills: string[] }) {
+// Skill tags in mono pills; pass tagClassName for light surfaces
+export function SkillTags({
+  skills,
+  tagClassName = "border-board-edge text-board-text",
+}: {
+  skills: string[];
+  tagClassName?: string;
+}) {
   if (skills.length === 0) return null;
 
   return (
@@ -109,7 +115,7 @@ export function SkillTags({ skills }: { skills: string[] }) {
       {skills.map((skill) => (
         <span
           key={skill}
-          className="rounded-full border border-board-edge px-2 py-0.5 font-mono text-xs font-medium text-board-text"
+          className={`rounded-full border px-2 py-0.5 font-mono text-xs font-medium ${tagClassName}`}
         >
           {skill}
         </span>

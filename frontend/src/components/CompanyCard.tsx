@@ -1,110 +1,78 @@
 import Link from "next/link";
+import CompanyFacts, { knownValue } from "@/components/CompanyFacts";
+import { SkillTags } from "@/components/JobRow";
 import type { Company } from "@/data/companies";
+import { formatAverageSalary, type CompanyStats } from "@/lib/company";
 
-type CompanyCardProps = {
+// One "terminal" in the companies directory
+export default function CompanyCard({
+  company,
+  stats,
+}: {
   company: Company;
-};
-
-// Converts incomplete backend text into a cleaner display value
-function formatCompanyValue(
-  value: string,
-  fallback: string
-) {
-  if (!value || value === "Unknown") {
-    return fallback;
-  }
-
-  return value;
-}
-
-// Displays one company in the company directory
-export default function CompanyCard({ company }: CompanyCardProps) {
-  const displayIndustry = formatCompanyValue(
-    company.industry,
-    "Industry not available"
-  );
-
-  const displayLocation = formatCompanyValue(
-    company.location,
-    "Location not available"
-  );
-
-  const displayDescription =
-    company.description.trim() !== ""
-      ? company.description
-      : "Company information is not currently available.";
+  stats: CompanyStats;
+}) {
+  const industry = knownValue(company.industry);
+  const href = `/companies/${company.id}`;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm transition hover:shadow-lg">
-      {/* Burgundy hover indicator */}
-      <div className="absolute left-0 top-0 h-1 w-full bg-[#800020] opacity-0 transition group-hover:opacity-100" />
-
-      {/* Company identity */}
-      <div className="flex items-start gap-4">
-        {/* Temporary company logo */}
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-md border border-[#E0BFBF] bg-[#F5F0EE] text-2xl font-bold text-[#800020]">
-          {company.name.charAt(0)}
+    <article className="flex flex-col overflow-hidden rounded-[18px] border border-hairline bg-card">
+      <div className="flex items-start justify-between gap-3 px-4 pb-4 pt-5 md:px-[22px] md:pb-[18px] md:pt-[22px]">
+        <div className="flex min-w-0 items-center gap-3.5">
+          <span
+            aria-hidden="true"
+            className="grid size-[52px] shrink-0 place-items-center rounded-full bg-ink text-[22px] font-extrabold text-paper outline-2 outline-offset-[5px] outline-ink"
+          >
+            {company.name.trim().charAt(0).toUpperCase() || "?"}
+          </span>
+          <div className="min-w-0 pl-1.5">
+            <Link
+              href={href}
+              className="break-words text-xl font-extrabold tracking-[-0.01em] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            >
+              {company.name}
+            </Link>
+            <p className={`mt-0.5 text-sm ${industry ? "text-muted" : "italic text-muted-2"}`}>
+              {industry ?? "Industry unknown"}
+            </p>
+          </div>
         </div>
 
-        <div className="min-w-0">
-          {/* Company name */}
-          <h2 className="text-2xl font-semibold text-gray-900 transition group-hover:text-[#800020]">
-            {company.name}
-          </h2>
-
-          {/* Company metadata */}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <span>{displayIndustry}</span>
-
-            <span>•</span>
-
-            <span>{displayLocation}</span>
-          </div>
+        <div className="shrink-0 text-right">
+          <p className="font-mono text-[32px] font-extrabold leading-none tracking-[-0.04em]">
+            {stats.openRoles}
+          </p>
+          <p className="mt-1 font-mono text-[11px] font-semibold tracking-[0.08em] text-muted">
+            OPEN ROLES
+          </p>
         </div>
       </div>
 
-      {/* Company description */}
-      <p className="mt-5 line-clamp-2 text-sm leading-6 text-gray-600">
-        {displayDescription}
-      </p>
-
-      {/* Technology tags */}
-      {company.technologies.length > 0 ? (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {company.technologies.map((technology) => (
-            <span
-              key={technology}
-              className="rounded bg-[#F0F0F0] px-2 py-1 text-xs font-medium text-gray-600"
-            >
-              {technology}
-            </span>
-          ))}
+      <div className="flex flex-col px-4 pb-[18px] md:px-[22px]">
+        <CompanyFacts company={company} fields={["location", "size"]} />
+        <div className="flex items-center justify-between gap-4 border-t border-hairline-soft py-2.5 text-sm md:text-[15px]">
+          <span className="text-muted">Avg salary</span>
+          <span
+            className={`font-mono text-sm ${
+              stats.averageSalary === null ? "font-medium text-muted-2" : "font-bold"
+            }`}
+          >
+            {formatAverageSalary(stats)}
+          </span>
         </div>
-      ) : (
-        <p className="mt-4 text-xs text-gray-400">
-          Technology information unavailable
-        </p>
-      )}
+      </div>
 
-      {/* Company actions */}
-      <div className="mt-auto flex items-end justify-between border-t border-[#E0BFBF] pt-5">
-        {/* Open job count */}
-        <div>
-          <p className="text-2xl font-semibold text-[#800020]">
-            {company.openJobs}
-          </p>
-
-          <p className="text-xs text-gray-500">
-            Open Jobs
-          </p>
-        </div>
-
-        {/* Company profile link */}
+      <div className="mt-auto flex items-center justify-between gap-2.5 border-t border-hairline-soft px-4 pb-5 pt-3.5 md:px-[22px]">
+        <SkillTags
+          skills={stats.technologies.slice(0, 4)}
+          tagClassName="border-hairline-strong text-ink"
+        />
         <Link
-          href={`/companies/${company.id}`}
-          className="rounded-md border border-[#800020] px-4 py-2 text-sm font-medium text-[#800020] transition hover:bg-[#F7EDEE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
+          href={href}
+          aria-label={`Open ${company.name}`}
+          className="ml-auto grid size-11 shrink-0 place-items-center rounded-full bg-ink text-lg font-bold text-white hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
-          View Profile
+          →
         </Link>
       </div>
     </article>

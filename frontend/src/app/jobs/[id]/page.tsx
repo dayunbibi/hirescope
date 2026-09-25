@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CompanyFacts from "@/components/CompanyFacts";
 import JobBoard, { lineColor } from "@/components/JobRow";
 import JobBookmarkButton from "@/components/JobBookmarkButton";
 import { ErrorBlock } from "@/components/StateBlocks";
@@ -15,10 +16,6 @@ type JobDetailPageProps = {
 };
 
 const hasSalary = (job: Job) => job.salaryMin !== null || job.salaryMax !== null;
-
-// Backend company fields may be empty or the literal "Unknown"
-const knownValue = (value: string | null | undefined) =>
-  value && value.trim() && value !== "Unknown" ? value : null;
 
 // Hostname of the original posting, e.g. "boards.greenhouse.io"
 function sourceHost(sourceUrl: string) {
@@ -161,13 +158,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const topSkillCounts = new Map(
     [...skillCounts].sort((first, second) => second[1] - first[1]).slice(0, 10)
   );
-
-  const companyFacts = [
-    { label: "Industry", value: knownValue(company?.industry) },
-    { label: "Headquarters", value: knownValue(company?.location) },
-    { label: "Company size", value: knownValue(company?.size) },
-  ];
-  const allFactsUnknown = companyFacts.every((fact) => !fact.value);
 
   // Related jobs: same line or a shared skill, excluding this job
   const relatedJobs = allJobs
@@ -369,25 +359,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               </div>
             </div>
 
-            {allFactsUnknown ? (
-              <p className="border-t border-hairline-soft pt-2.5 text-[15px] italic text-muted-2">
-                Industry, location and size not listed
-              </p>
-            ) : (
-              <dl>
-                {companyFacts.map((fact) => (
-                  <div
-                    key={fact.label}
-                    className="flex items-center justify-between gap-4 border-t border-hairline-soft py-2.5 text-sm md:text-[15px]"
-                  >
-                    <dt className="text-muted">{fact.label}</dt>
-                    <dd className={`text-right ${fact.value ? "font-bold" : "font-medium italic text-muted-2"}`}>
-                      {fact.value ?? "Unknown"}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )}
+            <CompanyFacts
+              company={company}
+              labels={{ location: "Headquarters", size: "Company size" }}
+            />
 
             {company && (
               <Link

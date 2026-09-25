@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import JobCard from "@/components/JobCard";
 import type { Company } from "@/data/companies";
 import type { Job } from "@/data/jobs";
@@ -63,8 +61,6 @@ export default async function CompanyDetailPage({
   if (!company) {
     return (
       <>
-        <Header />
-
         <main className="min-h-screen bg-[#FBF9F7] px-5 py-20">
           <section className="mx-auto max-w-5xl rounded-xl border border-[#E0BFBF] bg-white p-12 text-center shadow-sm">
             <h1 className="text-3xl font-bold text-gray-900">
@@ -88,7 +84,6 @@ export default async function CompanyDetailPage({
           </section>
         </main>
 
-        <Footer />
       </>
     );
   }
@@ -141,8 +136,6 @@ export default async function CompanyDetailPage({
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
         <div className="mx-auto max-w-6xl">
           {/* Back navigation */}
@@ -443,7 +436,6 @@ export default async function CompanyDetailPage({
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

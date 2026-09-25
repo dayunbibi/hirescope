@@ -1,28 +1,46 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Line Map design tokens (see design/line-map/README.md) */
+@theme {
+  --color-ink: #16181a;
+  --color-paper: #f5f4ef;
+  --color-card: #ffffff;
+  --color-hairline: #deddd6;
+  --color-hairline-strong: #cfcec7;
+  --color-hairline-soft: #eceae4;
+  --color-muted: #4a4c49;
+  --color-muted-2: #6a6c68;
+
+  /* Dark "departures board" surfaces */
+  --color-board-divider: #262927;
+  --color-board-divider-2: #2c2f2d;
+  --color-board-edge: #3c3f3c;
+  --color-board-text: #d6d5cf;
+  --color-board-soft: #c9c8c2;
+  --color-board-muted: #b4b6b1;
+  --color-board-faint: #8d908c;
+
+  /* Work type lines */
+  --color-line-hybrid: oklch(0.8 0.15 85);
+  --color-line-remote: oklch(0.6 0.2 28);
+  --color-line-onsite: oklch(0.6 0.14 155);
+
+  --color-signal: oklch(0.85 0.15 85);
+  --color-brand: oklch(0.6 0.2 28);
+  --color-brand-text: oklch(0.52 0.19 28);
+  --color-error: oklch(0.72 0.17 28);
+  --color-error-dot: oklch(0.65 0.2 28);
+  --color-lake: oklch(0.94 0.025 230);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-overpass), sans-serif;
+  --font-mono: var(--font-overpass-mono), monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 /* Brand-styled range slider, used by the job filter sidebar */

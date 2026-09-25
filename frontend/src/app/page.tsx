@@ -2,13 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
 import JobCard from "@/components/JobCard";
-import LoadingCard from "@/components/LoadingCard";
 import SearchBar from "@/components/SearchBar";
 import StatCard from "@/components/StatCard";
+import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Job } from "@/data/jobs";
 import type { Company } from "@/data/companies";
 import { getCompanies, getJobs } from "@/lib/api";
@@ -163,8 +160,6 @@ export default function Home() {
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-4 py-8 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-6xl">
           {/* Hero section */}
@@ -276,21 +271,12 @@ export default function Home() {
 
               <div className="grid gap-4">
                 {isLoading ? (
-                  <>
-                    <LoadingCard />
-                    <LoadingCard />
-                    <LoadingCard />
-                  </>
+                  <LoadingBlock rows={3} />
                 ) : hasError ? (
-                  <EmptyState
-                    icon="cloud_off"
-                    title="Couldn't load jobs"
-                    description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
-                  />
+                  <ErrorBlock />
                 ) : visibleJobs.length === 0 ? (
-                  <EmptyState
-                    icon="search_off"
-                    title="No jobs found"
+                  <EmptyBlock
+                title="No jobs found"
                     description="Try changing your search keyword or work type filter."
                   />
                 ) : (
@@ -416,7 +402,6 @@ export default function Home() {
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import FilterSidebar from "@/components/FilterSidebar";
 import JobCard from "@/components/JobCard";
-import LoadingCard from "@/components/LoadingCard";
 import Pagination from "@/components/Pagination";
-import EmptyState from "@/components/EmptyState";
+import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Job } from "@/data/jobs";
 import { getJobs } from "@/lib/api";
 
@@ -197,8 +194,6 @@ export default function JobsPage() {
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
         <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-12">
           {/* Desktop and mobile filter sidebar */}
@@ -275,21 +270,12 @@ export default function JobsPage() {
             {/* Job cards, loading skeletons, or empty/error state */}
             <div className="space-y-4">
               {isLoading ? (
-                <>
-                  <LoadingCard />
-                  <LoadingCard />
-                  <LoadingCard />
-                </>
+                <LoadingBlock rows={3} />
               ) : hasError ? (
-                <EmptyState
-                  icon="cloud_off"
-                  title="Couldn't load jobs"
-                  description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
-                />
+                <ErrorBlock />
               ) : visibleJobs.length === 0 ? (
-                <EmptyState
-                  icon="search_off"
-                  title="No jobs found"
+                <EmptyBlock
+                title="No jobs found"
                   description="Try changing your keyword, location, work type, experience level, or minimum salary."
                   actionLabel="Clear Filters"
                   onAction={clearFilters}
@@ -316,7 +302,6 @@ export default function JobsPage() {
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import JobBookmarkButton from "@/components/JobBookmarkButton";
 import type { Job } from "@/data/jobs";
 import { getJob, getJobs } from "@/lib/api";
@@ -70,8 +68,6 @@ export default async function JobDetailPage({
   if (!job) {
     return (
       <>
-        <Header />
-
         <main className="min-h-screen bg-[#FBF9F7] px-6 py-20">
           <div className="mx-auto max-w-6xl">
             <section className="rounded-xl border border-[#E0BFBF] bg-white p-10 text-center shadow-sm">
@@ -97,7 +93,6 @@ export default async function JobDetailPage({
           </div>
         </main>
 
-        <Footer />
       </>
     );
   }
@@ -117,8 +112,6 @@ export default async function JobDetailPage({
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
         <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-12">
           {/* Main job detail column */}
@@ -362,7 +355,6 @@ export default async function JobDetailPage({
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

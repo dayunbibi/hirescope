@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import BookmarkCard from "@/components/BookmarkCard";
-import EmptyState from "@/components/EmptyState";
-import LoadingCard from "@/components/LoadingCard";
+import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Job } from "@/data/jobs";
 import { getJobs } from "@/lib/api";
 import { useBookmarks } from "@/hooks/useBookmarks";
@@ -84,8 +81,6 @@ export default function BookmarksPage() {
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 pb-16 pt-10">
         <div className="mx-auto max-w-6xl">
           {/* Page heading and controls */}
@@ -138,19 +133,11 @@ export default function BookmarksPage() {
 
           {/* Loading state */}
           {isLoading ? (
-            <section className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((item) => (
-                <LoadingCard key={item} />
-              ))}
-            </section>
+            <div className="mt-10"><LoadingBlock rows={3} /></div>
           ) : hasError ? (
             /* API error state */
             <div className="mt-10">
-              <EmptyState
-                icon="cloud_off"
-                title="Couldn't load saved jobs"
-                description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
-              />
+              <ErrorBlock description="Your bookmarks are safe, but we can’t load their details right now. Try again in a moment." />
             </div>
           ) : bookmarkedJobs.length > 0 ? (
             /* Saved job cards */
@@ -165,8 +152,7 @@ export default function BookmarksPage() {
           ) : (
             /* Empty bookmarked job state */
             <div className="mt-10">
-              <EmptyState
-                icon="bookmark_border"
+              <EmptyBlock
                 title="No saved jobs yet"
                 description="Jobs you bookmark while browsing will appear here so you can easily find them later."
                 actionLabel="Browse Jobs"
@@ -178,7 +164,6 @@ export default function BookmarksPage() {
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import CompanyCard from "@/components/CompanyCard";
-import EmptyState from "@/components/EmptyState";
-import LoadingCard from "@/components/LoadingCard";
+import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Company } from "@/data/companies";
 import { getCompanies } from "@/lib/api";
 
@@ -133,8 +130,6 @@ export default function CompaniesPage() {
   return (
     <>
       {/* Global website header */}
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
         <div className="mx-auto max-w-6xl">
           {/* Page heading */}
@@ -270,18 +265,10 @@ export default function CompaniesPage() {
 
           {/* Company directory, loading skeletons, or empty/error state */}
           {isLoading ? (
-            <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <LoadingCard />
-              <LoadingCard />
-              <LoadingCard />
-            </section>
+            <div className="mt-6"><LoadingBlock rows={4} /></div>
           ) : hasError ? (
             <div className="mt-6">
-              <EmptyState
-                icon="cloud_off"
-                title="Couldn't load companies"
-                description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
-              />
+              <ErrorBlock description="Company data is temporarily unavailable. Try again in a moment." />
             </div>
           ) : filteredCompanies.length > 0 ? (
             <section className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -294,8 +281,7 @@ export default function CompaniesPage() {
             </section>
           ) : (
             <div className="mt-6">
-              <EmptyState
-                icon="domain_disabled"
+              <EmptyBlock
                 title="No companies found"
                 description="Try changing your company name, industry, or company size filters."
                 actionLabel="Clear Filters"
@@ -327,7 +313,6 @@ export default function CompaniesPage() {
       </main>
 
       {/* Global website footer */}
-      <Footer />
     </>
   );
 }

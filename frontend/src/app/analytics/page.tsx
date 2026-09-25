@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import EmptyState from "@/components/EmptyState";
-import LoadingCard from "@/components/LoadingCard";
+import { LoadingBlock, EmptyBlock, ErrorBlock } from "@/components/StateBlocks";
 import type { Job } from "@/data/jobs";
 import type { Company } from "@/data/companies";
 import { getJobs, getCompanies } from "@/lib/api";
@@ -335,8 +332,6 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <Header />
-
       <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
         <div className="mx-auto max-w-6xl">
           {/* Analytics page heading */}
@@ -429,24 +424,14 @@ export default function AnalyticsPage() {
           </section>
 
           {isLoading ? (
-            <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <LoadingCard />
-              <LoadingCard />
-              <LoadingCard />
-              <LoadingCard />
-            </section>
+            <div className="mt-8"><LoadingBlock rows={4} /></div>
           ) : hasError ? (
             <div className="mt-8">
-              <EmptyState
-                icon="cloud_off"
-                title="Couldn't load analytics"
-                description="We couldn't reach the HireScope API. Make sure the backend is running and try again."
-              />
+              <ErrorBlock description="Market data is temporarily unavailable, so no numbers are shown. Try again in a moment." />
             </div>
           ) : filteredJobs.length === 0 ? (
             <div className="mt-8">
-              <EmptyState
-                icon="query_stats"
+              <EmptyBlock
                 title="No jobs match these filters"
                 description="No postings were found for the selected date range and role. Try a longer date range or a different role."
               />
@@ -669,7 +654,6 @@ export default function AnalyticsPage() {
         </div>
       </main>
 
-      <Footer />
     </>
   );
 }

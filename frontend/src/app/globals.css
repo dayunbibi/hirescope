@@ -43,52 +43,56 @@ body {
   color: var(--color-ink);
 }
 
-/* Brand-styled range slider, used by the job filter sidebar */
-input[type="range"].brand-range {
+/* Line Map range slider (ink thumb on a hairline track), used by the job filters */
+input[type="range"].line-range {
   -webkit-appearance: none;
   appearance: none;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"].line-range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 9999px;
-  background: #e0bfbf;
+  background: var(--color-hairline-strong);
+}
+
+input[type="range"].line-range::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-hairline-strong);
+}
+
+input[type="range"].line-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  border: 3px solid var(--color-card);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+input[type="range"].line-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  border: 3px solid var(--color-card);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+input[type="range"].line-range:focus-visible {
   outline: none;
 }
 
-input[type="range"].brand-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #800020;
-  border: 2px solid #fbf9f7;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  transition: transform 0.15s ease;
+input[type="range"].line-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--color-ink), 0 0 0 6px rgba(22, 24, 26, 0.18);
 }
 
-input[type="range"].brand-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-}
-
-input[type="range"].brand-range:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.25);
-}
-
-input[type="range"].brand-range::-moz-range-track {
-  height: 4px;
-  border-radius: 9999px;
-  background: #e0bfbf;
-}
-
-input[type="range"].brand-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #800020;
-  border: 2px solid #fbf9f7;
-  cursor: pointer;
-}
-
-input[type="range"].brand-range:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(128, 0, 32, 0.25);
+input[type="range"].line-range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--color-ink), 0 0 0 6px rgba(22, 24, 26, 0.18);
 }

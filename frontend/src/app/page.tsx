@@ -224,7 +224,7 @@ export default function Home() {
           <p className={`${statValue} truncate`}>
             {isReady && stats.topSkill ? stats.topSkill.name : "—"}
             {isReady && stats.topSkill && (
-              <span className="ml-2 hidden font-mono text-base font-semibold tracking-normal text-muted-2 md:inline">
+              <span className="ml-2 hidden font-mono text-base font-semibold tracking-normal text-muted-2 md:inline lg:hidden xl:inline">
                 {stats.topSkill.count} jobs
               </span>
             )}
@@ -298,7 +298,7 @@ export default function Home() {
                 className="absolute -left-10 top-0 size-8 rounded-full border-[6px] border-ink bg-card md:static"
               />
               <p className="text-[15px] font-bold md:text-base">
-                {index + 1} · {step.title}
+                {index + 1} ∙ {step.title}
               </p>
               <p className="text-sm leading-[1.45] text-muted md:text-[15px]">{step.text}</p>
             </li>

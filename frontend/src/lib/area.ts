@@ -1,6 +1,8 @@
 // Maps free-text job locations to Line Map "stations".
 // The API has no area field, so this is a best-effort frontend mapping.
 
+// Separators: "·" in Overpass Mono, "∙" (U+2219) in Overpass. Overpass's "·" has zero
+// advance width, so " · " renders as "Name ·Place".
 export const stations = [
   { id: "downtown", name: "Downtown Toronto", short: "Downtown" },
   { id: "mississauga", name: "Mississauga", short: "Mississauga" },
@@ -8,7 +10,7 @@ export const stations = [
   { id: "markham", name: "Markham", short: "Markham" },
   { id: "vaughan", name: "Vaughan", short: "Vaughan" },
   { id: "oakville", name: "Oakville", short: "Oakville" },
-  { id: "remote", name: "Remote · Canada", short: "Remote" },
+  { id: "remote", name: "Remote ∙ Canada", short: "Remote" },
   { id: "other", name: "Other locations", short: "Other" },
 ] as const;
 

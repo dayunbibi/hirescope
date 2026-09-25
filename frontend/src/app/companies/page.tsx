@@ -117,7 +117,7 @@ export default function CompaniesPage() {
               <p className="hidden font-mono text-[13px] text-muted sm:block">Sorted by open roles</p>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-2 md:gap-5 xl:grid-cols-3">
+            <div className="grid gap-3 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
               {visible.map(({ company, stats }) => (
                 <CompanyCard key={company.id} company={company} stats={stats} />
               ))}

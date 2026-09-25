@@ -157,7 +157,7 @@ export function JobRow({ job, onRemove }: { job: Job; onRemove?: RemoveHandler }
             {job.title}
           </Link>
           <span className="text-sm text-board-muted">
-            {job.company} · {job.location || "Location unknown"}
+            {job.company} ∙ {job.location || "Location unknown"}
           </span>
           <SkillTags skills={job.skills} />
         </div>

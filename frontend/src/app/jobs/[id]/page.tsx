@@ -132,8 +132,11 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     companiesResult.status === "fulfilled" ? companiesResult.value : [];
 
   const station = getStation(job.location);
+  // Shown in mono, where "·" is the right separator (see area.ts)
   const placeName =
-    station === "other" ? job.location || "Location unknown" : getStationName(station);
+    station === "other"
+      ? job.location || "Location unknown"
+      : getStationName(station).replace("∙", "·");
 
   const company = companies.find(
     (item) => item.name.trim().toLowerCase() === job.company.trim().toLowerCase()

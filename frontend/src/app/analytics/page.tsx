@@ -245,7 +245,7 @@ function AnalyticsContent() {
     role !== "All" && role,
   ]
     .filter(Boolean)
-    .join(" · ");
+    .join(" ∙ ");
 
   const maxLevelSalary = Math.max(...stats.salaryByLevel.map((row) => row.average), 1);
   const lowCountLevels = stats.salaryByLevel.filter(

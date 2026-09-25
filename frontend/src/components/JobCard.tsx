@@ -56,7 +56,7 @@ export default function JobCard({
             {job.title}
           </Link>
           <span className="text-sm text-board-muted">
-            {job.company} · {job.location || "Location unknown"} ·{" "}
+            {job.company} ∙ {job.location || "Location unknown"} ∙{" "}
             {job.experienceLevel}
           </span>
         </div>

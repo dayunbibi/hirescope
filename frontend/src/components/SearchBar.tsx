@@ -72,7 +72,7 @@ export default function SearchBar({
       }}
       className={className}
     >
-      <div className="flex h-[52px] items-center gap-2.5 rounded-full border-2 border-ink bg-card pl-4 pr-1 focus-within:shadow-[0_0_0_4px_rgba(22,24,26,0.12)] md:h-14 md:pl-5 md:pr-1.5">
+      <div className="flex h-[52px] items-center gap-2.5 rounded-full border-2 border-ink bg-card pl-4 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink md:h-14 md:pl-5 md:pr-1.5">
         <svg
           aria-hidden="true"
           width="18"

@@ -6,12 +6,20 @@ import { formatPostedDate, formatSalaryRange } from "@/lib/format";
 import {
   BookmarkToggle,
   CompanyAvatar,
+  RemoveButton,
   SkillTags,
   lineColor,
+  type RemoveHandler,
 } from "@/components/JobRow";
 
 // Mobile departures card: the same fields as JobRow, stacked
-export default function JobCard({ job }: { job: Job }) {
+export default function JobCard({
+  job,
+  onRemove,
+}: {
+  job: Job;
+  onRemove?: RemoveHandler;
+}) {
   const hasSalary = job.salaryMin !== null || job.salaryMax !== null;
 
   return (
@@ -29,7 +37,11 @@ export default function JobCard({ job }: { job: Job }) {
         </span>
 
         <div className="-my-2 -mr-2">
-          <BookmarkToggle jobId={job.id} />
+          {onRemove ? (
+            <RemoveButton job={job} onRemove={onRemove} compact />
+          ) : (
+            <BookmarkToggle jobId={job.id} />
+          )}
         </div>
       </div>
 

@@ -1,8 +1,12 @@
 import Link from "next/link";
+import JobBoard, { lineColor } from "@/components/JobRow";
 import JobBookmarkButton from "@/components/JobBookmarkButton";
+import { ErrorBlock } from "@/components/StateBlocks";
+import type { Company } from "@/data/companies";
 import type { Job } from "@/data/jobs";
-import { getJob, getJobs } from "@/lib/api";
-import { formatPostedDate } from "@/lib/format";
+import { getCompanies, getJob, getJobs } from "@/lib/api";
+import { getStation, getStationName } from "@/lib/area";
+import { formatPostedDate, formatSalaryRange } from "@/lib/format";
 
 type JobDetailPageProps = {
   params: Promise<{
@@ -10,351 +14,412 @@ type JobDetailPageProps = {
   }>;
 };
 
-// Formats one salary value
-function formatSalary(salary: number | null) {
-  if (salary === null) {
-    return "N/A";
-  }
+const hasSalary = (job: Job) => job.salaryMin !== null || job.salaryMax !== null;
 
-  return `$${Math.round(salary / 1000)}k`;
-}
+// Backend company fields may be empty or the literal "Unknown"
+const knownValue = (value: string | null | undefined) =>
+  value && value.trim() && value !== "Unknown" ? value : null;
 
-// Formats the full salary range safely
-function formatSalaryRange(
-  salaryMin: number | null,
-  salaryMax: number | null
-) {
-  // No salary information is available
-  if (salaryMin === null && salaryMax === null) {
-    return "Salary not disclosed";
-  }
-
-  // Only the maximum salary is available
-  if (salaryMin === null) {
-    return `Up to ${formatSalary(salaryMax)}`;
-  }
-
-  // Only the minimum salary is available
-  if (salaryMax === null) {
-    return `From ${formatSalary(salaryMin)}`;
-  }
-
-  // Full salary range is available
-  return `${formatSalary(salaryMin)} – ${formatSalary(salaryMax)}`;
-}
-
-// Displays the detailed page for one selected job
-export default async function JobDetailPage({
-  params,
-}: JobDetailPageProps) {
-  // Reads the job ID from the dynamic URL
-  const { id } = await params;
-
-  // Fetches the selected job and full job list from the backend API
-  let job: Job | null = null;
-  let allJobs: Job[] = [];
-
+// Hostname of the original posting, e.g. "boards.greenhouse.io"
+function sourceHost(sourceUrl: string) {
   try {
-    [job, allJobs] = await Promise.all([
-      getJob(Number(id)),
-      getJobs(),
-    ]);
+    return new URL(sourceUrl).hostname.replace(/^www\./, "");
   } catch {
-    job = null;
-    allJobs = [];
+    return "the original site";
   }
+}
 
-  // Displays a fallback page when the job does not exist
-  if (!job) {
+// Ticket cell dividers: a 2×2 grid on mobile, one row of 4 from md up
+const overviewBorders = [
+  "border-b border-r md:border-b-0",
+  "border-b md:border-b-0 md:border-r",
+  "border-r",
+  "",
+];
+
+const backLinkClassName =
+  "inline-flex h-11 items-center rounded-full border-[1.5px] border-hairline-strong bg-card px-4 text-sm font-semibold text-ink hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+
+function BackToJobs() {
+  return (
+    <div className="px-4 pt-5 md:px-12">
+      <Link href="/jobs" className={backLinkClassName}>
+        ← Back to jobs
+      </Link>
+    </div>
+  );
+}
+
+// "View original posting ↗", or a disabled dashed button when there is no link
+function OriginalPostingAction({ job, className }: { job: Job; className: string }) {
+  if (job.sourceUrl) {
     return (
-      <>
-        <main className="min-h-screen bg-[#FBF9F7] px-6 py-20">
-          <div className="mx-auto max-w-6xl">
-            <section className="rounded-xl border border-[#E0BFBF] bg-white p-10 text-center shadow-sm">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Job not found
-              </h1>
-
-              <p className="mt-3 text-gray-500">
-                The requested job posting could not be found.
-              </p>
-
-              <Link
-                href="/jobs"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#800020] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  arrow_back
-                </span>
-
-                Back to Jobs
-              </Link>
-            </section>
-          </div>
-        </main>
-
-      </>
+      <a
+        href={job.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex items-center justify-center gap-2.5 rounded-full bg-ink font-extrabold text-white hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${className}`}
+      >
+        View original posting <span aria-hidden="true">↗</span>
+      </a>
     );
   }
 
-  // Finds related jobs while excluding the current job
+  return (
+    <button
+      type="button"
+      disabled
+      aria-describedby="no-link-note"
+      className={`flex cursor-not-allowed items-center justify-center rounded-full border-[1.5px] border-dashed border-[#b5b4ad] bg-[#e2e1db] font-extrabold text-muted-2 ${className}`}
+    >
+      Original posting unavailable
+    </button>
+  );
+}
+
+// Displays the detailed page for one selected job
+export default async function JobDetailPage({ params }: JobDetailPageProps) {
+  const { id } = await params;
+  const jobId = Number(id);
+
+  // The job itself decides the page state; jobs and companies only add context
+  const [jobResult, jobsResult, companiesResult] = await Promise.allSettled([
+    Number.isInteger(jobId) && jobId > 0 ? getJob(jobId) : Promise.resolve(null),
+    getJobs(),
+    getCompanies(),
+  ]);
+
+  if (jobResult.status === "rejected") {
+    return (
+      <main className="flex-1">
+        <BackToJobs />
+        <div className="px-4 pt-6 md:px-12">
+          <ErrorBlock
+            title="We couldn’t load this job."
+            description="The HireScope API isn’t responding. If you bookmarked it, it’s still saved."
+          />
+        </div>
+      </main>
+    );
+  }
+
+  const job = jobResult.value;
+
+  if (!job) {
+    return (
+      <main className="flex-1">
+        <BackToJobs />
+        <section className="mx-4 mt-6 flex flex-col items-start gap-3 rounded-2xl bg-ink px-5 py-8 text-paper md:mx-12 md:px-8 md:py-14">
+          <p className="font-mono text-xs font-bold tracking-[0.12em] text-signal md:text-[13px]">
+            NOT IN SERVICE
+          </p>
+          <h1 className="text-[22px] font-extrabold tracking-[-0.02em] md:text-[28px]">
+            Job not found
+          </h1>
+          <p className="max-w-[520px] text-[15px] leading-normal text-board-muted md:text-base">
+            This posting may have been removed, or the link is wrong.
+          </p>
+          <Link
+            href="/jobs"
+            className="mt-2 inline-flex h-11 items-center rounded-full bg-signal px-5 text-[15px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+          >
+            Browse all jobs
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  const allJobs = jobsResult.status === "fulfilled" ? jobsResult.value : [];
+  const companies: Company[] =
+    companiesResult.status === "fulfilled" ? companiesResult.value : [];
+
+  const station = getStation(job.location);
+  const placeName =
+    station === "other" ? job.location || "Location unknown" : getStationName(station);
+
+  const company = companies.find(
+    (item) => item.name.trim().toLowerCase() === job.company.trim().toLowerCase()
+  );
+  const openRoles = allJobs.filter((item) => item.company === job.company).length;
+
+  // Real share of fetched postings without a salary
+  const noSalaryShare =
+    allJobs.length > 0
+      ? Math.round(
+          (allJobs.filter((item) => !hasSalary(item)).length / allJobs.length) * 100
+        )
+      : null;
+
+  // Market counts for the 10 most requested skills
+  const skillCounts = new Map<string, number>();
+  for (const item of allJobs) {
+    for (const skill of item.skills) {
+      skillCounts.set(skill, (skillCounts.get(skill) ?? 0) + 1);
+    }
+  }
+  const topSkillCounts = new Map(
+    [...skillCounts].sort((first, second) => second[1] - first[1]).slice(0, 10)
+  );
+
+  const companyFacts = [
+    { label: "Industry", value: knownValue(company?.industry) },
+    { label: "Headquarters", value: knownValue(company?.location) },
+    { label: "Company size", value: knownValue(company?.size) },
+  ];
+  const allFactsUnknown = companyFacts.every((fact) => !fact.value);
+
+  // Related jobs: same line or a shared skill, excluding this job
   const relatedJobs = allJobs
     .filter(
       (item) =>
         item.id !== job.id &&
         (item.workType === job.workType ||
-          item.skills.some((skill) =>
-            job.skills.includes(skill)
-          ))
+          item.skills.some((skill) => job.skills.includes(skill)))
     )
     .slice(0, 3);
 
+  const lineSwatch = lineColor[job.workType] ?? "bg-board-faint";
+  const companyName = job.company || "Unknown company";
+  const companyInitial = companyName.trim().charAt(0).toUpperCase();
+
+  const overview = [
+    {
+      label: "WORK TYPE",
+      value: (
+        <span className="flex items-center gap-2 md:gap-2.5">
+          <span aria-hidden="true" className={`size-[11px] rounded-full md:size-3.5 ${lineSwatch}`} />
+          {job.workType}
+        </span>
+      ),
+      className: "text-lg font-extrabold md:text-2xl",
+    },
+    {
+      label: "EXPERIENCE",
+      value: job.experienceLevel,
+      className: "text-lg font-extrabold md:text-2xl",
+    },
+    {
+      label: "SALARY · CAD",
+      value: hasSalary(job) ? (
+        formatSalaryRange(job.salaryMin, job.salaryMax)
+      ) : (
+        <>
+          Not disclosed
+          {noSalaryShare !== null && (
+            <span className="mt-2.5 block font-sans text-[13px] font-normal leading-snug text-[#a9aba6]">
+              {noSalaryShare}% of postings we track don’t list pay.
+            </span>
+          )}
+        </>
+      ),
+      className: `font-mono text-[15px] font-bold md:text-[22px] ${
+        hasSalary(job) ? "text-paper" : "text-[#a9aba6] md:text-xl"
+      }`,
+    },
+    {
+      label: "POSTED",
+      value: formatPostedDate(job.postedAt, false),
+      className: "font-mono text-lg font-bold text-signal md:text-2xl",
+    },
+  ];
+
   return (
-    <>
-      {/* Global website header */}
-      <main className="min-h-screen bg-[#FBF9F7] px-5 py-10">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-12">
-          {/* Main job detail column */}
-          <section className="flex flex-col gap-6 lg:col-span-8">
-            {/* Job summary card */}
-            <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-5">
-                <div className="min-w-0">
-                  {/* Job title */}
-                  <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
-                    {job.title}
-                  </h1>
+    <main className="flex-1">
+      <BackToJobs />
 
-                  {/* Company name */}
-                  <p className="mt-2 text-lg text-gray-600">
-                    {job.company}
-                  </p>
-                </div>
+      {/* Header and desktop actions */}
+      <div className="grid gap-4 px-4 pt-6 md:px-12 md:pt-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end lg:gap-12">
+        <div className="flex flex-col gap-4 lg:gap-3.5">
+          <p className="flex items-center gap-2 font-mono text-xs font-bold tracking-[0.08em] md:gap-2.5 md:text-[13px]">
+            <span aria-hidden="true" className={`h-[7px] w-8 rounded-full md:h-2 md:w-11 ${lineSwatch}`} />
+            {job.workType.toUpperCase()} LINE · {placeName.toUpperCase()}
+          </p>
 
-                {/* Temporary company logo */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[#E0BFBF] bg-[#F5F3F1] text-2xl font-bold text-[#800020]">
-                  {job.company.charAt(0)}
-                </div>
+          <h1 className="max-w-[900px] text-balance text-[30px] font-extrabold leading-[1.08] tracking-[-0.02em] md:text-[52px] md:leading-[1.02] md:tracking-[-0.03em]">
+            {job.title}
+          </h1>
+
+          <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-base md:text-lg">
+            <span
+              aria-hidden="true"
+              className="grid size-9 place-items-center rounded-full bg-ink text-[15px] font-extrabold text-paper md:size-11 md:text-lg"
+            >
+              {companyInitial || "?"}
+            </span>
+            {company ? (
+              <Link
+                href={`/companies/${company.id}`}
+                className="font-bold underline underline-offset-[3px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                {companyName}
+              </Link>
+            ) : (
+              <span className="font-bold">{companyName}</span>
+            )}
+            <span className="text-muted">{job.location || "Location unknown"}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <div className="hidden lg:block">
+            <OriginalPostingAction job={job} className="h-14 w-full text-[17px]" />
+          </div>
+          {job.sourceUrl ? (
+            <p className="hidden text-center font-mono text-xs text-muted lg:block">
+              Opens {sourceHost(job.sourceUrl)} in a new tab
+            </p>
+          ) : (
+            <p id="no-link-note" className="font-mono text-xs leading-normal text-muted lg:text-center">
+              The source didn’t include a link. Search {companyName}’s careers page.
+            </p>
+          )}
+          <div className="hidden lg:block">
+            <JobBookmarkButton jobId={job.id} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 px-4 pt-4 md:px-12 md:pt-9 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
+        <div className="flex min-w-0 flex-col gap-4 md:gap-6">
+          {/* Overview ticket */}
+          <dl className="grid grid-cols-2 rounded-2xl bg-ink text-paper md:grid-cols-4">
+            {overview.map((cell, index) => (
+              <div
+                key={cell.label}
+                className={`flex flex-col gap-1.5 border-board-divider-2 p-4 md:gap-2.5 md:p-6 ${overviewBorders[index]}`}
+              >
+                <dt className="font-mono text-[10px] font-semibold tracking-[0.12em] text-[#a9aba6] md:text-[11px]">
+                  {cell.label}
+                </dt>
+                <dd className={cell.className}>{cell.value}</dd>
               </div>
+            ))}
+          </dl>
 
-              {/* Main job metadata */}
-              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600">
-                {/* Location */}
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                    location_on
-                  </span>
+          {/* Tech stack */}
+          <section className="flex flex-col gap-2.5 md:gap-4 md:rounded-2xl md:border md:border-hairline md:bg-card md:p-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-lg font-extrabold md:text-[22px]">Tech stack</h2>
+              {job.skills.length > 0 && (
+                <span className="hidden font-mono text-[13px] text-muted md:inline">
+                  Tap a skill to see every job that asks for it
+                </span>
+              )}
+            </div>
 
-                  <span>
-                    {job.location} ({job.workType})
-                  </span>
-                </div>
+            {job.skills.length > 0 ? (
+              <ul className="flex flex-wrap gap-1.5 md:gap-2">
+                {job.skills.map((skill) => (
+                  <li key={skill}>
+                    <Link
+                      href={`/jobs?q=${encodeURIComponent(skill)}`}
+                      className="flex h-11 items-center gap-2 rounded-full border-[1.5px] border-ink px-4 text-[15px] font-bold hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:gap-2.5 md:px-[18px] md:text-base"
+                    >
+                      {skill}
+                      {topSkillCounts.has(skill) && (
+                        <span className="font-mono text-xs font-medium text-muted md:text-[13px]">
+                          {topSkillCounts.get(skill)} jobs
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[15px] text-muted">
+                This posting didn’t list any technologies.
+              </p>
+            )}
+          </section>
 
-                {/* Salary */}
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                    payments
-                  </span>
+          {/* Info note */}
+          <div className="flex items-start gap-4 rounded-[14px] border-[1.5px] border-dashed border-[#b5b4ad] p-3.5 text-sm leading-normal text-muted md:rounded-2xl md:px-6 md:py-5 md:text-[15px]">
+            <span
+              aria-hidden="true"
+              className="hidden size-7 shrink-0 place-items-center rounded-full border-2 border-muted font-mono text-sm font-bold md:grid"
+            >
+              i
+            </span>
+            <p>
+              HireScope stores the key fields of each posting: title, company, location, work
+              type, level, salary, skills and date.{" "}
+              <b className="text-ink">The full job description lives on the original posting.</b>
+            </p>
+          </div>
+        </div>
 
-                  <span>
-                    {formatSalaryRange(
-                      job.salaryMin,
-                      job.salaryMax
-                    )}
-                  </span>
-                </div>
-
-                {/* Experience level */}
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px] text-[#800020]">
-                    monitoring
-                  </span>
-
-                  <span>{job.experienceLevel}</span>
-                </div>
+        {/* Company card */}
+        <aside className="flex flex-col gap-4 lg:row-span-2">
+          <section className="flex flex-col gap-4 rounded-2xl border border-hairline bg-card p-4 md:p-[22px]">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-ink text-lg font-extrabold text-paper"
+              >
+                {companyInitial || "?"}
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-lg font-extrabold">{companyName}</h2>
+                <p className="font-mono text-[13px] text-muted">
+                  {allJobs.length > 0
+                    ? `${openRoles} open ${openRoles === 1 ? "role" : "roles"}`
+                    : "Open roles: —"}
+                </p>
               </div>
+            </div>
 
-              {/* Main job actions */}
-              <div className="mt-7 flex flex-wrap gap-3">
-                {/* Opens the original job posting */}
-                {job.sourceUrl ? (
-                  <a
-                    href={job.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#800020] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#570013] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
+            {allFactsUnknown ? (
+              <p className="border-t border-hairline-soft pt-2.5 text-[15px] italic text-muted-2">
+                Industry, location and size not listed
+              </p>
+            ) : (
+              <dl>
+                {companyFacts.map((fact) => (
+                  <div
+                    key={fact.label}
+                    className="flex items-center justify-between gap-4 border-t border-hairline-soft py-2.5 text-sm md:text-[15px]"
                   >
-                    <span className="material-symbols-outlined text-[18px]">
-                      open_in_new
-                    </span>
-
-                    View Original Posting
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    disabled
-                    className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg bg-gray-300 px-6 py-3 text-sm font-medium text-gray-600"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">
-                      open_in_new
-                    </span>
-
-                    Original posting unavailable
-                  </button>
-                )}
-
-                {/* Interactive bookmark button */}
-                <JobBookmarkButton jobId={job.id} />
-              </div>
-            </article>
-
-            {/* Job overview built from collected posting data */}
-            <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="border-b border-[#E4E2E0] pb-4 text-lg font-semibold tracking-tight text-gray-900">
-                Job Overview
-              </h2>
-
-              <dl className="mt-6 grid gap-5 sm:grid-cols-2">
-                {[
-                  { label: "Work Type", value: job.workType },
-                  { label: "Experience Level", value: job.experienceLevel },
-                  {
-                    label: "Salary",
-                    value: formatSalaryRange(job.salaryMin, job.salaryMax),
-                  },
-                  { label: "Posted", value: formatPostedDate(job.postedAt) },
-                ].map((detail) => (
-                  <div key={detail.label}>
-                    <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                      {detail.label}
-                    </dt>
-
-                    <dd className="mt-1 text-base font-medium text-gray-900">
-                      {detail.value}
+                    <dt className="text-muted">{fact.label}</dt>
+                    <dd className={`text-right ${fact.value ? "font-bold" : "font-medium italic text-muted-2"}`}>
+                      {fact.value ?? "Unknown"}
                     </dd>
                   </div>
                 ))}
               </dl>
+            )}
 
-              <p className="mt-6 text-sm leading-6 text-gray-500">
-                {job.sourceUrl
-                  ? "The full job description, responsibilities, and benefits are available on the original posting."
-                  : "A full job description is not available for this posting."}
-              </p>
-
-              {/* Technology stack */}
-              <section className="mt-8 border-t border-[#E4E2E0] pt-6">
-                <h3 className="text-base font-semibold text-gray-900">
-                  Tech Stack
-                </h3>
-
-                {job.skills.length > 0 ? (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {job.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="rounded-md bg-[#E4E2E0] px-3 py-1.5 text-sm text-gray-700"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm text-gray-500">
-                    No technology stack information available.
-                  </p>
-                )}
-              </section>
-            </article>
+            {company && (
+              <Link
+                href={`/companies/${company.id}`}
+                className="flex h-11 items-center justify-center rounded-full border-[1.5px] border-ink text-[15px] font-bold hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                Company page →
+              </Link>
+            )}
           </section>
 
-          {/* Job detail sidebar */}
-          <aside className="flex flex-col gap-6 lg:col-span-4">
-            {/* Company information card */}
-            <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                About {job.company}
-              </h2>
+          {job.sourceUrl && (
+            <p className="px-1 font-mono text-xs leading-relaxed text-muted">
+              Source: {sourceHost(job.sourceUrl)} · posted {formatPostedDate(job.postedAt)}
+            </p>
+          )}
+        </aside>
 
-              <p className="mt-4 leading-7 text-gray-600">
-                Company profile information will be expanded when
-                additional company data is available from the backend.
-              </p>
+        {/* Related jobs */}
+        {relatedJobs.length > 0 && (
+          <section className="flex min-w-0 flex-col gap-3.5 pt-4 md:pt-6">
+            <h2 className="text-lg font-extrabold md:text-[22px]">Related jobs</h2>
+            <JobBoard jobs={relatedJobs} />
+          </section>
+        )}
+      </div>
 
-              <Link
-                href="/companies"
-                className="mt-5 inline-flex items-center gap-2 rounded text-sm font-medium text-[#800020] transition hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-              >
-                View Companies
-
-                <span className="material-symbols-outlined text-[18px]">
-                  arrow_forward
-                </span>
-              </Link>
-            </article>
-
-            {/* Related jobs */}
-            <article className="rounded-xl border border-[#E0BFBF] bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                Related Jobs
-              </h2>
-
-              <div className="mt-5 space-y-3">
-                {relatedJobs.length > 0 ? (
-                  relatedJobs.map((relatedJob) => (
-                    <Link
-                      key={relatedJob.id}
-                      href={`/jobs/${relatedJob.id}`}
-                      className="block rounded-lg border border-transparent p-4 transition hover:border-[#E0BFBF] hover:bg-[#FBF9F7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30"
-                    >
-                      {/* Related job title */}
-                      <h3 className="font-semibold text-gray-900 transition hover:text-[#800020]">
-                        {relatedJob.title}
-                      </h3>
-
-                      {/* Related company */}
-                      <p className="mt-1 text-sm text-gray-500">
-                        {relatedJob.company}
-                      </p>
-
-                      {/* Related job metadata */}
-                      <div className="mt-3 flex flex-col gap-2 text-xs text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[15px]">
-                            location_on
-                          </span>
-
-                          <span>{relatedJob.location}</span>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[15px]">
-                            payments
-                          </span>
-
-                          <span>
-                            {formatSalaryRange(
-                              relatedJob.salaryMin,
-                              relatedJob.salaryMax
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No related jobs are currently available.
-                  </p>
-                )}
-              </div>
-            </article>
-          </aside>
-        </div>
-      </main>
-
-      {/* Global website footer */}
-    </>
+      {/* Mobile sticky action bar */}
+      <div className="sticky bottom-0 z-10 mt-6 flex gap-2 border-t border-hairline bg-paper px-4 pb-[22px] pt-3 lg:hidden">
+        <JobBookmarkButton jobId={job.id} compact />
+        <OriginalPostingAction job={job} className="h-[52px] flex-1 text-[15px] md:text-base" />
+      </div>
+    </main>
   );
 }

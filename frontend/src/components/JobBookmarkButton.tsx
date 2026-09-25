@@ -2,40 +2,40 @@
 
 import { useBookmarks } from "@/hooks/useBookmarks";
 
-type JobBookmarkButtonProps = {
-  jobId: number;
-};
-
+// Job Detail bookmark toggle: a labelled pill on desktop, a 52px circle in the mobile action bar
 export default function JobBookmarkButton({
   jobId,
-}: JobBookmarkButtonProps) {
+  compact = false,
+}: {
+  jobId: number;
+  compact?: boolean;
+}) {
   const { isBookmarked, toggleBookmark, isLoaded } = useBookmarks();
-
   const bookmarked = isBookmarked(jobId);
+  const label = bookmarked ? "Saved to bookmarks" : "Bookmark this job";
 
   return (
     <button
       type="button"
       disabled={!isLoaded}
       onClick={() => toggleBookmark(jobId)}
-      className={`inline-flex items-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#800020]/30 disabled:cursor-not-allowed disabled:opacity-50 ${
-        bookmarked
-          ? "border-[#800020] bg-[#F7EDEE] text-[#800020]"
-          : "border-[#800020] text-[#800020] hover:bg-[#F7EDEE]"
-      }`}
+      aria-pressed={bookmarked}
+      aria-label={compact ? label : undefined}
+      className={`flex h-[52px] shrink-0 items-center justify-center gap-2.5 rounded-full border-[1.5px] border-ink text-base font-bold text-ink transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-50 ${
+        compact ? "w-[52px]" : "w-full"
+      } ${bookmarked ? "bg-signal" : "bg-card hover:bg-paper"}`}
     >
-      <span
-        className="material-symbols-outlined text-[18px]"
-        style={{
-          fontVariationSettings: bookmarked
-            ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
-            : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-        }}
+      <svg
+        aria-hidden="true"
+        width="13"
+        height="16"
+        viewBox="0 0 14 16"
+        strokeWidth="1.6"
+        className={`stroke-ink ${bookmarked ? "fill-ink" : "fill-none"}`}
       >
-        bookmark
-      </span>
-
-      {bookmarked ? "Saved" : "Save Job"}
+        <path d="M2 1h10v14l-5-4-5 4z" />
+      </svg>
+      {!compact && label}
     </button>
   );
 }

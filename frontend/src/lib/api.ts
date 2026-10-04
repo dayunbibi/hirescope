@@ -1,7 +1,8 @@
 import type { Company } from "@/data/companies";
 import type { Job } from "@/data/jobs";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Strip a trailing slash so "https://api.example.com/" doesn't produce "//jobs"
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 export async function getJobs(): Promise<Job[]> {
   const response = await fetch(`${API_URL}/jobs`, { cache: "no-store" });

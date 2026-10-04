@@ -104,14 +104,15 @@ Charts are built with plain HTML elements styled with Tailwind CSS (proportional
 ### Database
 
 - **Development:** SQLite by default (`backend/hirescope.db`), used when `DATABASE_URL` in `backend/.env` is empty.
-- **Production:** PostgreSQL. Set `DATABASE_URL` to a PostgreSQL connection string (`psycopg2-binary` is included). Both `postgresql://` and `postgres://` URLs are accepted.
+- **Production:** PostgreSQL on [Neon](https://neon.tech). Set `DATABASE_URL` to the Neon connection string (keep `?sslmode=require`). The driver is psycopg 3 (`psycopg[binary]`). Both `postgresql://` and `postgres://` URLs are accepted.
 
 Tables are created automatically on API startup and on each scraper run. There is no migration tool yet.
 
 ### Deployment
 
 - Vercel (frontend)
-- Railway (backend and PostgreSQL)
+- Render (backend)
+- Neon (PostgreSQL)
 
 See [Deployment](#deployment).
 
@@ -176,30 +177,55 @@ cp .env.local.example .env.local    # sets NEXT_PUBLIC_API_URL=http://localhost:
 npm run dev                         # http://localhost:3000
 ```
 
-By default the backend only allows CORS requests from `http://localhost:3000`. To use another port, add it to `ALLOWED_ORIGINS` in `backend/.env`.
+By default the backend only allows CORS requests from `http://localhost:3000`. To use another port, add it to `ALLOWED_ORIGINS` in `backend/.env`. The deployed frontend URL goes in `FRONTEND_URL`.
 
 Other frontend scripts: `npm run build`, `npm run start`, `npm run lint`.
 
 ## Deployment
 
+Neon (database) → Render (backend) → Vercel (frontend) → back to Render to set `FRONTEND_URL`.
+
 ### Environment variables
 
-| Service           | Variable              | Value                                                        |
-| ----------------- | --------------------- | ------------------------------------------------------------ |
-| Railway (backend) | `DATABASE_URL`        | PostgreSQL connection string (reference the Railway Postgres service) |
-| Railway (backend) | `ALLOWED_ORIGINS`     | Comma-separated frontend URLs, e.g. `https://hirescope.vercel.app` |
-| Vercel (frontend) | `NEXT_PUBLIC_API_URL` | Public URL of the Railway backend, e.g. `https://hirescope-api.up.railway.app` |
+| Service          | Variable              | Value                                                                 |
+| ---------------- | --------------------- | --------------------------------------------------------------------- |
+| Render (backend) | `DATABASE_URL`        | Neon connection string, e.g. `postgresql://user:pass@ep-xxx.aws.neon.tech/neondb?sslmode=require&channel_binding=require` |
+| Render (backend) | `FRONTEND_URL`        | Vercel production URL, e.g. `https://hirescope.vercel.app`            |
+| Render (backend) | `ALLOWED_ORIGINS`     | Optional. Extra comma-separated origins (defaults to `http://localhost:3000`) |
+| Vercel (frontend)| `NEXT_PUBLIC_API_URL` | Render backend URL, e.g. `https://hirescope-api.onrender.com`         |
 
-### Backend (Railway)
+### 1. Database (Neon)
 
-- Set the service root directory to `backend`.
-- The start command comes from `backend/Procfile`: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-- Tables are created on startup. The database is empty until the scraper runs against it: `python -m scripts.run_scraper`.
+- Create a project and copy the connection string from **Connect**.
+- Tables are created automatically when the API starts or the scraper runs.
 
-### Frontend (Vercel)
+### 2. Backend (Render)
+
+- New → Blueprint, or New → Web Service with these settings (they are also in `render.yaml`):
+  - Root directory: `backend`
+  - Build command: `pip install -r requirements.txt`
+  - Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+  - Health check path: `/`
+- Python version comes from `backend/.python-version`.
+- On the free plan the service sleeps after 15 minutes without traffic, so the first request can take up to a minute.
+
+### 3. Initial data (scraper)
+
+The database is empty until the scraper runs against it. Run it from your machine with the Neon URL:
+
+```bash
+cd backend
+source venv/bin/activate
+DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" python -m scripts.run_scraper
+```
+
+Re-run the same command to refresh jobs. Existing jobs are updated, not duplicated.
+
+### 4. Frontend (Vercel)
 
 - Set the project root directory to `frontend`. Vercel detects Next.js automatically.
 - `NEXT_PUBLIC_API_URL` is read at build time, so redeploy after changing it.
+- After the first deploy, copy the production URL into `FRONTEND_URL` on Render.
 - Vercel preview deployments use different URLs. They can only call the API if their origin is added to `ALLOWED_ORIGINS`.
 
 ## Project Structure
@@ -207,9 +233,9 @@ Other frontend scripts: `npm run build`, `npm run start`, `npm run lint`.
 ```
 backend/
   main.py              FastAPI app and routes
-  Procfile             Railway start command
+  Procfile             Start command (Render uses render.yaml)
   app/
-    config.py          Settings (DATABASE_URL)
+    config.py          Settings (DATABASE_URL, FRONTEND_URL)
     database.py        SQLAlchemy engine and session
     models.py          Company and Job models
     schemas.py         API response schemas
@@ -258,7 +284,7 @@ design/
 - Store and display full job descriptions
 - Enrich company data (industry, size, location, technologies)
 - Collect job history to support real hiring trends
-- Deploy (Vercel and Railway)
+- Deploy (Vercel, Render, and Neon)
 - Scheduled scraper runs
 
 ### Planned API

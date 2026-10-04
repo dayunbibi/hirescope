@@ -17,3 +17,10 @@ backend/app/scrapers/discovery_cache.json
 .env
 backend/.env
 frontend/.env.local
+
+# local AI tool config
+CLAUDE.md
+AGENTS.md
+.agents/
+.claude/
+skills-lock.json

@@ -14,7 +14,7 @@ It collects software and developer job postings and lets users explore jobs, com
 
 HireScope is a working application. The Next.js frontend has seven pages, all connected to a FastAPI backend that serves real job data collected by a scraping pipeline (Greenhouse, Lever, RemoteOK, Jobicy).
 
-Current focus: replacing the remaining placeholder content, improving UI consistency and responsive behavior, and preparing for deployment. See [Known Limitations](#known-limitations) and [Roadmap](#roadmap).
+Current focus: replacing the remaining placeholder content, improving UI consistency and responsive behavior, and polishing the deployed app. See [Known Limitations](#known-limitations) and [Roadmap](#roadmap).
 
 ## Design: Line Map
 
@@ -292,8 +292,6 @@ design/
 - Store and display full job descriptions
 - Enrich company data (industry, size, location, technologies)
 - Collect job history to support real hiring trends
-- Deploy (Vercel, Render, and Neon)
-- Scheduled scraper runs
 
 ### Planned API
 

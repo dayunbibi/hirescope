@@ -4,9 +4,7 @@
 
 > Note: the API runs on Render's free plan, so the first load may take ~50 seconds while the server wakes up.
 
-<!-- Add the screenshot to docs/screenshot-home.png, then remove this comment wrapper:
 ![HireScope home page](docs/screenshot-home.png)
--->
 
 HireScope is a Toronto-focused developer job market analytics platform.
 

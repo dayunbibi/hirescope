@@ -1,5 +1,13 @@
 # HireScope
 
+**Live Demo:** https://hirescope-xi.vercel.app
+
+> Note: the API runs on Render's free plan, so the first load may take ~50 seconds while the server wakes up.
+
+<!-- Add the screenshot to docs/screenshot-home.png, then remove this comment wrapper:
+![HireScope home page](docs/screenshot-home.png)
+-->
+
 HireScope is a Toronto-focused developer job market analytics platform.
 
 It collects software and developer job postings and lets users explore jobs, companies, salaries, technologies, work arrangements, and hiring activity across Toronto and the Greater Toronto Area.
@@ -220,6 +228,8 @@ DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require" python -m script
 ```
 
 Re-run the same command to refresh jobs. Existing jobs are updated, not duplicated.
+
+The scraper also runs daily through GitHub Actions (`.github/workflows/scrape.yml`). It reads `DATABASE_URL` from the repository secret of the same name and can be started manually from the **Actions** tab.
 
 ### 4. Frontend (Vercel)
 

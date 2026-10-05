@@ -17,10 +17,43 @@ const overpassMono = Overpass_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
+// Vercel sets VERCEL_PROJECT_PRODUCTION_URL (without https://) on every deployment, so
+// link previews always point at the production domain. Falls back to localhost in dev.
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "http://localhost:3000";
+
+const description =
+  "Toronto developer job search and job market analytics platform.";
+const shareDescription =
+  "Toronto's developer jobs, mapped like the subway. Search live postings across the GTA by area, work type, and skill.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "HireScope",
-  description:
-    "Toronto developer job search and job market analytics platform.",
+  description,
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "HireScope",
+    title: "HireScope",
+    description: shareDescription,
+    locale: "en_CA",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HireScope home page with the GTA job map and job stats",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HireScope",
+    description: shareDescription,
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

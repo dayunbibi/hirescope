@@ -18,7 +18,7 @@ Current focus: replacing the remaining placeholder content, improving UI consist
 
 ## Design: Line Map
 
-The UI draws the GTA job market as a transit map. The design handoff (spec, tokens and HTML prototypes) lives in [`design/line-map/`](design/line-map/README.md).
+I wanted the UI to feel like something you'd actually see in Toronto, so it draws the GTA job market as a TTC-style transit map instead of a regular dashboard.
 
 - **Work types are lines:** Hybrid (yellow), Remote (red), On-site (green)
 - **Areas are stations:** Downtown Toronto, Mississauga, North York, Markham, Vaughan, Oakville, Remote · Canada. Free-text job locations are mapped to stations on the frontend (`lib/area.ts`).
@@ -259,24 +259,7 @@ frontend/
     hooks/             useBookmarks
     lib/               API client, station mapping, formatting, company stats
     data/              Job and Company types
-design/
-  line-map/            Line Map design handoff: README spec and HTML prototypes
 ```
-
-## Screenshots
-
-<!-- Replace these paths with real screenshots. -->
-
-| Page           | Screenshot                                                  |
-| -------------- | ----------------------------------------------------------- |
-| Home           | ![Home](docs/screenshots/home.png)                          |
-| Jobs           | ![Jobs](docs/screenshots/jobs.png)                          |
-| Job Detail     | ![Job Detail](docs/screenshots/job-detail.png)              |
-| Companies      | ![Companies](docs/screenshots/companies.png)                |
-| Company Detail | ![Company Detail](docs/screenshots/company-detail.png)      |
-| Analytics      | ![Analytics](docs/screenshots/analytics.png)                |
-| Bookmarks      | ![Bookmarks](docs/screenshots/bookmarks.png)                |
-| Mobile         | ![Mobile](docs/screenshots/mobile.png)                      |
 
 ## Known Limitations
 
@@ -302,43 +285,9 @@ design/
 
 ### Later
 
-- User authentication
-- Email notifications
-- AI resume matching
-- AI skill gap analysis
-- Interview question generator
-- Salary trend analytics
-- Job market heatmap
+- User accounts and server-side bookmarks
+- Salary trends over time
 
-## Team Responsibilities
+## Team
 
-### Frontend
-
-- UI and layout
-- Search and filters
-- Job listing page
-- Job detail page
-- Dashboard
-- Charts
-- Bookmark interface
-- Responsive design
-
-### Backend
-
-- Job data collection
-- Data parser
-- Database
-- REST API
-- Scheduler
-- Statistics
-- Notifications
-
-### Shared Responsibilities
-
-- Project planning
-- Database schema
-- API design
-- GitHub workflow
-- Testing
-- Deployment
-- Final presentation
+HireScope started as a small team project. I built the frontend, and after the team wrapped up I kept maintaining and extending the whole app on my own.

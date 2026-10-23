@@ -3,7 +3,7 @@
 import type { Job } from "@/data/jobs";
 import { getStation, stations } from "@/lib/area";
 
-// Map geometry from design/line-map (viewBox 0 0 880 500). Station → line
+// Map geometry (viewBox 0 0 880 500). Station → line
 // membership is part of the drawing, not data; counts come from real jobs.
 const lines = [
   { workType: "Hybrid", stroke: "var(--color-line-hybrid)", points: "70,430 150,350 480,350 480,190 540,130 680,130" },
